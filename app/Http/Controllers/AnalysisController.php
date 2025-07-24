@@ -21,27 +21,6 @@ class AnalysisController extends Controller
     }
 
     /**
-     * Display analysis dashboard
-     */
-    public function index()
-    {
-        $summary = $this->analysisService->getAnalysisResultsSummary();
-
-        $recommendations = InventoryRecommendation::active()
-            ->orderBy('confidence', 'desc')
-            ->limit(10)
-            ->get();
-
-        $predictions = StockPrediction::active()
-            ->with('item')
-            ->orderBy('prediction_confidence', 'desc')
-            ->limit(10)
-            ->get();
-
-        return view('analysis.index', compact('summary', 'recommendations', 'predictions'));
-    }
-
-    /**
      * Display apriori algorithm process page
      */
     public function aprioriProcess(Request $request)

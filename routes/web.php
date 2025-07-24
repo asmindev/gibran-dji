@@ -29,11 +29,7 @@ Route::resource('outgoing_items', OutgoingItemController::class);
 
 // Analysis routes
 Route::prefix('analysis')->name('analysis.')->group(function () {
-    Route::get('/', [AnalysisController::class, 'index'])->name('index');
     Route::get('/apriori-process', [AnalysisController::class, 'aprioriProcess'])->name('apriori-process');
-    Route::get('/recommendations', [AnalysisController::class, 'recommendations'])->name('recommendations');
-    Route::get('/predictions', [AnalysisController::class, 'predictions'])->name('predictions');
-    Route::post('/run', [AnalysisController::class, 'runAnalysis'])->name('run');
 });
 
 // Reports

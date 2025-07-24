@@ -13,16 +13,6 @@
             <h1 class="text-3xl font-bold text-gray-800">Proses Algoritma Apriori (Support)</h1>
             <p class="text-gray-600 mt-2">Pemahaman langkah demi langkah algoritma Association Rule Mining</p>
         </div>
-        <div class="flex space-x-2">
-            <a href="{{ route('analysis.index') }}"
-                class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg">
-                ← Kembali ke Analisis
-            </a>
-            <a href="{{ route('analysis.recommendations') }}"
-                class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">
-                Lihat Hasil Rekomendasi
-            </a>
-        </div>
     </div>
 
     <!-- Algorithm Overview -->
