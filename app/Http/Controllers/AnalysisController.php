@@ -8,6 +8,7 @@ use App\Models\Item;
 use App\Models\OutgoingItem;
 use App\Services\InventoryAnalysisService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
 class AnalysisController extends Controller
@@ -99,108 +100,6 @@ class AnalysisController extends Controller
             'minSupport' => $minSupport, // Send as percentage for display
             'minConfidence' => $minConfidence // Send as percentage for display
         ]);
-    }
-
-    /**
-     * Display recommendations page
-     */
-    public function recommendations(Request $request)
-    {
-        $query = InventoryRecommendation::active();
-
-        // Filter by search (item name in antecedent or consequent)
-        if ($request->filled('search')) {
-            $search = $request->search;
-
-            // First, find item codes that match the search term
-            $matchingItemCodes = Item::where('item_name', 'like', '%' . $search . '%')
-                ->pluck('item_code')
-                ->toArray();
-
-            if (!empty($matchingItemCodes)) {
-                $query->where(function ($q) use ($matchingItemCodes) {
-                    foreach ($matchingItemCodes as $code) {
-                        $q->orWhere('antecedent_items', 'like', '%' . $code . '%')
-                            ->orWhere('consequent_items', 'like', '%' . $code . '%');
-                    }
-                });
-            } else {
-                // If no matching items found, return empty result
-                $query->whereRaw('1 = 0');
-            }
-        }
-
-        // Filter by confidence
-        if ($request->filled('min_confidence')) {
-            $query->where('confidence', '>=', $request->min_confidence);
-        }
-
-        // Filter by lift
-        if ($request->filled('min_lift')) {
-            $query->where('lift', '>=', $request->min_lift);
-        }
-
-        $recommendations = $query->orderBy('confidence', 'desc')
-            ->paginate(15)
-            ->withQueryString();
-
-        return view('analysis.recommendations', compact('recommendations'));
-    }
-
-    /**
-     * Display predictions page
-     */
-    public function predictions(Request $request)
-    {
-        $query = StockPrediction::active()->with('item');
-
-        // Filter by search (item name)
-        if ($request->filled('search')) {
-            $query->whereHas('item', function ($q) use ($request) {
-                $q->where('item_name', 'like', '%' . $request->search . '%');
-            });
-        }
-
-        // Filter by confidence
-        if ($request->filled('min_confidence')) {
-            $query->where('prediction_confidence', '>=', $request->min_confidence);
-        }
-
-        // Filter by minimum demand
-        if ($request->filled('min_demand')) {
-            $query->where('predicted_demand', '>=', $request->min_demand);
-        }
-
-        // Filter by item
-        if ($request->filled('item_id')) {
-            $query->where('item_id', $request->item_id);
-        }
-
-        $predictions = $query->orderBy('prediction_confidence', 'desc')
-            ->paginate(15)
-            ->withQueryString();
-
-        return view('analysis.predictions', compact('predictions'));
-    }
-
-    /**
-     * Run analysis manually
-     */
-    public function runAnalysis()
-    {
-        try {
-            $results = $this->analysisService->runCompleteAnalysis();
-
-            $message = sprintf(
-                'Analisis berhasil! %d rekomendasi dan %d prediksi telah dihasilkan.',
-                $results['import_results']['recommendations_imported'] ?? 0,
-                $results['import_results']['predictions_imported'] ?? 0
-            );
-
-            return redirect()->route('analysis.index')->with('success', $message);
-        } catch (\Exception $e) {
-            return redirect()->route('analysis.index')->with('error', 'Analisis gagal: ' . $e->getMessage());
-        }
     }
 
     /**
@@ -509,5 +408,23 @@ class AnalysisController extends Controller
         }
 
         return $transactions;
+    }
+
+
+
+    /**
+     * Get available customers for filter dropdown
+     */
+    private function getAvailableCustomers(): array
+    {
+        $customers = OutgoingItem::whereNotNull('customer')
+            ->distinct()
+            ->pluck('customer')
+            ->filter()
+            ->sort()
+            ->values()
+            ->toArray();
+
+        return array_merge(['all' => 'Semua Customer'], array_combine($customers, $customers));
     }
 }
