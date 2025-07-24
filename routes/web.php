@@ -7,6 +7,7 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\IncomingItemController;
 use App\Http\Controllers\OutgoingItemController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\AnalysisController;
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -17,10 +18,23 @@ Route::resource('categories', CategoryController::class);
 Route::resource('items', ItemController::class);
 
 // Incoming Items
+Route::get('incoming_items/export', [IncomingItemController::class, 'export'])->name('incoming_items.export');
+Route::get('incoming_items/template', [IncomingItemController::class, 'template'])->name('incoming_items.template');
 Route::resource('incoming_items', IncomingItemController::class);
 
 // Outgoing Items
+Route::get('outgoing_items/export', [OutgoingItemController::class, 'export'])->name('outgoing_items.export');
+Route::get('outgoing_items/template', [OutgoingItemController::class, 'template'])->name('outgoing_items.template');
 Route::resource('outgoing_items', OutgoingItemController::class);
+
+// Analysis routes
+Route::prefix('analysis')->name('analysis.')->group(function () {
+    Route::get('/', [AnalysisController::class, 'index'])->name('index');
+    Route::get('/apriori-process', [AnalysisController::class, 'aprioriProcess'])->name('apriori-process');
+    Route::get('/recommendations', [AnalysisController::class, 'recommendations'])->name('recommendations');
+    Route::get('/predictions', [AnalysisController::class, 'predictions'])->name('predictions');
+    Route::post('/run', [AnalysisController::class, 'runAnalysis'])->name('run');
+});
 
 // Reports
 Route::prefix('reports')->name('reports.')->group(function () {

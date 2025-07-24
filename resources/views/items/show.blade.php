@@ -5,17 +5,17 @@
 @section('content')
 <div class="max-w-6xl mx-auto">
     <div class="bg-white rounded-lg shadow-md overflow-hidden">
-        <div class="px-6 py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+        <div class="px-6 py-4 bg-primary text-white">
             <div class="flex items-center justify-between">
                 <h1 class="text-2xl font-bold">Item Details</h1>
                 <div class="flex space-x-2">
                     <a href="{{ route('items.edit', $item) }}"
                         class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200">
-                        Edit Item
+                        Edit Barang
                     </a>
                     <a href="{{ route('items.index') }}"
                         class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200">
-                        Back to Items
+                        Kembali ke Daftar
                     </a>
                 </div>
             </div>
@@ -52,7 +52,7 @@
                                 class="inline-flex px-3 py-1 text-sm font-semibold rounded-full bg-blue-100 text-blue-800">
                                 {{ $item->category->name }}
                             </span>
-                            <span class="text-gray-600">SKU: {{ $item->sku }}</span>
+                            {{-- <span class="text-gray-600">SKU: {{ $item->sku }}</span> --}}
                         </div>
 
                         @if($item->description)
@@ -62,37 +62,36 @@
 
                     <!-- Stock Information -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="bg-white border rounded-lg p-4 text-center">
-                            <div
-                                class="text-3xl font-bold {{ $item->stock <= $item->minimum_stock ? 'text-red-600' : 'text-green-600' }}">
+                        <div class="bg-white border border-gray-300 rounded-lg p-4 text-center">
+                            <div class="text-3xl font-bold">
                                 {{ number_format($item->stock) }}
                             </div>
                             <div class="text-sm text-gray-600 mt-1">Current Stock</div>
                             @if($item->stock <= $item->minimum_stock)
-                                <div class="text-xs text-red-600 mt-1">⚠️ Low Stock</div>
+                                <div class="text-xs mt-1">⚠️ Stock Rendah</div>
                                 @endif
                         </div>
 
-                        <div class="bg-white border rounded-lg p-4 text-center">
-                            <div class="text-3xl font-bold text-yellow-600">{{ number_format($item->minimum_stock) }}
+                        <div class="bg-white border border-gray-300 rounded-lg p-4 text-center">
+                            <div class="text-3xl font-bold">{{ number_format($item->minimum_stock) }}
                             </div>
                             <div class="text-sm text-gray-600 mt-1">Minimum Stock</div>
                         </div>
 
-                        <div class="bg-white border rounded-lg p-4 text-center">
-                            <div class="text-3xl font-bold text-blue-600">${{ number_format($item->selling_price, 2) }}
+                        <div class="bg-white border border-gray-300 rounded-lg p-4 text-center">
+                            <div class="text-3xl font-bold">${{ number_format($item->selling_price, 2) }}
                             </div>
                             <div class="text-sm text-gray-600 mt-1">Selling Price</div>
                         </div>
                     </div>
 
                     <!-- Stock Value -->
-                    <div class="bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-4">
-                        <h3 class="text-lg font-semibold text-purple-800 mb-2">Stock Value</h3>
-                        <div class="text-3xl font-bold text-purple-900">
+                    <div class="bg-primary/5 border border-primary/10 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-primary mb-2">Stock Value</h3>
+                        <div class="text-3xl font-bold text-purple">
                             ${{ number_format($item->stock * $item->selling_price, 2) }}
                         </div>
-                        <p class="text-sm text-purple-700 mt-1">
+                        <p class="text-sm text-primary mt-1">
                             {{ number_format($item->stock) }} units × ${{ number_format($item->selling_price, 2) }}
                         </p>
                     </div>
@@ -102,7 +101,7 @@
             <!-- Quick Actions -->
             <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <a href="{{ route('incoming_items.create', ['item_id' => $item->id]) }}"
-                    class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-md font-medium text-center transition duration-200 flex items-center justify-center">
+                    class="bg-primary text-white px-6 py-3 rounded-md font-medium text-center transition duration-200 flex items-center justify-center">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
@@ -121,12 +120,12 @@
 
             <!-- Recent Transactions -->
             <div class="mt-8">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Transactions</h3>
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Transaksi Terbaru</h3>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <!-- Recent Incoming -->
-                    <div class="bg-white border rounded-lg overflow-hidden">
-                        <div class="px-4 py-3 bg-green-50 border-b">
-                            <h4 class="font-medium text-green-800">Recent Incoming</h4>
+                    <div class="bg-white border border-gray-300 rounded-lg overflow-hidden">
+                        <div class="px-4 py-3 bg-primary/5 border-b border-gray-200">
+                            <h4 class="font-medium text-primary">Barang Masuk Terbaru</h4>
                         </div>
                         <div class="p-4">
                             @if($recentIncoming->count() > 0)
@@ -139,14 +138,13 @@
                                         <div class="text-gray-500">{{ $incoming->created_at->format('M d, Y') }}</div>
                                     </div>
                                     <a href="{{ route('incoming_items.show', $incoming) }}"
-                                        class="text-green-600 hover:text-green-800">View</a>
+                                        class="text-primary">Lihat</a>
                                 </div>
                                 @endforeach
                             </div>
-                            <div class="mt-3 pt-3 border-t">
+                            <div class="mt-3 pt-3 border-t border-gray-200">
                                 <a href="{{ route('incoming_items.index', ['item_id' => $item->id]) }}"
-                                    class="text-sm text-green-600 hover:text-green-800">View all incoming transactions
-                                    →</a>
+                                    class="text-sm text-primary">Lihat Semua →</a>
                             </div>
                             @else
                             <p class="text-gray-500 text-sm">No recent incoming transactions</p>
@@ -155,8 +153,8 @@
                     </div>
 
                     <!-- Recent Outgoing -->
-                    <div class="bg-white border rounded-lg overflow-hidden">
-                        <div class="px-4 py-3 bg-red-50 border-b">
+                    <div class="bg-white border border-gray-300 rounded-lg overflow-hidden">
+                        <div class="px-4 py-3 bg-red-50 border-b border-gray-200">
                             <h4 class="font-medium text-red-800">Recent Outgoing</h4>
                         </div>
                         <div class="p-4">
@@ -174,7 +172,7 @@
                                 </div>
                                 @endforeach
                             </div>
-                            <div class="mt-3 pt-3 border-t">
+                            <div class="mt-3 pt-3 border-t border-gray-200">
                                 <a href="{{ route('outgoing_items.index', ['item_id' => $item->id]) }}"
                                     class="text-sm text-red-600 hover:text-red-800">View all outgoing transactions →</a>
                             </div>

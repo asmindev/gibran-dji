@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Item;
 use App\Models\IncomingItem;
 use App\Http\Requests\StoreIncomingItemRequest;
+use App\Exports\IncomingItemsExport;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class IncomingItemController extends Controller
 {
@@ -14,7 +16,21 @@ class IncomingItemController extends Controller
      */
     public function index(Request $request)
     {
-        $query = IncomingItem::with('item');
+        $query = IncomingItem::with(['item', 'item.category']);
+
+        // Search functionality
+        if ($request->filled('search')) {
+            $search = $request->get('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('supplier', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhere('notes', 'like', "%{$search}%")
+                    ->orWhereHas('item', function ($itemQuery) use ($search) {
+                        $itemQuery->where('item_name', 'like', "%{$search}%")
+                            ->orWhere('item_code', 'like', "%{$search}%");
+                    });
+            });
+        }
 
         // Date range filter
         if ($request->filled('start_date')) {
@@ -30,7 +46,43 @@ class IncomingItemController extends Controller
             $query->where('item_id', $request->item_id);
         }
 
-        $incomingItems = $query->latest('incoming_date')->paginate(10);
+        // Supplier filter
+        if ($request->filled('supplier')) {
+            $query->where('supplier', 'like', "%{$request->supplier}%");
+        }
+
+        // Quantity range filter
+        if ($request->filled('min_quantity')) {
+            $query->where('quantity', '>=', $request->get('min_quantity'));
+        }
+        if ($request->filled('max_quantity')) {
+            $query->where('quantity', '<=', $request->get('max_quantity'));
+        }
+
+        // Cost range filter
+        if ($request->filled('min_cost')) {
+            $query->where('unit_cost', '>=', $request->get('min_cost'));
+        }
+        if ($request->filled('max_cost')) {
+            $query->where('unit_cost', '<=', $request->get('max_cost'));
+        }
+
+        // Sorting functionality
+        $sortBy = $request->get('sort_by', 'incoming_date');
+        $sortOrder = $request->get('sort_order', 'desc');
+
+        $allowedSorts = ['incoming_date', 'quantity', 'unit_cost', 'supplier', 'created_at'];
+        if (!in_array($sortBy, $allowedSorts)) {
+            $sortBy = 'incoming_date';
+        }
+
+        if (!in_array($sortOrder, ['asc', 'desc'])) {
+            $sortOrder = 'desc';
+        }
+
+        $query->orderBy($sortBy, $sortOrder);
+
+        $incomingItems = $query->paginate(15)->withQueryString();
         $items = Item::all();
 
         return view('incoming_items.index', compact('incomingItems', 'items'));
@@ -94,5 +146,32 @@ class IncomingItemController extends Controller
 
         return redirect()->route('incoming_items.index')
             ->with('success', 'Incoming item deleted successfully.');
+    }
+
+    /**
+     * Export incoming items to Excel/CSV
+     */
+    public function export(Request $request)
+    {
+        $format = $request->get('format', 'excel');
+        $filename = 'barang_masuk_' . date('Y-m-d_H-i-s');
+
+        if ($format === 'csv') {
+            return Excel::download(new IncomingItemsExport($request), $filename . '.csv', \Maatwebsite\Excel\Excel::CSV);
+        } else {
+            return Excel::download(new IncomingItemsExport($request), $filename . '.xlsx');
+        }
+    }
+
+    /**
+     * Download import template
+     */
+    public function template()
+    {
+        $filename = 'template_barang_masuk.xlsx';
+
+        // Create a simple template with sample data
+        $export = new IncomingItemsExport(request());
+        return Excel::download($export, $filename);
     }
 }

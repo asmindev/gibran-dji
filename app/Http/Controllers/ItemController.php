@@ -20,19 +20,27 @@ class ItemController extends Controller
 
         // Search functionality
         if ($request->filled('search')) {
-            $search = $request->search;
+            $search = $request->get('search');
             $query->where(function ($q) use ($search) {
-                $q->where('item_name', 'like', '%' . $search . '%')
-                    ->orWhere('item_code', 'like', '%' . $search . '%');
+                $q->where('item_name', 'like', "%{$search}%")
+                    ->orWhere('item_code', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhereHas('category', function ($categoryQuery) use ($search) {
+                        $categoryQuery->where('name', 'like', "%{$search}%");
+                    });
             });
         }
 
-        // Category filter
-        if ($request->filled('category_id')) {
-            $query->where('category_id', $request->category_id);
+        // Default sorting by name
+        $query->orderBy('item_name', 'asc');
+
+        // Handle per page
+        $perPage = $request->get('per_page', 10);
+        if (!in_array($perPage, [10, 15, 25, 50])) {
+            $perPage = 10;
         }
 
-        $items = $query->paginate(10);
+        $items = $query->paginate($perPage)->withQueryString();
         $categories = Category::all();
 
         return view('items.index', compact('items', 'categories'));

@@ -11,9 +11,30 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::withCount('items')->paginate(10);
+        $query = Category::withCount('items');
+
+        // Search functionality
+        if ($request->filled('search')) {
+            $search = $request->get('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        // Default sorting by name
+        $query->orderBy('name', 'asc');
+
+        // Handle per page
+        $perPage = $request->get('per_page', 10);
+        if (!in_array($perPage, [10, 15, 25, 50])) {
+            $perPage = 10;
+        }
+
+        $categories = $query->paginate($perPage)->withQueryString();
+
         return view('categories.index', compact('categories'));
     }
 

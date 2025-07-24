@@ -16,6 +16,8 @@ return new class extends Migration
             $table->date('incoming_date');
             $table->foreignId('item_id')->constrained()->onDelete('cascade');
             $table->integer('quantity');
+            $table->decimal('unit_cost', 10, 2)->nullable();
+            $table->text('notes')->nullable();
             $table->string('supplier');
             $table->text('description')->nullable();
             $table->timestamps();

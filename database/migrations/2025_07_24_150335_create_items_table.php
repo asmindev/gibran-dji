@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('item_name');
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->integer('stock')->default(0);
+            $table->integer('minimum_stock')->default(10);
             $table->decimal('purchase_price', 10, 2);
             $table->decimal('selling_price', 10, 2);
             $table->text('description')->nullable();

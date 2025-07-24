@@ -3,137 +3,195 @@
 @section('title', 'Outgoing Items')
 
 @section('content')
-<div class="flex justify-between items-center mb-6">
-    <div>
-        <h1 class="text-3xl font-bold text-gray-900">Outgoing Items</h1>
-        <p class="text-gray-600">Track items dispatched from inventory</p>
-    </div>
-    <a href="{{ route('outgoing_items.create') }}"
-        class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium">
-        Record Outgoing
-    </a>
-</div>
+<div>
+    <!-- Simple Header -->
+    <div class="mb-6">
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Barang Keluar</h1>
+                <p class="text-gray-600 mt-1">Kelola dan lacak barang yang keluar dari inventory</p>
+            </div>
+            <div class="flex space-x-3">
+                <!-- Export Dropdown -->
+                <div class="relative inline-block text-left" x-data="{ open: false }">
+                    <button @click="open = !open" type="button"
+                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-lg font-medium transition-colors inline-flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Export
+                        <svg class="w-4 h-4 ml-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </button>
 
-<!-- Filter -->
-<div class="bg-white p-4 rounded-lg shadow mb-6">
-    <form method="GET" action="{{ route('outgoing_items.index') }}" class="flex flex-wrap gap-4">
-        <div class="flex-1 min-w-0">
-            <select name="item_id"
-                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                <option value="">All Items</option>
-                @foreach($items as $item)
-                <option value="{{ $item->id }}" {{ request('item_id')==$item->id ? 'selected' : '' }}>
-                    {{ $item->item_name }} ({{ $item->item_code }})
-                </option>
-                @endforeach
-            </select>
-        </div>
-        <div class="w-48">
-            <input type="date" name="start_date" value="{{ request('start_date') }}"
-                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-        </div>
-        <div class="w-48">
-            <input type="date" name="end_date" value="{{ request('end_date') }}"
-                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-        </div>
-        <button type="submit" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm font-medium">
-            Filter
-        </button>
-        @if(request()->hasAny(['item_id', 'start_date', 'end_date']))
-        <a href="{{ route('outgoing_items.index') }}"
-            class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-md text-sm font-medium">
-            Clear
-        </a>
-        @endif
-    </form>
-</div>
-
-@if($outgoingItems->count() > 0)
-<div class="bg-white shadow overflow-hidden sm:rounded-md">
-    <ul class="divide-y divide-gray-200">
-        @foreach($outgoingItems as $outgoing)
-        <li>
-            <div class="px-4 py-4 sm:px-6">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    <div x-show="open" @click.outside="open = false" x-transition
+                        class="absolute right-0 mt-2 w-48 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+                        <div class="py-1">
+                            <a href="{{ route('outgoing_items.export', ['format' => 'excel'] + request()->query()) }}"
+                                class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <svg class="w-4 h-4 mr-3 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path
+                                        d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm2 2h8v8H6V6z" />
                                 </svg>
-                            </div>
-                        </div>
-                        <div class="ml-4">
-                            <div class="text-sm font-medium text-gray-900">
-                                {{ $outgoing->item->item_name }}
-                            </div>
-                            <div class="text-sm text-gray-500">
-                                {{ $outgoing->item->item_code }} • To: {{ $outgoing->recipient }}
-                            </div>
-                            @if($outgoing->description)
-                            <div class="text-sm text-gray-400">
-                                {{ Str::limit($outgoing->description, 80) }}
-                            </div>
-                            @endif
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-6">
-                        <div class="text-right">
-                            <div class="text-sm font-medium text-blue-600">-{{ $outgoing->quantity }}</div>
-                            <div class="text-sm text-gray-500">{{ $outgoing->outgoing_date->format('M d, Y') }}</div>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <a href="{{ route('outgoing_items.show', $outgoing) }}"
-                                class="text-indigo-600 hover:text-indigo-900 text-sm">View</a>
-                            <a href="{{ route('outgoing_items.edit', $outgoing) }}"
-                                class="text-yellow-600 hover:text-yellow-900 text-sm">Edit</a>
-                            <form action="{{ route('outgoing_items.destroy', $outgoing) }}" method="POST" class="inline"
-                                onsubmit="return confirm('Are you sure? This will adjust the item stock.')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:text-red-900 text-sm">Delete</button>
-                            </form>
+                                Export Excel
+                            </a>
+                            <a href="{{ route('outgoing_items.export', ['format' => 'csv'] + request()->query()) }}"
+                                class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <svg class="w-4 h-4 mr-3 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                                    <path fill-rule="evenodd"
+                                        d="M4 5a2 2 0 012-2v1a1 1 0 102 0V3a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm2.5 5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                Export CSV
+                            </a>
                         </div>
                     </div>
                 </div>
-            </div>
-        </li>
-        @endforeach
-    </ul>
-</div>
-@else
-<div class="text-center py-12">
-    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
-        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-        </svg>
-    </div>
-    <h3 class="mt-2 text-sm font-medium text-gray-900">No outgoing items found</h3>
-    @if(request()->hasAny(['item_id', 'start_date', 'end_date']))
-    <p class="mt-1 text-sm text-gray-500">Try adjusting your filter criteria.</p>
-    <div class="mt-6">
-        <a href="{{ route('outgoing_items.index') }}" class="text-indigo-600 hover:text-indigo-500">Clear filters</a>
-    </div>
-    @else
-    <p class="mt-1 text-sm text-gray-500">Get started by recording your first outgoing item.</p>
-    <div class="mt-6">
-        <a href="{{ route('outgoing_items.create') }}"
-            class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
-            <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-            Record Outgoing
-        </a>
-    </div>
-    @endif
-</div>
-@endif
 
-@if($outgoingItems->hasPages())
-<div class="mt-6">
-    {{ $outgoingItems->appends(request()->query())->links() }}
+                <a href="{{ route('outgoing_items.create') }}"
+                    class="bg-primary text-white px-5 py-2.5 rounded-lg font-medium transition-colors">
+                    Tambah Barang Keluar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Simple Filter -->
+
+    <div class="bg-primary rounded-xl p-8">
+        @if($outgoingItems->count() > 0)
+        <div class="bg-white shadow rounded-lg overflow-hidden">
+            <div class="bg-white shadow p-4">
+                <form method="GET" action="{{ route('outgoing_items.index') }}" class="flex flex-wrap gap-4">
+                    <div class="flex-1 min-w-48">
+                        <input type="text" name="search" value="{{ request('search') }}"
+                            placeholder="Cari nama barang..."
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                    </div>
+                    <div class="flex-1 min-w-48">
+                        <select name="item_id"
+                            class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                            <option value="">Semua Item</option>
+                            @foreach($items as $item)
+                            <option value="{{ $item->id }}" {{ request('item_id')==$item->id ? 'selected' : '' }}>
+                                {{ $item->item_name }} ({{ $item->item_code }})
+                            </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <input type="date" name="start_date" value="{{ request('start_date') }}"
+                            placeholder="Dari Tanggal"
+                            class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                    </div>
+                    <div>
+                        <input type="date" name="end_date" value="{{ request('end_date') }}"
+                            placeholder="Sampai Tanggal"
+                            class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                    </div>
+                    <button type="submit"
+                        class="bg-primary text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                        Filter
+                    </button>
+                    @if(request()->hasAny(['search', 'item_id', 'start_date', 'end_date']))
+                    <a href="{{ route('outgoing_items.index') }}"
+                        class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium transition-colors">
+                        Clear
+                    </a>
+                    @endif
+                </form>
+            </div>
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama
+                            Barang
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Tanggal
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Jumlah
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @foreach($outgoingItems as $index => $outgoing)
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ ($outgoingItems->currentPage() - 1) * $outgoingItems->perPage() + $index + 1 }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div>
+                                <div class="text-sm font-medium text-gray-900">{{ $outgoing->item->item_name }}</div>
+                                <div class="text-sm text-gray-500">{{ $outgoing->item->item_code }}</div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ $outgoing->outgoing_date->format('d/m/Y') }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-sm font-medium text-primary-600">-{{ $outgoing->quantity }}</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                            <a href="{{ route('outgoing_items.show', $outgoing) }}"
+                                class="text-primary-600 hover:text-primary-700">Detail</a>
+                            <a href="{{ route('outgoing_items.edit', $outgoing) }}"
+                                class="text-primary-600 hover:text-primary-700">Edit</a>
+                            <form action="{{ route('outgoing_items.destroy', $outgoing) }}" method="POST" class="inline"
+                                onsubmit="return confirm('Yakin ingin menghapus? Ini akan menyesuaikan stok barang.')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-600 hover:text-red-700">Hapus</button>
+                            </form>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        @else
+        <div class="bg-white rounded-lg shadow p-12 text-center">
+            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Belum ada data barang keluar</h3>
+            @if(request()->hasAny(['search', 'item_id', 'start_date', 'end_date']))
+            <p class="text-gray-500 mb-4">Coba sesuaikan kriteria filter Anda.</p>
+            <a href="{{ route('outgoing_items.index') }}"
+                class="text-primary-600 hover:text-primary-700 font-medium">Hapus
+                filter</a>
+            @else
+            <p class="text-gray-500 mb-6">Mulai dengan mencatat barang keluar pertama Anda.</p>
+            <a href="{{ route('outgoing_items.create') }}"
+                class="inline-flex items-center px-4 py-2 bg-primary text-white font-medium rounded-lg transition-colors">
+                <svg class="-ml-1 mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Tambah Barang Keluar
+            </a>
+            @endif
+        </div>
+        @endif
+
+        @if($outgoingItems->hasPages())
+        <div class="mt-6">
+            {{ $outgoingItems->appends(request()->query())->links() }}
+        </div>
+        @endif
+    </div>
+
 </div>
-@endif
 @endsection
