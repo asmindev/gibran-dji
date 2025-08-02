@@ -44,4 +44,10 @@ class Item extends Model
     {
         return $this->stock <= $threshold;
     }
+
+    // Accessor for name to map to item_name
+    public function getNameAttribute(): string
+    {
+        return $this->item_name;
+    }
 }

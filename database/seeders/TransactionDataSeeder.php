@@ -90,7 +90,7 @@ class TransactionDataSeeder extends Seeder
                 'item_code' => 'BB-007',
                 'item_name' => 'Bola Basket',
                 'category_id' => $sportsCategory->id,
-                'stock' => 150,
+                'stock' => 200,
                 'minimum_stock' => 5,
                 'purchase_price' => 120000,
                 'selling_price' => 180000,
@@ -149,9 +149,12 @@ class TransactionDataSeeder extends Seeder
             [$bolaBasket->id, $jerseyBasket->id]
         ];
 
-        for ($i = 1; $i <= 100; $i++) {
-            // Tanggal random antara 20 Juli 2025 - 25 Juli 2025
-            $transactionDate = Carbon::create(2025, 7, 20)->addDays($faker->numberBetween(0, 3));
+        for ($i = 1; $i <= 1000; $i++) {
+            // Tanggal random antara 1 Januari 2025 - 31 Juli 2025 (3 bulan)
+            $startDate = Carbon::create(2025, 1, 1);
+            $endDate = Carbon::create(2025, 7, 31);
+            $daysDiff = $startDate->diffInDays($endDate);
+            $transactionDate = $startDate->addDays($faker->numberBetween(0, $daysDiff));
 
             // Pilih customer random
             $customer = $faker->randomElement($customers);
@@ -185,7 +188,7 @@ class TransactionDataSeeder extends Seeder
                 OutgoingItem::create([
                     'outgoing_date' => $transactionDate,
                     'item_id' => $itemId,
-                    'quantity' => 1, // Setiap item qty = 1
+                    'quantity' => $faker->numberBetween(5, 8),
                     'unit_price' => $item->selling_price,
                     'customer' => $customer,
                     'purpose' => 'Penjualan',
@@ -194,15 +197,20 @@ class TransactionDataSeeder extends Seeder
                     'notes' => "Transaksi simulasi tanggal " . $transactionDate->format('d-m-Y')
                 ]);
 
-                // Update stock item (kurangi 1)
-                $item->decrement('stock', 1);
+                // Update stock item
+                // Pastikan stock tidak negatif
+
+                $item->update([
+                    "stock" => max(0, $item->stock - 1) // Kurangi stock tapi tidak boleh negatif
+                ]);
             }
         }
 
         $this->command->info('✅ Berhasil membuat:');
         $this->command->info('   - 1 Kategori: Peralatan Olahraga');
         $this->command->info('   - 8 Item olahraga');
-        $this->command->info('   - 100 transaksi simulasi (dengan pola asosiasi)');
+        $this->command->info('   - 1000 transaksi simulasi (Mei-Juli 2025)');
+        $this->command->info('   - Data mencakup 3 bulan untuk training ML');
         $this->command->info('   - Stock item telah disesuaikan');
     }
 }

@@ -25,9 +25,7 @@ class OutgoingItemController extends Controller
             $query->whereHas('item', function ($itemQuery) use ($search) {
                 $itemQuery->where('item_name', 'like', "%{$search}%")
                     ->orWhere('item_code', 'like', "%{$search}%");
-            })->orWhere('destination', 'like', "%{$search}%")
-                ->orWhere('description', 'like', "%{$search}%")
-                ->orWhere('notes', 'like', "%{$search}%");
+            });
         }
 
         // Date range filter

@@ -1,0 +1,38 @@
+{
+  "model_type": "daily",
+  "version": "3.0",
+  "training_date": "2025-08-01 14:56:57",
+  "performance_metrics": {
+    "mae": 4.837735297254613,
+    "mse": 37.19887829206654,
+    "rmse": 6.099088316467187,
+    "r2": 0.4060666559813638,
+    "mape": 0.4660126159282534,
+    "cv_mae_mean": 6.471450706567832,
+    "cv_mae_std": 0.497014142103483,
+    "cv_r2_mean": -0.08832799233180899,
+    "cv_r2_std": 0.03242484341477048
+  },
+  "config": {
+    "MODEL_VERSION": "3.0",
+    "TRAINING_DATE": "2025-08-01 14:56:57",
+    "MIN_SAMPLES_DAILY": 5,
+    "MIN_SAMPLES_MONTHLY": 3,
+    "RANDOM_STATE": 42,
+    "CV_SPLITS": 3,
+    "N_ESTIMATORS_DAILY": 300,
+    "N_ESTIMATORS_MONTHLY": 200,
+    "MAX_DEPTH_DAILY": 10,
+    "MAX_DEPTH_MONTHLY": 8
+  },
+  "valid_products": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8"
+  ]
+}

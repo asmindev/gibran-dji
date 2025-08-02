@@ -8,6 +8,7 @@ use App\Http\Controllers\IncomingItemController;
 use App\Http\Controllers\OutgoingItemController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\AnalysisController;
+use App\Http\Controllers\StockPredictionController;
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -26,6 +27,14 @@ Route::resource('incoming_items', IncomingItemController::class);
 Route::get('outgoing_items/export', [OutgoingItemController::class, 'export'])->name('outgoing_items.export');
 Route::get('outgoing_items/template', [OutgoingItemController::class, 'template'])->name('outgoing_items.template');
 Route::resource('outgoing_items', OutgoingItemController::class);
+
+// Stock Predictions
+Route::prefix('predictions')->name('predictions.')->group(function () {
+    Route::get('/', [StockPredictionController::class, 'index'])->name('index');
+    Route::post('/predict', [StockPredictionController::class, 'predict'])->name('predict');
+    Route::post('/generate-model', [StockPredictionController::class, 'generateModel'])->name('generate-model');
+    Route::delete('/{prediction}', [StockPredictionController::class, 'destroy'])->name('destroy');
+});
 
 // Analysis routes
 Route::prefix('analysis')->name('analysis.')->group(function () {
