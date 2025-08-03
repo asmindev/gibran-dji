@@ -105,14 +105,11 @@ class IncomingItemsExport
             $counter++,
             $incomingItem->item->item_code ?? '',
             $incomingItem->item->item_name ?? '',
-            $incomingItem->item->category->category_name ?? '',
+            $incomingItem->item->category->name ?? '',
             $incomingItem->incoming_date ? $incomingItem->incoming_date->format('d/m/Y') : '',
             $incomingItem->quantity,
-            $incomingItem->item->unit ?? '',
             number_format($incomingItem->unit_cost, 0, ',', '.'),
             number_format($incomingItem->quantity * $incomingItem->unit_cost, 0, ',', '.'),
-            $incomingItem->supplier ?? '',
-            $incomingItem->description ?? '',
             $incomingItem->notes ?? ''
         ];
     }

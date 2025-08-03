@@ -6,6 +6,8 @@ use App\Models\Item;
 use App\Models\OutgoingItem;
 use App\Http\Requests\StoreOutgoingItemRequest;
 use App\Exports\OutgoingItemsExport;
+use App\Exports\OutgoingItemsTemplateExport;
+use App\Imports\OutgoingItemsImport;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -147,9 +149,244 @@ class OutgoingItemController extends Controller
     public function template()
     {
         $filename = 'template_barang_keluar.xlsx';
+        return Excel::download(new OutgoingItemsTemplateExport(), $filename);
+    }
 
-        // Create a simple template with sample data
-        $export = new OutgoingItemsExport(request());
-        return Excel::download($export, $filename);
+    /**
+     * Import outgoing items from Excel/CSV
+     */    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,csv|max:10240', // Max 10MB
+        ], [
+            'file.required' => 'File import wajib dipilih.',
+            'file.mimes' => 'File harus berformat Excel (.xlsx) atau CSV (.csv).',
+            'file.max' => 'Ukuran file maksimal 10MB.',
+        ]);
+
+        try {
+            $import = new OutgoingItemsImport();
+            Excel::import($import, $request->file('file'));
+
+            // Check for stock validation errors
+            $stockErrors = $import->getStockValidationErrors();
+            $hasStockErrors = !empty($stockErrors);
+
+            if ($hasStockErrors) {
+                $stockErrorDetails = [];
+                foreach ($stockErrors as $error) {
+                    $stockErrorDetails[] = [
+                        'row' => $error['row'],
+                        'error' => $error['message']
+                    ];
+                }
+
+                if ($request->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'errors' => ['stock' => $stockErrorDetails],
+                        'error_count' => count($stockErrorDetails)
+                    ]);
+                }
+
+                return redirect()->back()
+                    ->withInput()
+                    ->with('import_errors', ['stock' => $stockErrorDetails])
+                    ->with('error_count', count($stockErrorDetails));
+            }
+
+            if ($request->ajax()) {
+                // Set flash session for success message
+                session()->flash('success', 'Data barang keluar berhasil diimport.');
+
+                return response()->json([
+                    'success' => true,
+                    'redirect_url' => route('outgoing_items.index')
+                ]);
+            }
+
+            return redirect()->route('outgoing_items.index')
+                ->with('success', 'Data barang keluar berhasil diimport.');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+            $errorDetails = [];
+
+            foreach ($failures as $failure) {
+                $row = $failure->row();
+                $errors = $failure->errors();
+
+                foreach ($errors as $error) {
+                    $errorDetails[] = [
+                        'row' => $row,
+                        'error' => $error
+                    ];
+                }
+            }
+
+            // Group errors by type for better display
+            $groupedErrors = [];
+            foreach ($errorDetails as $detail) {
+                if (strpos($detail['error'], 'tidak ditemukan') !== false) {
+                    $groupedErrors['not_found'][] = $detail;
+                } elseif (strpos($detail['error'], 'stok') !== false) {
+                    $groupedErrors['stock'][] = $detail;
+                } else {
+                    $groupedErrors['validation'][] = $detail;
+                }
+            }
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $groupedErrors,
+                    'error_count' => count($errorDetails)
+                ]);
+            }
+
+            return redirect()->back()
+                ->withInput()
+                ->with('import_errors', $groupedErrors)
+                ->with('error_count', count($errorDetails));
+        } catch (\Exception $e) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => ['general' => 'Import gagal: ' . $e->getMessage()],
+                    'error_count' => 1
+                ]);
+            }
+
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Import gagal: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Preview import data for validation
+     */
+    public function importPreview(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,csv|max:10240',
+        ], [
+            'file.required' => 'File import wajib dipilih.',
+            'file.mimes' => 'File harus berformat Excel (.xlsx) atau CSV (.csv).',
+            'file.max' => 'Ukuran file maksimal 10MB.',
+        ]);
+
+        try {
+            $uploadedFile = $request->file('file');
+
+            // Simpan file sementara untuk digunakan saat konfirmasi import
+            $tempFileName = 'import_' . time() . '_' . uniqid() . '.' . $uploadedFile->getClientOriginalExtension();
+            $tempFilePath = storage_path('app/temp/' . $tempFileName);
+
+            // Pastikan direktori temp ada
+            if (!file_exists(dirname($tempFilePath))) {
+                mkdir(dirname($tempFilePath), 0755, true);
+            }
+
+            // Copy file ke temporary location
+            $uploadedFile->move(dirname($tempFilePath), $tempFileName);
+
+            // Simpan path di session
+            session(['import_file_path' => $tempFilePath]);
+            session(['import_file_name' => $uploadedFile->getClientOriginalName()]);
+
+            // Read the file and validate without importing
+            $data = Excel::toArray(new OutgoingItemsImport(), $tempFilePath);
+
+            if (empty($data) || empty($data[0])) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'File kosong atau format tidak sesuai.');
+            }
+
+            $rows = $data[0]; // First sheet
+            $preview = [];
+            $validationErrors = [];
+            $stockErrors = [];
+
+            // Remove header row and process first 10 rows for preview
+            array_shift($rows);
+            $previewRows = array_slice($rows, 0, 10);
+
+            foreach ($previewRows as $index => $row) {
+                $rowNumber = $index + 2; // +2 because array is 0-indexed and we removed header
+
+                // Map array indices to column names
+                $mappedRow = [
+                    'kode_barang' => $row[0] ?? '',
+                    'tanggal_keluar' => $row[1] ?? '',
+                    'jumlah' => $row[2] ?? '',
+                    'tujuan' => $row[3] ?? '',
+                    'deskripsi' => $row[4] ?? '',
+                    'catatan' => $row[5] ?? '',
+                ];
+
+                // Basic validation
+                $rowErrors = [];
+
+                if (empty($mappedRow['kode_barang'])) {
+                    $rowErrors[] = 'Kode barang wajib diisi';
+                }
+
+                if (empty($mappedRow['tanggal_keluar'])) {
+                    $rowErrors[] = 'Tanggal keluar wajib diisi';
+                }
+
+                if (empty($mappedRow['jumlah']) || !is_numeric($mappedRow['jumlah']) || $mappedRow['jumlah'] <= 0) {
+                    $rowErrors[] = 'Jumlah harus berupa angka positif';
+                }
+
+                // Check if item exists and stock availability
+                if (!empty($mappedRow['kode_barang'])) {
+                    $item = Item::where('item_code', $mappedRow['kode_barang'])->first();
+
+                    if (!$item) {
+                        $rowErrors[] = "Item dengan kode '{$mappedRow['kode_barang']}' tidak ditemukan";
+                    } elseif (is_numeric($mappedRow['jumlah']) && $item->stock < $mappedRow['jumlah']) {
+                        $stockErrors[] = "Stok tidak mencukupi untuk {$item->item_name}. Diminta: {$mappedRow['jumlah']}, Tersedia: {$item->stock}";
+                    }
+                }
+
+                $preview[] = [
+                    'row_number' => $rowNumber,
+                    'data' => $mappedRow,
+                    'errors' => $rowErrors,
+                    'item' => isset($item) ? $item : null
+                ];
+
+                if (!empty($rowErrors)) {
+                    $validationErrors[] = "Baris {$rowNumber}: " . implode(', ', $rowErrors);
+                }
+            }
+
+            $totalRows = count($rows);
+            $hasErrors = !empty($validationErrors) || !empty($stockErrors);
+            $uploadedFileName = session('import_file_name', '');
+
+            return view('outgoing_items.import-preview', compact(
+                'preview',
+                'validationErrors',
+                'stockErrors',
+                'totalRows',
+                'hasErrors',
+                'uploadedFileName'
+            ));
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Gagal membaca file: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Show import form
+     */
+    public function importForm()
+    {
+        return view('outgoing_items.import');
     }
 }

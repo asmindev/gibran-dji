@@ -22,9 +22,7 @@ class IncomingItemController extends Controller
         if ($request->filled('search')) {
             $search = $request->get('search');
             $query->where(function ($q) use ($search) {
-                $q->where('supplier', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%")
-                    ->orWhere('notes', 'like', "%{$search}%")
+                $q->where('notes', 'like', "%{$search}%")
                     ->orWhereHas('item', function ($itemQuery) use ($search) {
                         $itemQuery->where('item_name', 'like', "%{$search}%")
                             ->orWhere('item_code', 'like', "%{$search}%");
@@ -46,10 +44,7 @@ class IncomingItemController extends Controller
             $query->where('item_id', $request->item_id);
         }
 
-        // Supplier filter
-        if ($request->filled('supplier')) {
-            $query->where('supplier', 'like', "%{$request->supplier}%");
-        }
+
 
         // Quantity range filter
         if ($request->filled('min_quantity')) {

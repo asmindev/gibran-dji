@@ -6,19 +6,13 @@ use App\Models\InventoryRecommendation;
 use App\Models\StockPrediction;
 use App\Models\Item;
 use App\Models\OutgoingItem;
-use App\Services\InventoryAnalysisService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
 class AnalysisController extends Controller
 {
-    private InventoryAnalysisService $analysisService;
 
-    public function __construct(InventoryAnalysisService $analysisService)
-    {
-        $this->analysisService = $analysisService;
-    }
 
     /**
      * Display apriori algorithm process page

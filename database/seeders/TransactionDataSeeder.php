@@ -150,9 +150,9 @@ class TransactionDataSeeder extends Seeder
         ];
 
         for ($i = 1; $i <= 1000; $i++) {
-            // Tanggal random antara 1 Januari 2025 - 31 Juli 2025 (3 bulan)
+            // Tanggal random antara 1 Januari 2025 - 1 Agustus 2025 (8 bulan)
             $startDate = Carbon::create(2025, 1, 1);
-            $endDate = Carbon::create(2025, 7, 31);
+            $endDate = Carbon::create(2025, 8, 1);
             $daysDiff = $startDate->diffInDays($endDate);
             $transactionDate = $startDate->addDays($faker->numberBetween(0, $daysDiff));
 
@@ -190,10 +190,7 @@ class TransactionDataSeeder extends Seeder
                     'item_id' => $itemId,
                     'quantity' => $faker->numberBetween(5, 8),
                     'unit_price' => $item->selling_price,
-                    'customer' => $customer,
-                    'purpose' => 'Penjualan',
-                    'recipient' => $customer,
-                    'description' => "Transaksi penjualan #{$i}",
+                    'transaction_id' => 'TRX-' . strtoupper($faker->unique()->lexify('??????')),
                     'notes' => "Transaksi simulasi tanggal " . $transactionDate->format('d-m-Y')
                 ]);
 

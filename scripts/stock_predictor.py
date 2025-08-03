@@ -124,10 +124,10 @@ class StockPredictor:
         # Configure logging
         logging.basicConfig(
             level=logging.INFO,
-            format=log_format,
+            format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
             handlers=[
                 logging.FileHandler(log_file_path, encoding="utf-8"),
-                logging.StreamHandler(sys.stdout),
+                # logging.StreamHandler(sys.stdout),
             ],
         )
 
@@ -224,7 +224,15 @@ class StockPredictor:
         }
 
         # Check for required columns
-        expected_cols = ["no", "id_trx", "tgl", "nama_barang", "kategori", "jumlah"]
+        expected_cols = [
+            "no",
+            "id_trx",
+            "tgl",
+            "id_item",
+            "nama_barang",
+            "kategori",
+            "jumlah",
+        ]
         quality_metrics["has_required_columns"] = all(
             col in df.columns for col in expected_cols[: len(df.columns)]
         )
@@ -273,19 +281,20 @@ class StockPredictor:
                     quality_metrics = self.analyze_data_quality(df, file)
                     quality_reports.append(quality_metrics)
 
-                    # Validate column structure
+                    # Validate column structure - updated for new format with id_item and nama_barang
                     expected_cols = [
                         "no",
                         "id_trx",
                         "tgl",
+                        "id_item",
                         "nama_barang",
                         "kategori",
                         "jumlah",
                     ]
 
-                    if len(df.columns) < 6:
+                    if len(df.columns) < 7:
                         self.logger.warning(
-                            f"Column mismatch: Expected 6, got {len(df.columns)}"
+                            f"Column mismatch: Expected 7, got {len(df.columns)}"
                         )
                         continue
 
@@ -296,8 +305,8 @@ class StockPredictor:
                         self.logger.warning("File is empty, skipping...")
                         continue
 
-                    # Check for required columns
-                    required_cols = ["nama_barang", "kategori", "jumlah"]
+                    # Check for required columns - updated for new format
+                    required_cols = ["id_item", "nama_barang", "kategori", "jumlah"]
                     missing_required = [
                         col for col in required_cols if col not in df.columns
                     ]
@@ -364,7 +373,7 @@ class StockPredictor:
             self.logger.info("🔍 Starting sales data processing pipeline...")
 
             # Validate required columns
-            required_cols = ["kategori", "jumlah", "nama_barang", "tgl"]
+            required_cols = ["kategori", "jumlah", "id_item", "nama_barang", "tgl"]
             missing_cols = [col for col in required_cols if col not in df.columns]
             if missing_cols:
                 raise ValueError(f"Missing required columns: {missing_cols}")
@@ -483,10 +492,10 @@ class StockPredictor:
                 f"   • Months: {min_date.strftime('%B %Y')} - {max_date.strftime('%B %Y')}",
             )
 
-            # Product analysis
+            # Product analysis - using both id_item and nama_barang for better insights
             self.logger.info("🏷️ Analyzing product portfolio...")
             product_stats = (
-                sales.groupby("nama_barang")
+                sales.groupby(["id_item", "nama_barang"])
                 .agg({"qty_sold": ["count", "sum", "mean", "std"]})
                 .round(2)
             )
@@ -498,12 +507,17 @@ class StockPredictor:
             )
             self.logger.info("🏆 Top 10 Products by Total Sales:")
 
-            for i, (product, stats) in enumerate(product_stats.head(10).iterrows(), 1):
-                product_name = (
-                    str(product)[:35] if len(str(product)) > 35 else str(product)
+            for i, ((item_id, item_name), stats) in enumerate(
+                product_stats.head(10).iterrows(), 1
+            ):
+                # Truncate product name for display
+                display_name = (
+                    str(item_name)[:30] + "..."
+                    if len(str(item_name)) > 30
+                    else str(item_name)
                 )
                 self.logger.info(
-                    f"   {i:2d}. {product_name:<35} | "
+                    f"   {i:2d}. ID:{item_id} | {display_name:<33} | "
                     f"Total: {stats['total_sold']:>6.0f} | "
                     f"Txns: {stats['transactions']:>4.0f} | "
                     f"Avg: {stats['avg_qty']:>5.1f}",
@@ -546,22 +560,20 @@ class StockPredictor:
             if prediction_type not in ["daily", "monthly"]:
                 raise ValueError("prediction_type must be 'daily' or 'monthly'")
 
-            # Step 1: Daily aggregation
+            # Step 1: Daily aggregation - using id_item as primary identifier
             self.logger.info("📊 Aggregating data to daily level...")
             sales["tgl_date"] = sales["tgl"].dt.date
             daily_demand = (
-                sales.groupby(["tgl_date", "nama_barang"])["qty_sold"]
-                .sum()
-                .reset_index()
+                sales.groupby(["tgl_date", "id_item"])["qty_sold"].sum().reset_index()
             )
             daily_demand = daily_demand.rename(columns={"tgl_date": "tgl"})
             daily_demand["tgl"] = pd.to_datetime(daily_demand["tgl"])
-            daily_demand = daily_demand.sort_values(["nama_barang", "tgl"])
+            daily_demand = daily_demand.sort_values(["id_item", "tgl"])
 
             # Daily aggregation statistics
             daily_stats = {
                 "total_days": daily_demand["tgl"].nunique(),
-                "total_products": daily_demand["nama_barang"].nunique(),
+                "total_products": daily_demand["id_item"].nunique(),
                 "total_records": len(daily_demand),
                 "avg_daily_sales": daily_demand["qty_sold"].mean(),
                 "date_range": (
@@ -595,20 +607,20 @@ class StockPredictor:
                 self.logger.info("   • lag3: Sales from 3 days ago")
                 self.logger.info("   • Target: Today's sales prediction")
 
-                # Create lag features
-                daily_demand["lag1"] = daily_demand.groupby("nama_barang")[
+                # Create lag features - using id_item
+                daily_demand["lag1"] = daily_demand.groupby("id_item")[
                     "qty_sold"
                 ].shift(1)
-                daily_demand["lag2"] = daily_demand.groupby("nama_barang")[
+                daily_demand["lag2"] = daily_demand.groupby("id_item")[
                     "qty_sold"
                 ].shift(2)
-                daily_demand["lag3"] = daily_demand.groupby("nama_barang")[
+                daily_demand["lag3"] = daily_demand.groupby("id_item")[
                     "qty_sold"
                 ].shift(3)
 
                 # Select features
                 final_data = daily_demand[
-                    ["nama_barang", "tgl", "qty_sold", "lag1", "lag2", "lag3"]
+                    ["id_item", "tgl", "qty_sold", "lag1", "lag2", "lag3"]
                 ].copy()
 
                 # Data quality check
@@ -631,21 +643,19 @@ class StockPredictor:
                 self.logger.info("   • prev_month_total: Previous month's total sales")
                 self.logger.info("   • Target: Current month's total sales prediction")
 
-                # Aggregate to monthly level
+                # Aggregate to monthly level - using id_item
                 daily_demand["year_month"] = daily_demand["tgl"].dt.to_period("M")
                 monthly_demand = (
-                    daily_demand.groupby(["nama_barang", "year_month"])["qty_sold"]
+                    daily_demand.groupby(["id_item", "year_month"])["qty_sold"]
                     .sum()
                     .reset_index()
                 )
-                monthly_demand = monthly_demand.sort_values(
-                    ["nama_barang", "year_month"]
-                )
+                monthly_demand = monthly_demand.sort_values(["id_item", "year_month"])
 
                 # Monthly aggregation stats
                 monthly_stats = {
                     "total_months": monthly_demand["year_month"].nunique(),
-                    "total_products": monthly_demand["nama_barang"].nunique(),
+                    "total_products": monthly_demand["id_item"].nunique(),
                     "avg_monthly_sales": monthly_demand["qty_sold"].mean(),
                     "min_monthly_sales": monthly_demand["qty_sold"].min(),
                     "max_monthly_sales": monthly_demand["qty_sold"].max(),
@@ -662,14 +672,14 @@ class StockPredictor:
                     f"   • Range: {monthly_stats['min_monthly_sales']:.0f} - {monthly_stats['max_monthly_sales']:.0f}",
                 )
 
-                # Create lag feature for monthly data
-                monthly_demand["prev_month_total"] = monthly_demand.groupby(
-                    "nama_barang"
-                )["qty_sold"].shift(1)
+                # Create lag feature for monthly data - using id_item
+                monthly_demand["prev_month_total"] = monthly_demand.groupby("id_item")[
+                    "qty_sold"
+                ].shift(1)
 
                 # Select features
                 final_data = monthly_demand[
-                    ["nama_barang", "year_month", "qty_sold", "prev_month_total"]
+                    ["id_item", "year_month", "qty_sold", "prev_month_total"]
                 ].copy()
 
                 # Data quality check
@@ -692,7 +702,7 @@ class StockPredictor:
 
             # Product coverage analysis
             min_samples = self.config[f"MIN_SAMPLES_{prediction_type.upper()}"]
-            product_counts = final_data["nama_barang"].value_counts()
+            product_counts = final_data["id_item"].value_counts()
             valid_products = product_counts[product_counts >= min_samples].index
 
             self.logger.info(f"📋 Product coverage analysis:")
@@ -705,7 +715,7 @@ class StockPredictor:
             )
 
             # Filter to valid products only
-            final_data = final_data[final_data["nama_barang"].isin(valid_products)]
+            final_data = final_data[final_data["id_item"].isin(valid_products)]
 
             # Final statistics
             target_stats = final_data["qty_sold"].describe()
@@ -759,8 +769,8 @@ class StockPredictor:
         """Prepare features for daily prediction"""
         self.logger.info("🗓️  Preparing daily prediction features...")
 
-        # Define features
-        feature_cols = ["nama_barang", "lag1", "lag2", "lag3"]
+        # Define features - updated to use id_item
+        feature_cols = ["id_item", "lag1", "lag2", "lag3"]
         target_col = "qty_sold"
 
         # Validate required columns
@@ -774,9 +784,7 @@ class StockPredictor:
         y = data[target_col]
 
         self.logger.info(f"📊 Daily features prepared: {len(X)} samples")
-        self.logger.info(
-            f"📦 Products with sufficient data: {X['nama_barang'].nunique()}"
-        )
+        self.logger.info(f"📦 Products with sufficient data: {X['id_item'].nunique()}")
 
         return X, y
 
@@ -786,8 +794,8 @@ class StockPredictor:
         """Prepare features for monthly prediction"""
         self.logger.info("📅 Preparing monthly prediction features...")
 
-        # Define features
-        feature_cols = ["nama_barang", "prev_month_total"]
+        # Define features - updated to use id_item
+        feature_cols = ["id_item", "prev_month_total"]
         target_col = "qty_sold"
 
         # Validate required columns
@@ -801,24 +809,16 @@ class StockPredictor:
         y = data[target_col]
 
         self.logger.info(f"📊 Monthly features prepared: {len(X)} samples")
-        self.logger.info(
-            f"📦 Products with sufficient data: {X['nama_barang'].nunique()}"
-        )
-
-        return X, y
-
-        X = pd.concat(features_list, ignore_index=True)
-        y = pd.concat(targets_list, ignore_index=True)
-
-        self.logger.info(f"📊 Monthly features prepared: {len(X)} samples")
-        self.logger.info(
-            f"📦 Products with sufficient data: {X['nama_barang'].nunique()}"
-        )
+        self.logger.info(f"📦 Products with sufficient data: {X['id_item'].nunique()}")
 
         return X, y
 
     def train_model(
-        self, X: pd.DataFrame, y: pd.Series, prediction_type: str
+        self,
+        X: pd.DataFrame,
+        y: pd.Series,
+        prediction_type: str,
+        product_mapping: Optional[dict] = None,
     ) -> Pipeline:
         """
         Train Random Forest model with comprehensive cross-validation and analysis
@@ -834,15 +834,15 @@ class StockPredictor:
         self.logger.info(f"MODEL TRAINING - {prediction_type.upper()}")
 
         self.logger.info(f"Training data: {len(X)} samples, {len(X.columns)} features")
-        self.logger.info(f"Unique products: {X['nama_barang'].nunique()}")
+        self.logger.info(f"Unique products: {X['id_item'].nunique()}")
         self.logger.info(
             f"Target statistics - Mean: {y.mean():.2f}, Std: {y.std():.2f}, Min: {y.min()}, Max: {y.max()}"
         )
 
         # Create preprocessing pipeline
         self.logger.info("Membuat preprocessing pipeline...")
-        categorical_features = ["nama_barang"]
-        numerical_features = [col for col in X.columns if col != "nama_barang"]
+        categorical_features = ["id_item"]
+        numerical_features = [col for col in X.columns if col != "id_item"]
 
         preprocessor = ColumnTransformer(
             transformers=[
@@ -950,22 +950,63 @@ class StockPredictor:
         self.logger.info(f"   R²: {final_metrics['r2']:.3f}")
         self.logger.info(f"   MAPE: {final_metrics['mape']:.1%}")
 
-        # Feature importance analysis
+        # Feature importance analysis with product name mapping
         try:
-            feature_names = list(
+            # Get feature names from the preprocessor
+            categorical_feature_names = list(
                 model.named_steps["preprocessor"]
                 .named_transformers_["cat"]
                 .get_feature_names_out()
-            ) + [col for col in X.columns if col != "nama_barang"]
+            )
+            numerical_feature_names = [col for col in X.columns if col != "id_item"]
+            all_feature_names = categorical_feature_names + numerical_feature_names
+
             importance = model.named_steps["regressor"].feature_importances_
 
-            # Show feature importance
-            feature_importance = list(zip(feature_names, importance))
+            # Create mapping from encoded features to actual product IDs/names
+            # Get the unique product IDs from training data
+            unique_products = sorted(X["id_item"].unique())
+
+            # Create a mapping for one-hot encoded features to product names
+            feature_mapping = {}
+            for i, feature_name in enumerate(all_feature_names):
+                if feature_name.startswith("id_item_"):
+                    # Extract the index from the one-hot encoded feature name
+                    try:
+                        # The OneHotEncoder creates features like 'id_item_0', 'id_item_1', etc.
+                        # corresponding to the sorted unique values
+                        encoded_idx = int(feature_name.split("_")[-1])
+                        if encoded_idx < len(unique_products):
+                            actual_product_id = unique_products[encoded_idx]
+
+                            # Use product mapping if available
+                            if product_mapping and actual_product_id in product_mapping:
+                                product_name = product_mapping[actual_product_id]
+                                # Truncate long names for display
+                                if len(str(product_name)) > 25:
+                                    product_name = str(product_name)[:22] + "..."
+                                feature_mapping[feature_name] = (
+                                    f"ID_{actual_product_id}:{product_name}"
+                                )
+                            else:
+                                feature_mapping[feature_name] = (
+                                    f"Product_ID_{actual_product_id}"
+                                )
+                        else:
+                            feature_mapping[feature_name] = feature_name
+                    except (ValueError, IndexError):
+                        feature_mapping[feature_name] = feature_name
+                else:
+                    feature_mapping[feature_name] = feature_name
+
+            # Show feature importance with mapped names
+            feature_importance = list(zip(all_feature_names, importance))
             feature_importance.sort(key=lambda x: x[1], reverse=True)
 
             self.logger.info(f"FEATURE IMPORTANCE - {prediction_type.upper()}:")
             for i, (feature, imp) in enumerate(feature_importance[:10], 1):
-                self.logger.warning(f"{i:2d}. {feature:<30} : {imp:.4f}")
+                mapped_name = feature_mapping.get(feature, feature)
+                self.logger.warning(f"{i:2d}. {mapped_name:<35} : {imp:.4f}")
 
         except Exception as e:
             self.logger.info(f"Warning: Could not extract feature importance: {e}")
@@ -980,6 +1021,7 @@ class StockPredictor:
         model: Pipeline,
         prediction_type: str,
         valid_products: Optional[List[str]] = None,
+        product_mapping: Optional[dict] = None,
     ):
         """
         Save trained model and metadata
@@ -1010,6 +1052,7 @@ class StockPredictor:
                 ),
                 "config": self.config,
                 "valid_products": valid_products or [],
+                "product_mapping": product_mapping or {},
             }
 
             metadata_path = model_path.with_suffix(".json")
@@ -1146,7 +1189,7 @@ class StockPredictor:
 
                 input_data = pd.DataFrame(
                     {
-                        "nama_barang": [product_id],
+                        "id_item": [product_id],
                         "lag1": [lag1],
                         "lag2": [lag2],
                         "lag3": [lag3],
@@ -1166,7 +1209,7 @@ class StockPredictor:
 
                 input_data = pd.DataFrame(
                     {
-                        "nama_barang": [product_id],
+                        "id_item": [product_id],
                         "prev_month_total": [prev_month_total],
                     }
                 )
@@ -1333,6 +1376,13 @@ class StockPredictor:
             data = self.load_and_process_data(data_folder)
             sales_data = self.process_sales_data(data)
 
+            # Create product mapping from sales_data for better feature importance display
+            product_mapping = {}
+            if "nama_barang" in sales_data.columns and "id_item" in sales_data.columns:
+                product_mapping = dict(
+                    sales_data[["id_item", "nama_barang"]].drop_duplicates().values
+                )
+
             # Train daily model
             try:
                 # Create features for daily prediction
@@ -1341,11 +1391,15 @@ class StockPredictor:
 
                 # Get list of valid products for daily model (convert to strings)
                 daily_valid_products = sorted(
-                    [str(x) for x in X_daily["nama_barang"].unique().tolist()]
+                    [str(x) for x in X_daily["id_item"].unique().tolist()]
                 )
 
-                daily_model = self.train_model(X_daily, y_daily, "daily")
-                self.save_model(daily_model, "daily", daily_valid_products)
+                daily_model = self.train_model(
+                    X_daily, y_daily, "daily", product_mapping
+                )
+                self.save_model(
+                    daily_model, "daily", daily_valid_products, product_mapping
+                )
                 self.logger.info("✅ Daily model training completed successfully")
             except Exception as e:
                 self.logger.error(f"❌ Daily model training failed: {str(e)}")
@@ -1360,11 +1414,16 @@ class StockPredictor:
 
                 # Get list of valid products for monthly model (convert to strings)
                 monthly_valid_products = sorted(
-                    [str(x) for x in X_monthly["nama_barang"].unique().tolist()]
+                    [str(x) for x in X_monthly["id_item"].unique().tolist()]
                 )
 
-                monthly_model = self.train_model(X_monthly, y_monthly, "monthly")
-                self.save_model(monthly_model, "monthly", monthly_valid_products)
+                # Use the same product mapping
+                monthly_model = self.train_model(
+                    X_monthly, y_monthly, "monthly", product_mapping
+                )
+                self.save_model(
+                    monthly_model, "monthly", monthly_valid_products, product_mapping
+                )
                 self.logger.info("✅ Monthly model training completed successfully")
             except Exception as e:
                 self.logger.error(f"❌ Monthly model training failed: {str(e)}")
@@ -1372,8 +1431,12 @@ class StockPredictor:
             self.logger.info("TRAINING COMPLETED")
             self.logger.info("🎉 All models trained successfully!")
 
+            # Also output to stdout for Laravel detection
+            print("TRAINING_COMPLETED")
+
         except Exception as e:
             self.logger.error(f"❌ Training process failed: {str(e)}")
+            print(f"TRAINING_FAILED: {str(e)}")
             raise
 
 
@@ -1394,8 +1457,8 @@ def main():
     predictor = StockPredictor()
 
     if command == "train":
-        # Use the default data folder
-        data_folder = "data"
+        # Use the default data from path main.py
+        data_folder = Path(__file__).parent / "data"
 
         # Check if data folder exists
         if not Path(data_folder).exists():

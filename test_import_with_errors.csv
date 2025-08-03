@@ -1,0 +1,5 @@
+No,Kode Barang,Nama Barang,Kategori,Tanggal Keluar,Jumlah,Catatan
+1,BRG001,Laptop Gaming,Elektronik,03/08/2025,5,Test valid
+2,BRG999,Item Not Found,Elektronik,03/08/2025,2,Test error - item not found
+3,BRG002,Mouse Wireless,Elektronik,03/08/2025,100,Test error - stock insufficient
+4,INVALID,,Elektronik,03/08/2025,0,Test error - multiple validation errors

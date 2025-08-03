@@ -97,46 +97,6 @@
                     @enderror
                 </div>
 
-                <!-- Penerima -->
-                <div>
-                    <label for="customer" class="block text-sm font-medium text-gray-700 mb-2">
-                        Penerima <span class="text-red-500">*</span>
-                    </label>
-                    <input type="text" name="customer" id="customer"
-                        value="{{ old('customer', $outgoingItem->customer) }}" required
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                        placeholder="Nama penerima">
-                    @error('customer')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- Tujuan -->
-                <div>
-                    <label for="purpose" class="block text-sm font-medium text-gray-700 mb-2">
-                        Tujuan
-                    </label>
-                    <select name="purpose" id="purpose"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
-                        <option value="">Pilih tujuan</option>
-                        <option value="Penjualan" {{ old('purpose', $outgoingItem->purpose) == 'Penjualan' ? 'selected'
-                            : '' }}>Penjualan</option>
-                        <option value="Penggunaan Internal" {{ old('purpose', $outgoingItem->purpose) == 'Penggunaan
-                            Internal' ? 'selected' : '' }}>Penggunaan Internal</option>
-                        <option value="Rusak" {{ old('purpose', $outgoingItem->purpose) == 'Rusak' ? 'selected' : ''
-                            }}>Rusak</option>
-                        <option value="Retur" {{ old('purpose', $outgoingItem->purpose) == 'Retur' ? 'selected' : ''
-                            }}>Retur</option>
-                        <option value="Transfer" {{ old('purpose', $outgoingItem->purpose) == 'Transfer' ? 'selected' :
-                            '' }}>Transfer</option>
-                        <option value="Lainnya" {{ old('purpose', $outgoingItem->purpose) == 'Lainnya' ? 'selected' : ''
-                            }}>Lainnya</option>
-                    </select>
-                    @error('purpose')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
                 <!-- Keterangan -->
                 <div>
                     <label for="notes" class="block text-sm font-medium text-gray-700 mb-2">Keterangan</label>
@@ -151,7 +111,7 @@
         </div>
 
         <!-- Warning Box -->
-        <div class="bg-primary-50 border border-primary-200 rounded-lg p-4">
+        <div class="bg-primary/5 border border-primary/20 rounded-lg p-4">
             <div class="flex">
                 <div class="flex-shrink-0">
                     <svg class="h-5 w-5 text-primary-400" fill="currentColor" viewBox="0 0 20 20">
@@ -161,8 +121,8 @@
                     </svg>
                 </div>
                 <div class="ml-3">
-                    <h3 class="text-sm font-medium text-primary-800">Pemberitahuan Penting</h3>
-                    <p class="text-sm text-primary-700 mt-1">
+                    <h3 class="text-sm font-medium text-primary/80">Pemberitahuan Penting</h3>
+                    <p class="text-sm text-primary/70 mt-1">
                         Mengedit transaksi ini akan menyesuaikan stok barang secara otomatis.
                         Selisih antara jumlah lama dan baru akan diterapkan pada stok saat ini.
                         Pastikan stok mencukupi.
@@ -171,13 +131,13 @@
             </div>
 
             <!-- Action Buttons -->
-            <div class="flex justify-end space-x-3">
+            <div class="flex justify-end space-x-3 mt-2">
                 <a href="{{ route('outgoing_items.show', $outgoingItem) }}"
                     class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors">
                     Batal
                 </a>
                 <button type="submit"
-                    class="px-6 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition-colors">
+                    class="px-6 py-2 bg-primary/60 hover:bg-primary/70 text-white rounded-lg font-medium transition-colors">
                     Update Barang Keluar
                 </button>
             </div>

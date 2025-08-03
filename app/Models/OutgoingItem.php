@@ -8,14 +8,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class OutgoingItem extends Model
 {
     protected $fillable = [
+        'transaction_id',
         'outgoing_date',
         'item_id',
         'quantity',
         'unit_price',
         'customer',
-        'purpose',
-        'recipient',
-        'description',
         'notes',
     ];
 

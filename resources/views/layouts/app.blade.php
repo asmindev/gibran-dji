@@ -414,6 +414,8 @@
         </div>
     </div>
 
+
+    @stack('scripts')
     <script>
         function toggleMobileSidebar() {
             const overlay = document.getElementById('mobile-sidebar-overlay');

@@ -12,8 +12,6 @@ class IncomingItem extends Model
         'item_id',
         'quantity',
         'unit_cost',
-        'supplier',
-        'description',
         'notes',
     ];
 

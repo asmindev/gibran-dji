@@ -37,7 +37,7 @@
 <!-- Detail Card -->
 <div class="max-w-4xl">
     <div class="bg-white shadow rounded-lg overflow-hidden">
-        <div class="px-6 py-4 bg-primary-600 text-white">
+        <div class="px-6 py-4 bg-primary/60 text-white">
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-semibold">ID Transaksi: #{{ str_pad($outgoingItem->id, 6, '0', STR_PAD_LEFT) }}
                 </h2>
@@ -125,7 +125,7 @@
             </div>
 
             <!-- Stock Impact -->
-            <div class="mt-6 bg-primary-50 border border-primary-200 rounded-lg p-4">
+            <div class="mt-6 bg-primary/5 border border-primary/20 rounded-lg p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
                         <svg class="h-5 w-5 text-primary-400" fill="currentColor" viewBox="0 0 20 20">
@@ -135,8 +135,8 @@
                         </svg>
                     </div>
                     <div class="ml-3">
-                        <h3 class="text-sm font-medium text-primary-800">Stok Telah Diperbarui</h3>
-                        <p class="text-sm text-primary-700">
+                        <h3 class="text-sm font-medium text-primary">Stok Telah Diperbarui</h3>
+                        <p class="text-sm text-primary/70">
                             Transaksi ini mengurangi <strong>{{ number_format($outgoingItem->quantity) }}</strong> unit
                             dari inventory.
                             Stok saat ini: <strong>{{ number_format($outgoingItem->item->stock) }}</strong> unit.
@@ -150,20 +150,20 @@
 
             <!-- Transaction Value -->
             @if($outgoingItem->unit_price)
-            <div class="mt-4 bg-primary-50 border border-primary-200 rounded-lg p-4">
+            <div class="mt-4 bg-primary/5 border border-primary/20 rounded-lg p-4">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h3 class="text-sm font-medium text-primary-800">Nilai Transaksi</h3>
-                        <p class="text-sm text-primary-700">
+                        <h3 class="text-sm font-medium text-primary/80">Nilai Transaksi</h3>
+                        <p class="text-sm text-primary/70">
                             Harga Satuan: Rp {{ number_format($outgoingItem->unit_price, 0, ',', '.') }} × {{
                             number_format($outgoingItem->quantity) }} unit
                         </p>
                     </div>
                     <div class="text-right">
-                        <p class="text-2xl font-bold text-primary-900">
+                        <p class="text-2xl font-bold text-primary/90">
                             Rp {{ number_format($outgoingItem->unit_price * $outgoingItem->quantity, 0, ',', '.') }}
                         </p>
-                        <p class="text-sm text-primary-600">Total Nilai</p>
+                        <p class="text-sm text-primary/60">Total Nilai</p>
                     </div>
                 </div>
             </div>
