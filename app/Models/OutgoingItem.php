@@ -12,14 +12,11 @@ class OutgoingItem extends Model
         'outgoing_date',
         'item_id',
         'quantity',
-        'unit_price',
-        'customer',
         'notes',
     ];
 
     protected $casts = [
         'outgoing_date' => 'date',
-        'unit_price' => 'decimal:2',
     ];
 
     public function item(): BelongsTo

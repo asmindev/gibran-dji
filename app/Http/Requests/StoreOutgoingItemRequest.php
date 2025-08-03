@@ -21,12 +21,38 @@ class StoreOutgoingItemRequest extends FormRequest
      */
     public function rules(): array
     {
+        $outgoingItemId = $this->route('outgoing_item') ? $this->route('outgoing_item')->id : null;
+
         return [
+            'transaction_id' => [
+                'required',
+                'string',
+                'max:255',
+                'unique:outgoing_items,transaction_id' . ($outgoingItemId ? ',' . $outgoingItemId : '')
+            ],
             'outgoing_date' => 'required|date',
             'item_id' => 'required|exists:items,id',
             'quantity' => 'required|integer|min:1',
-            'recipient' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'notes' => 'nullable|string',
+        ];
+    }
+
+    /**
+     * Get custom validation messages.
+     */
+    public function messages(): array
+    {
+        return [
+            'transaction_id.required' => 'ID Transaksi wajib diisi.',
+            'transaction_id.unique' => 'ID Transaksi sudah digunakan. Gunakan ID yang berbeda.',
+            'transaction_id.max' => 'ID Transaksi maksimal 255 karakter.',
+            'outgoing_date.required' => 'Tanggal keluar wajib diisi.',
+            'outgoing_date.date' => 'Format tanggal tidak valid.',
+            'item_id.required' => 'Barang wajib dipilih.',
+            'item_id.exists' => 'Barang yang dipilih tidak valid.',
+            'quantity.required' => 'Jumlah wajib diisi.',
+            'quantity.integer' => 'Jumlah harus berupa angka.',
+            'quantity.min' => 'Jumlah minimal 1.',
         ];
     }
 }

@@ -42,6 +42,23 @@
 
         <div class="bg-white shadow rounded-lg p-6">
             <div class="space-y-6">
+                <!-- ID Transaksi -->
+                <div>
+                    <label for="transaction_id" class="block text-sm font-medium text-gray-700 mb-2">
+                        ID Transaksi <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="transaction_id" id="transaction_id"
+                        value="{{ old('transaction_id', $outgoingItem->transaction_id) }}" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        placeholder="Masukkan ID transaksi unik, contoh: OUT-2024-001">
+                    <p class="mt-1 text-xs text-gray-500">
+                        ID transaksi harus unik untuk setiap barang keluar
+                    </p>
+                    @error('transaction_id')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <!-- Tanggal Keluar -->
                 <div>
                     <label for="outgoing_date" class="block text-sm font-medium text-gray-700 mb-2">

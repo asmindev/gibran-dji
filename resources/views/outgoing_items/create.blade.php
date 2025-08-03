@@ -41,6 +41,23 @@
 
         <div class="bg-white shadow rounded-lg p-6">
             <div class="space-y-6">
+                <!-- ID Transaksi -->
+                <div>
+                    <label for="transaction_id" class="block text-sm font-medium text-gray-700 mb-2">
+                        ID Transaksi <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="transaction_id" id="transaction_id" value="{{ old('transaction_id') }}"
+                        required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        placeholder="Masukkan ID transaksi unik, contoh: OUT-2024-001">
+                    <p class="mt-1 text-xs text-gray-500">
+                        ID transaksi harus unik untuk setiap barang keluar
+                    </p>
+                    @error('transaction_id')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <!-- Tanggal Keluar -->
                 <div>
                     <label for="outgoing_date" class="block text-sm font-medium text-gray-700 mb-2">
@@ -88,26 +105,13 @@
                     @enderror
                 </div>
 
-                <!-- Penerima -->
-                <div>
-                    <label for="recipient" class="block text-sm font-medium text-gray-700 mb-2">
-                        Penerima <span class="text-red-500">*</span>
-                    </label>
-                    <input type="text" name="recipient" id="recipient" value="{{ old('recipient') }}" required
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                        placeholder="Nama penerima">
-                    @error('recipient')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
                 <!-- Keterangan -->
                 <div>
-                    <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Keterangan</label>
-                    <textarea name="description" id="description" rows="3"
+                    <label for="notes" class="block text-sm font-medium text-gray-700 mb-2">Keterangan</label>
+                    <textarea name="notes" id="notes" rows="3"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 resize-none"
-                        placeholder="Catatan opsional tentang barang keluar ini">{{ old('description') }}</textarea>
-                    @error('description')
+                        placeholder="Catatan opsional tentang barang keluar ini">{{ old('notes') }}</textarea>
+                    @error('notes')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
@@ -115,10 +119,10 @@
         </div>
 
         <!-- Warning Box -->
-        <div class="bg-primary-50 border border-primary-200 rounded-lg p-4">
+        <div class="bg-primary/5 border border-primary/50 rounded-lg p-4">
             <div class="flex">
                 <div class="flex-shrink-0">
-                    <svg class="h-5 w-5 text-primary-400" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="h-5 w-5 text-primary/40" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd"
                             d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
                             clip-rule="evenodd" />
@@ -141,7 +145,7 @@
                 Batal
             </a>
             <button type="submit" id="submit-btn"
-                class="px-6 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition-colors">
+                class="px-6 py-2 bg-primary/60 hover:bg-primary/70 text-white rounded-lg font-medium transition-colors">
                 Simpan Barang Keluar
             </button>
         </div>
