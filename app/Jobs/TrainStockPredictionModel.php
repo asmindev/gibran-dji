@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Item;
 use App\Models\OutgoingItem;
+use App\Services\PlatformCompatibilityService;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -140,13 +141,12 @@ class TrainStockPredictionModel implements ShouldQueue
             }
 
             // Create scripts/data directory if it doesn't exist
-            $dataPath = base_path('scripts/data');
-            if (!file_exists($dataPath)) {
-                mkdir($dataPath, 0755, true);
-            }
+            $dataPath = PlatformCompatibilityService::buildPath(base_path(), 'scripts', 'data');
+            PlatformCompatibilityService::createDirectory($dataPath);
 
-            // Clear existing CSV files
-            $existingFiles = glob($dataPath . '/*.csv');
+            // Clear existing CSV files using platform-specific pattern
+            $pattern = PlatformCompatibilityService::buildPath($dataPath, '*.csv');
+            $existingFiles = glob($pattern);
             foreach ($existingFiles as $file) {
                 unlink($file);
             }
@@ -155,7 +155,7 @@ class TrainStockPredictionModel implements ShouldQueue
             $generatedFiles = [];
             foreach ($monthlyData as $monthKey => $monthInfo) {
                 $filename = ucfirst($monthInfo['month_name']) . '.csv';
-                $filepath = $dataPath . '/' . $filename;
+                $filepath = PlatformCompatibilityService::buildPath($dataPath, $filename);
 
                 $file = fopen($filepath, 'w');
                 fputcsv($file, ['no', 'id_trx', 'tgl', 'id_item', 'nama_barang', 'kategori', 'jumlah'], ',', '"', '\\');
@@ -193,39 +193,46 @@ class TrainStockPredictionModel implements ShouldQueue
             Log::info('Job: Starting Python model training');
 
             $basePath = base_path();
-            $operatingSystem = PHP_OS_FAMILY;
+            $scriptsPath = PlatformCompatibilityService::buildPath($basePath, 'scripts');
+            $systemInfo = PlatformCompatibilityService::getSystemInfo();
 
-            // Build training command
-            if (file_exists($basePath . '/scripts/.venv/bin/python')) {
-                $command = "cd \"{$basePath}/scripts\" && source .venv/bin/activate && python stock_predictor.py train 2>&1";
-            } else {
-                $pythonCmd = $operatingSystem === 'Windows' ? 'python' : 'python3';
-                $command = "cd \"{$basePath}/scripts\" && {$pythonCmd} stock_predictor.py train 2>&1";
-            }
+            Log::info('Job: System info', $systemInfo);
 
-            Log::info('Job: Running model training command: ' . $command);
+            // Build Python command using the compatibility service
+            $commandInfo = PlatformCompatibilityService::buildPythonCommand(
+                $scriptsPath,
+                'stock_predictor.py',
+                ['train']
+            );
 
-            $output = [];
-            $returnCode = 0;
-            exec($command, $output, $returnCode);
+            Log::info('Job: Running model training command', $commandInfo);
 
-            $outputString = implode("\n", $output);
-            Log::info('Job: Model training output: ' . $outputString);
+            // Execute the command
+            $result = PlatformCompatibilityService::executeCommand(
+                $commandInfo['command'],
+                $commandInfo['workingDirectory']
+            );
 
-            if ($returnCode !== 0) {
+            Log::info('Job: Model training output: ' . $result['outputString']);
+
+            if (!$result['success']) {
                 return [
                     'success' => false,
-                    'message' => 'Training gagal: ' . $outputString
+                    'message' => 'Training gagal: ' . $result['outputString']
                 ];
             }
 
-            // Check if model files were created
-            $dailyModelExists = file_exists($basePath . '/scripts/model/rf_stock_predictor_daily.pkl');
-            $monthlyModelExists = file_exists($basePath . '/scripts/model/rf_stock_predictor_monthly.pkl');
+            // Check if model files were created (use platform-specific paths)
+            $modelPath = PlatformCompatibilityService::buildPath($scriptsPath, 'model');
+            $dailyModelExists = file_exists(PlatformCompatibilityService::buildPath($modelPath, 'rf_stock_predictor_daily.pkl'));
+            $monthlyModelExists = file_exists(PlatformCompatibilityService::buildPath($modelPath, 'rf_stock_predictor_monthly.pkl'));
 
             Log::info('Job: Model files status', [
                 'daily_model_exists' => $dailyModelExists,
-                'monthly_model_exists' => $monthlyModelExists
+                'monthly_model_exists' => $monthlyModelExists,
+                'model_path' => $modelPath,
+                'system_info' => $systemInfo,
+                'command_info' => $commandInfo
             ]);
 
             return [
@@ -235,10 +242,16 @@ class TrainStockPredictionModel implements ShouldQueue
                     'daily_model' => $dailyModelExists,
                     'monthly_model' => $monthlyModelExists
                 ],
-                'training_output' => $outputString
+                'training_output' => $result['outputString'],
+                'platform_info' => [
+                    'system_info' => $systemInfo,
+                    'command_info' => $commandInfo,
+                    'virtual_env_used' => $commandInfo['venvUsed']
+                ]
             ];
         } catch (\Exception $e) {
             Log::error('Job: Model training error: ' . $e->getMessage());
+            Log::error('Job: Model training stack trace: ' . $e->getTraceAsString());
             return [
                 'success' => false,
                 'message' => 'Error saat training model: ' . $e->getMessage()
