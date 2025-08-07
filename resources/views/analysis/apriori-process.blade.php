@@ -57,15 +57,18 @@
         <form method="GET" action="{{ route('analysis.apriori-process') }}" class="grid md:grid-cols-5 gap-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Transaksi</label>
-                <select name="transaction_date"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
-                    <option value="all" {{ $selectedDate==='all' ? 'selected' : '' }}>Semua Tanggal</option>
-                    @foreach($availableDates as $date)
-                    <option value="{{ $date }}" {{ $selectedDate===$date ? 'selected' : '' }}>
-                        {{ \Carbon\Carbon::parse($date)->format('d M Y') }}
-                    </option>
-                    @endforeach
-                </select>
+                <input type="date" name="transaction_date" value="{{ $selectedDate !== 'all' ? $selectedDate : '' }}"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                    min="{{ !empty($availableDates) ? min($availableDates) : '' }}"
+                    max="{{ !empty($availableDates) ? max($availableDates) : '' }}">
+                <div class="text-xs text-gray-500 mt-1">
+                    @if(!empty($availableDates))
+                    Rentang data: {{ \Carbon\Carbon::parse(min($availableDates))->format('d M Y') }} - {{
+                    \Carbon\Carbon::parse(max($availableDates))->format('d M Y') }}
+                    @else
+                    Tidak ada data transaksi tersedia
+                    @endif
+                </div>
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Minimum Support (%)</label>
@@ -482,7 +485,7 @@
 <!-- Algorithm Summary -->
 <div class="bg-white rounded-lg shadow-md p-6 mt-8">
     <h3 class="text-xl font-semibold text-gray-800 mb-4">📈 Ringkasan Hasil Algoritma</h3>
-    <div class="grid md:grid-cols-4 gap-6">
+    <div class="grid md:grid-cols-5 gap-6">
         <div class="text-center">
             <div class="text-3xl font-bold text-blue-600">{{ $algorithmSteps['summary']['total_transactions'] }}
             </div>
@@ -502,8 +505,148 @@
             <div class="text-3xl font-bold text-orange-600">{{ $algorithmSteps['summary']['strong_rules'] }}</div>
             <div class="text-sm text-gray-600">Strong Rules</div>
         </div>
+        <div class="text-center">
+            <div class="text-3xl font-bold text-red-600">
+                @if(isset($algorithmSteps['summary']['execution_time_ms']))
+                @if($algorithmSteps['summary']['execution_time_ms'] > 1000)
+                {{ round($algorithmSteps['summary']['execution_time_ms'] / 1000, 2) }}s
+                @else
+                {{ $algorithmSteps['summary']['execution_time_ms'] }}ms
+                @endif
+                @else
+                N/A
+                @endif
+            </div>
+            <div class="text-sm text-gray-600">Waktu Eksekusi</div>
+        </div>
     </div>
 </div>
+
+<!-- Performance Analysis -->
+@if(isset($algorithmSteps['summary']['execution_time_ms']))
+<div class="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-lg p-6 mt-8 border border-cyan-200 hidden">
+    <h3 class="text-xl font-semibold text-cyan-800 mb-4">⚡ Analisis Performa Eksekusi</h3>
+    <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-lg p-4 shadow-sm">
+            <h4 class="font-semibold text-gray-800 mb-2">🕒 Detail Waktu</h4>
+            <div class="space-y-2 text-sm">
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Waktu Total:</span>
+                    <span class="font-medium" id="totalExecutionTime">
+                        @if($algorithmSteps['summary']['execution_time_ms'] > 1000)
+                        {{ round($algorithmSteps['summary']['execution_time_ms'] / 1000, 3) }} detik
+                        @else
+                        {{ $algorithmSteps['summary']['execution_time_ms'] }} ms
+                        @endif
+                    </span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Per Transaksi:</span>
+                    <span class="font-medium">
+                        {{ round($algorithmSteps['summary']['execution_time_ms'] /
+                        $algorithmSteps['summary']['total_transactions'], 2) }} ms
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg p-4 shadow-sm">
+            <h4 class="font-semibold text-gray-800 mb-2">📊 Kategori Performa</h4>
+            <div class="text-center">
+                @php
+                $execTime = $algorithmSteps['summary']['execution_time_ms'];
+                $transactionCount = $algorithmSteps['summary']['total_transactions'];
+
+                if ($execTime < 100) { $category='🚀 Sangat Cepat' ; $color='text-green-600' ; $bgColor='bg-green-100' ;
+                    } elseif ($execTime < 500) { $category='⚡ Cepat' ; $color='text-blue-600' ; $bgColor='bg-blue-100' ;
+                    } elseif ($execTime < 2000) { $category='⏱️ Normal' ; $color='text-yellow-600' ;
+                    $bgColor='bg-yellow-100' ; } else { $category='🐌 Lambat' ; $color='text-red-600' ;
+                    $bgColor='bg-red-100' ; } @endphp <span
+                    class="inline-flex px-3 py-2 text-sm font-medium rounded-full {{ $bgColor }} {{ $color }}">
+                    {{ $category }}
+                    </span>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg p-4 shadow-sm">
+            <h4 class="font-semibold text-gray-800 mb-2">🎯 Efisiensi</h4>
+            <div class="space-y-2 text-sm">
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Kompleksitas:</span>
+                    <span class="font-medium">
+                        @if($algorithmSteps['summary']['total_transactions'] < 50) Rendah
+                            @elseif($algorithmSteps['summary']['total_transactions'] < 200) Sedang @else Tinggi @endif
+                            </span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Throughput:</span>
+                    <span class="font-medium">
+                        {{ round($algorithmSteps['summary']['total_transactions'] /
+                        ($algorithmSteps['summary']['execution_time_ms'] / 1000), 0) }} txn/s
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Step Timings -->
+    @if(isset($algorithmSteps['summary']['step_timings']) && !empty($algorithmSteps['summary']['step_timings']))
+    <div class="mt-6">
+        <h4 class="font-semibold text-gray-800 mb-3">📋 Breakdown Waktu per Langkah</h4>
+        <div class="bg-gray-50 rounded-lg p-4">
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+                @if(isset($algorithmSteps['summary']['step_timings']['step1']))
+                <div class="flex justify-between items-center bg-white p-2 rounded text-sm">
+                    <span class="text-gray-600">Scan & Count Singles:</span>
+                    <span class="font-medium text-blue-600">{{ $algorithmSteps['summary']['step_timings']['step1']
+                        }}ms</span>
+                </div>
+                @endif
+
+                @if(isset($algorithmSteps['summary']['step_timings']['step2']))
+                <div class="flex justify-between items-center bg-white p-2 rounded text-sm">
+                    <span class="text-gray-600">Prune Items:</span>
+                    <span class="font-medium text-green-600">{{ $algorithmSteps['summary']['step_timings']['step2']
+                        }}ms</span>
+                </div>
+                @endif
+
+                @if(isset($algorithmSteps['summary']['step_timings']['step4']))
+                <div class="flex justify-between items-center bg-white p-2 rounded text-sm">
+                    <span class="text-gray-600">Count 2-Itemsets:</span>
+                    <span class="font-medium text-purple-600">{{ $algorithmSteps['summary']['step_timings']['step4']
+                        }}ms</span>
+                </div>
+                @endif
+
+                @if(isset($algorithmSteps['summary']['step_timings']['step5']))
+                <div class="flex justify-between items-center bg-white p-2 rounded text-sm">
+                    <span class="text-gray-600">Generate 3-Itemsets:</span>
+                    <span class="font-medium text-orange-600">{{ $algorithmSteps['summary']['step_timings']['step5']
+                        }}ms</span>
+                </div>
+                @endif
+
+                @if(isset($algorithmSteps['summary']['step_timings']['rules']))
+                <div class="flex justify-between items-center bg-white p-2 rounded text-sm">
+                    <span class="text-gray-600">Generate Rules:</span>
+                    <span class="font-medium text-red-600">{{ $algorithmSteps['summary']['step_timings']['rules']
+                        }}ms</span>
+                </div>
+                @endif
+
+                @if(isset($algorithmSteps['summary']['algorithm_time_ms']))
+                <div class="flex justify-between items-center bg-blue-100 p-2 rounded text-sm border-2 border-blue-200">
+                    <span class="text-blue-800 font-medium">Total Algorithm:</span>
+                    <span class="font-bold text-blue-800">{{ $algorithmSteps['summary']['algorithm_time_ms'] }}ms</span>
+                </div>
+                @endif
+            </div>
+        </div>
+    </div>
+    @endif
+</div>
+@endif
 
 <!-- Key Insights -->
 {{-- <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-6 mt-8 border border-indigo-200">
@@ -797,6 +940,17 @@ document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         closeProductDetailModal();
     }
+});
+
+// Date input enhancement
+document.addEventListener('DOMContentLoaded', function() {
+    const dateInput = document.querySelector('input[name="transaction_date"]');
+    const form = dateInput.closest('form');
+
+    // Auto-submit form when date is selected or cleared
+    dateInput.addEventListener('change', function() {
+        form.submit();
+    });
 });
 </script>
 </div>

@@ -41,8 +41,44 @@
             confidenceIcon = '⚡';
         }
 
+        // Format execution time display
+        const executionTime = prediction.execution_time_ms || 0;
+        let executionDisplay = `${executionTime} ms`;
+        let executionClass = 'text-purple-800';
+
+        if (executionTime > 1000) {
+            executionDisplay = `${(executionTime / 1000).toFixed(2)} detik`;
+            executionClass = 'text-orange-800';
+        } else if (executionTime > 100) {
+            executionClass = 'text-yellow-800';
+        } else {
+            executionClass = 'text-green-800';
+        }
+
+        // Performance indicator
+        let performanceIcon = '🚀';
+        let performanceText = 'Sangat Cepat';
+        if (executionTime > 1000) {
+            performanceIcon = '🐌';
+            performanceText = 'Lambat';
+        } else if (executionTime > 500) {
+            performanceIcon = '⚡';
+            performanceText = 'Normal';
+        } else if (executionTime > 100) {
+            performanceIcon = '⚡';
+            performanceText = 'Cepat';
+        }
+
+        // Handle missing execution time data
+        if (executionTime === 0 || executionTime === null || executionTime === undefined) {
+            executionDisplay = 'Tidak tersedia';
+            executionClass = 'text-gray-500';
+            performanceIcon = '❓';
+            performanceText = 'Data tidak tersedia';
+        }
+
         contentContainer.innerHTML = `
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div class="bg-blue-50 rounded-lg p-4">
                     <h4 class="font-semibold text-blue-900 mb-2">📦 Produk</h4>
                     <p class="text-blue-800">${prediction.name}</p>
@@ -55,13 +91,39 @@
                 </div>
 
                 <div class="bg-gray-50 rounded-lg p-4">
-                    <h4 class="font-semibold text-gray-900 mb-2">${confidenceIcon} Confidence Level</h4>
+                    <h4 class="font-semibold text-gray-900 mb-2">${confidenceIcon} Akurasi Model</h4>
                     <p class="text-2xl font-bold ${confidenceClass}">${confidence}%</p>
                     <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
                         <div class="h-2 rounded-full bg-current" style="width: ${confidence}%"></div>
                     </div>
                 </div>
+
+                <div class="bg-purple-50 rounded-lg p-4">
+                    <h4 class="font-semibold text-purple-900 mb-2">${performanceIcon} Waktu Eksekusi</h4>
+                    <p class="text-xl font-bold ${executionClass}">${prediction.model_prediction_time_ms} ms</p>
+                    <p class="text-sm text-purple-600">${performanceText}</p>
+                </div>
             </div>
+
+            ${prediction.input_parameters ? `
+                <div class="mt-6 bg-gray-50 rounded-lg p-4">
+                    <h4 class="font-semibold text-gray-900 mb-3">📋 Detail Parameter Input</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                        ${Object.entries(prediction.input_parameters).map(([key, value]) => `
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">${key}:</span>
+                                <span class="font-medium text-gray-900">${value}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            ` : ''}
+
+            ${prediction.timestamp ? `
+                <div class="mt-4 text-center text-sm text-gray-500">
+                    <i class="bi bi-clock"></i> Prediksi dibuat pada: ${new Date(prediction.timestamp).toLocaleString('id-ID')}
+                </div>
+            ` : ''}
         `;
 
         resultsContainer.classList.remove('hidden');

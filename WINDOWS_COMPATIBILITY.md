@@ -4,29 +4,30 @@ This document### 4. Cross-Platform Queue Management
 
 The queue worker command (`app/Console/Commands/QueueWorkerCommand.php`) now supports:
 
-- **Windows process management**: Uses `tasklist` and `taskkill` instead of `ps` and `pkill`
-- **Background process handling**: Uses `start /B` on Windows, traditional `&` on Unix
-- **Process detection**: Cross-platform process discovery and management
-- **Enhanced status reporting**: Shows platform-specific information and instructions
+-   **Windows process management**: Uses `tasklist` and `taskkill` instead of `ps` and `pkill`
+-   **Background process handling**: Uses `start /B` on Windows, traditional `&` on Unix
+-   **Process detection**: Cross-platform process discovery and management
+-   **Enhanced status reporting**: Shows platform-specific information and instructions
 
 ### 5. Cross-Platform Scripts
 
 #### Queue Management Scripts
-- `queue_manager.bat` - Windows batch script for queue management
-- `queue_manager.sh` - Unix shell script for queue management
+
+-   `queue_manager.bat` - Windows batch script for queue management
+-   `queue_manager.sh` - Unix shell script for queue management
 
 #### System Check Scripts
 
 #### Windows Batch Script
 
-- `check_scheduler.bat` - Windows equivalent of the shell script
-- Uses Windows-specific commands like `tasklist` instead of `ps`
-- Uses PowerShell for advanced operations like reading log files
+-   `check_scheduler.bat` - Windows equivalent of the shell script
+-   Uses Windows-specific commands like `tasklist` instead of `ps`
+-   Uses PowerShell for advanced operations like reading log files
 
 #### Original Shell Script
 
-- `check_scheduler.sh` - Remains for Unix-like systems
-- Uses standard Unix commandse Windows compatibility improvements made to the Gibran stock prediction system.
+-   `check_scheduler.sh` - Remains for Unix-like systems
+-   Uses standard Unix commandse Windows compatibility improvements made to the Gibran stock prediction system.
 
 ## Overview
 
@@ -102,7 +103,7 @@ php artisan model:train --info
 # Start queue worker
 php artisan queue:manage start
 
-# Stop queue worker  
+# Stop queue worker
 php artisan queue:manage stop
 
 # Check worker status

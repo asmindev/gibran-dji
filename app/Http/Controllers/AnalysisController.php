@@ -19,10 +19,18 @@ class AnalysisController extends Controller
      */
     public function aprioriProcess(Request $request)
     {
+        // Start timing execution
+        $startTime = microtime(true);
+
         // Get algorithm parameters - keep as percentage
         $minSupport = $request->get('min_support', 50); // Keep as percentage (50)
         $minConfidence = $request->get('min_confidence', 70); // Keep as percentage (70)
         $selectedDate = $request->get('transaction_date', 'all'); // Default all dates
+
+        // Handle empty date input as 'all'
+        if (empty($selectedDate) || $selectedDate === '') {
+            $selectedDate = 'all';
+        }
 
         // Get real transaction data from database
         $allTransactions = $this->getTransactionDataFromDatabase();
@@ -59,6 +67,15 @@ class AnalysisController extends Controller
             $minConfidence,
         );
 
+        // Calculate execution time
+        $endTime = microtime(true);
+        $executionTimeMs = round(($endTime - $startTime) * 1000, 2);
+
+        // Add execution time to algorithm steps summary
+        $algorithmSteps['summary']['execution_time_ms'] = $executionTimeMs;
+        $algorithmSteps['summary']['execution_time_start'] = $startTime;
+        $algorithmSteps['summary']['execution_time_end'] = $endTime;
+
         // Get available dates for dropdown
         $availableDates = array_unique(array_column($allTransactions, 'date'));
         sort($availableDates);
@@ -80,12 +97,16 @@ class AnalysisController extends Controller
      */
     private function simulateAprioriSteps($transactions, $minSupport, $minConfidence)
     {
+        $stepTimings = [];
+        $algorithmStart = microtime(true);
+
         $totalTransactions = count($transactions);
         if ($totalTransactions === 0) {
             return $this->getEmptyAlgorithmSteps($minSupport, $minConfidence);
         }
 
         // Step 1: Count individual items (1-itemsets)
+        $step1Start = microtime(true);
         $itemCounts = [];
         foreach ($transactions as $transaction) {
             foreach ($transaction['items'] as $item) {
@@ -107,8 +128,10 @@ class AnalysisController extends Controller
                 'support' => $support
             ];
         }
+        $stepTimings['step1'] = round((microtime(true) - $step1Start) * 1000, 2);
 
         // Step 2: Prune infrequent items
+        $step2Start = microtime(true);
         $frequentItems = [];
         $step2Data = [];
         foreach ($itemCounts as $item => $count) {
@@ -123,8 +146,10 @@ class AnalysisController extends Controller
                 'status' => $status
             ];
         }
+        $stepTimings['step2'] = round((microtime(true) - $step2Start) * 1000, 2);
 
         // Step 3: Generate 2-itemsets
+        $step3Start = microtime(true);
         $pairCombinations = [];
         $step3Data = [];
         for ($i = 0; $i < count($frequentItems); $i++) {
@@ -139,8 +164,10 @@ class AnalysisController extends Controller
                 ];
             }
         }
+        $stepTimings['step3'] = round((microtime(true) - $step3Start) * 1000, 2);
 
         // Step 4: Count and prune 2-itemsets
+        $step4Start = microtime(true);
         $pairCounts = [];
         foreach ($pairCombinations as $pairKey => $pair) {
             $count = 0;
@@ -167,8 +194,10 @@ class AnalysisController extends Controller
                 'status' => $status
             ];
         }
+        $stepTimings['step4'] = round((microtime(true) - $step4Start) * 1000, 2);
 
         // Step 5: Generate 3-itemsets (if any frequent pairs exist)
+        $step5Start = microtime(true);
         $step5Data = [];
         $frequentTriplets = [];
         if (count($frequentPairs) >= 2) {
@@ -217,51 +246,10 @@ class AnalysisController extends Controller
         if (empty($step5Data)) {
             $step5Data[] = ['note' => 'No valid 3-itemsets can be generated from frequent 2-itemsets'];
         }
-
-        // Build steps array
-        $steps = [
-            [
-                'step' => 'A',
-                'title' => 'Scan & Count Singles',
-                'description' => 'Count how often each individual item appears',
-                'data' => $step1Data
-            ],
-            [
-                'step' => 'B',
-                'title' => 'Prune Infrequent Items',
-                'description' => 'Keep only items whose support ≥ min_sup (' . $minSupport . '%)',
-                'data' => $step2Data
-            ],
-            // [
-            //     'step' => 'C',
-            //     'title' => 'Generate 2-Itemsets',
-            //     'description' => 'Form every possible pair of the remaining items',
-            //     'data' => $step3Data
-            // ],
-            [
-                'step' => 'D',
-                'title' => 'Count & Prune 2-Itemsets',
-                'description' => 'Count support for each pair, keep those ≥ ' . $minSupport . '%',
-                'data' => $step4Data
-            ],
-            [
-                'step' => 'E',
-                'title' => 'Generate 3-Itemsets',
-                'description' => 'Build triplets from surviving 2-itemsets',
-                'data' => $step5Data
-            ],
-            // [
-            //     'step' => 'F',
-            //     'title' => 'Algorithm Termination',
-            //     'description' => 'Algorithm halts when no k-itemsets meet min_sup',
-            //     'data' => [
-            //         ['result' => 'Largest frequent itemset: k = ' . (count($frequentTriplets) > 0 ? '3' : (count($frequentPairs) > 0 ? '2' : '1'))],
-            //         ['result' => 'Analysis with ' . $totalTransactions . ' transactions completed']
-            //     ]
-            // ]
-        ];
+        $stepTimings['step5'] = round((microtime(true) - $step5Start) * 1000, 2);
 
         // Generate association rules from frequent 2-itemsets
+        $rulesStart = microtime(true);
         $associationRules = [];
         foreach ($frequentPairs as $pairKey => $pair) {
             $pairCount = $pairCounts[$pairKey];
@@ -302,6 +290,38 @@ class AnalysisController extends Controller
                 ];
             }
         }
+        $stepTimings['rules'] = round((microtime(true) - $rulesStart) * 1000, 2);
+
+        $algorithmEnd = microtime(true);
+        $totalAlgorithmTime = round(($algorithmEnd - $algorithmStart) * 1000, 2);
+
+        // Build steps array
+        $steps = [
+            [
+                'step' => 'A',
+                'title' => 'Scan & Count Singles',
+                'description' => 'Count how often each individual item appears',
+                'data' => $step1Data
+            ],
+            [
+                'step' => 'B',
+                'title' => 'Prune Infrequent Items',
+                'description' => 'Keep only items whose support ≥ min_sup (' . $minSupport . '%)',
+                'data' => $step2Data
+            ],
+            [
+                'step' => 'D',
+                'title' => 'Count & Prune 2-Itemsets',
+                'description' => 'Count support for each pair, keep those ≥ ' . $minSupport . '%',
+                'data' => $step4Data
+            ],
+            [
+                'step' => 'E',
+                'title' => 'Generate 3-Itemsets',
+                'description' => 'Build triplets from surviving 2-itemsets',
+                'data' => $step5Data
+            ],
+        ];
 
         return [
             'steps' => $steps,
@@ -311,7 +331,9 @@ class AnalysisController extends Controller
                 'frequent_1_itemsets' => count($frequentItems),
                 'frequent_2_itemsets' => count($frequentPairs),
                 'frequent_3_itemsets' => count($frequentTriplets),
-                'strong_rules' => count(array_filter($associationRules, fn($rule) => $rule['status'] === 'strong'))
+                'strong_rules' => count(array_filter($associationRules, fn($rule) => $rule['status'] === 'strong')),
+                'step_timings' => $stepTimings,
+                'algorithm_time_ms' => $totalAlgorithmTime
             ]
         ];
     }
@@ -336,7 +358,10 @@ class AnalysisController extends Controller
                 'frequent_1_itemsets' => 0,
                 'frequent_2_itemsets' => 0,
                 'frequent_3_itemsets' => 0,
-                'strong_rules' => 0
+                'strong_rules' => 0,
+                'execution_time_ms' => 0,
+                'algorithm_time_ms' => 0,
+                'step_timings' => []
             ]
         ];
     }
