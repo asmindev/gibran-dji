@@ -85,7 +85,7 @@
                 </div>
 
                 <div class="bg-green-50 rounded-lg p-4">
-                    <h4 class="font-semibold text-green-900 mb-2">📊 Prediksi Permintaan</h4>
+                    <h4 class="font-semibold text-green-900 mb-2">📊 Prediksi Penjualan</h4>
                     <p class="text-2xl font-bold text-green-800">${Math.round(prediction.prediction)}</p>
                     <p class="text-sm text-green-600">Unit untuk ${prediction.type === 'daily' ? 'hari' : 'bulan'}</p>
                 </div>

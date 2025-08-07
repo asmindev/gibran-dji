@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('outgoing_items', function (Blueprint $table) {
             $table->id();
-            $table->string('transaction_id')->nullable();
+            $table->string('transaction_id');
             $table->date('outgoing_date');
             $table->foreignId('item_id')->constrained()->onDelete('cascade');
             $table->integer('quantity');

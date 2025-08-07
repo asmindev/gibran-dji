@@ -1,373 +1,408 @@
 no,id_trx,tgl,id_item,nama_barang,kategori,jumlah
-1,297,"01 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",8
-2,298,"01 February 2025",2,"Kaos Kaki Avo","Barang Keluar",8
-3,299,"01 February 2025",7,"Bola Basket","Barang Keluar",7
-4,300,"01 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",7
-5,75,"01 February 2025",8,"Jersey Basket","Barang Keluar",6
-6,76,"01 February 2025",5,Piala,"Barang Keluar",6
-7,77,"01 February 2025",6,"Sepatu Futsal","Barang Keluar",6
-8,78,"01 February 2025",2,"Kaos Kaki Avo","Barang Keluar",5
-9,103,"01 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",5
-10,104,"01 February 2025",6,"Sepatu Futsal","Barang Keluar",5
-11,105,"01 February 2025",3,"Jersey Mills","Barang Keluar",5
-12,106,"01 February 2025",2,"Kaos Kaki Avo","Barang Keluar",6
-13,2237,"01 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",7
-14,2238,"01 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",8
-15,2239,"01 February 2025",7,"Bola Basket","Barang Keluar",5
-16,2508,"01 February 2025",3,"Jersey Mills","Barang Keluar",6
-17,2509,"01 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",5
-18,2293,"01 February 2025",7,"Bola Basket","Barang Keluar",7
-19,2294,"01 February 2025",8,"Jersey Basket","Barang Keluar",6
-20,2295,"01 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",7
-21,2296,"01 February 2025",5,Piala,"Barang Keluar",8
-22,2041,"01 February 2025",7,"Bola Basket","Barang Keluar",7
-23,2042,"01 February 2025",8,"Jersey Basket","Barang Keluar",6
-24,2043,"01 February 2025",3,"Jersey Mills","Barang Keluar",5
-25,2044,"01 February 2025",5,Piala,"Barang Keluar",5
-26,2079,"02 February 2025",6,"Sepatu Futsal","Barang Keluar",5
-27,2080,"02 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",5
-28,545,"02 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",5
-29,546,"02 February 2025",2,"Kaos Kaki Avo","Barang Keluar",7
-30,547,"02 February 2025",3,"Jersey Mills","Barang Keluar",7
-31,548,"02 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",8
-32,2384,"02 February 2025",6,"Sepatu Futsal","Barang Keluar",6
-33,2385,"02 February 2025",5,Piala,"Barang Keluar",6
-34,2386,"02 February 2025",2,"Kaos Kaki Avo","Barang Keluar",6
-35,2387,"02 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",8
-36,2654,"02 February 2025",6,"Sepatu Futsal","Barang Keluar",6
-37,2655,"02 February 2025",3,"Jersey Mills","Barang Keluar",8
-38,2656,"02 February 2025",7,"Bola Basket","Barang Keluar",7
-39,2440,"02 February 2025",3,"Jersey Mills","Barang Keluar",6
-40,2441,"02 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",5
-41,2442,"02 February 2025",8,"Jersey Basket","Barang Keluar",8
-42,1285,"03 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",8
-43,1286,"03 February 2025",5,Piala,"Barang Keluar",6
-44,1287,"03 February 2025",7,"Bola Basket","Barang Keluar",6
-45,1288,"03 February 2025",6,"Sepatu Futsal","Barang Keluar",8
-46,142,"03 February 2025",5,Piala,"Barang Keluar",6
-47,143,"03 February 2025",3,"Jersey Mills","Barang Keluar",6
-48,144,"03 February 2025",8,"Jersey Basket","Barang Keluar",5
-49,1936,"03 February 2025",3,"Jersey Mills","Barang Keluar",6
-50,145,"03 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",8
-51,1937,"03 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",8
-52,2519,"03 February 2025",6,"Sepatu Futsal","Barang Keluar",6
-53,2520,"03 February 2025",2,"Kaos Kaki Avo","Barang Keluar",7
-54,2521,"03 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",5
-55,1257,"03 February 2025",5,Piala,"Barang Keluar",6
-56,1258,"03 February 2025",2,"Kaos Kaki Avo","Barang Keluar",5
-57,1259,"03 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",6
-58,1260,"03 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",8
-59,835,"04 February 2025",7,"Bola Basket","Barang Keluar",8
-60,836,"04 February 2025",8,"Jersey Basket","Barang Keluar",7
-61,837,"04 February 2025",3,"Jersey Mills","Barang Keluar",6
-62,838,"04 February 2025",5,Piala,"Barang Keluar",8
-63,2382,"04 February 2025",3,"Jersey Mills","Barang Keluar",5
-64,2383,"04 February 2025",5,Piala,"Barang Keluar",8
-65,2643,"04 February 2025",8,"Jersey Basket","Barang Keluar",6
-66,2644,"04 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",6
-67,2933,"04 February 2025",7,"Bola Basket","Barang Keluar",7
-68,2934,"04 February 2025",8,"Jersey Basket","Barang Keluar",6
-69,2935,"04 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",6
-70,184,"04 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
-71,185,"04 February 2025",5,Piala,"Barang Keluar",6
-72,528,"05 February 2025",5,Piala,"Barang Keluar",6
-73,529,"05 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",7
-74,51,"05 February 2025",8,"Jersey Basket","Barang Keluar",7
-75,52,"05 February 2025",2,"Kaos Kaki Avo","Barang Keluar",5
-76,53,"05 February 2025",5,Piala,"Barang Keluar",8
-77,54,"05 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",5
-78,580,"05 February 2025",7,"Bola Basket","Barang Keluar",5
-79,581,"05 February 2025",8,"Jersey Basket","Barang Keluar",8
-80,605,"05 February 2025",7,"Bola Basket","Barang Keluar",5
-81,606,"05 February 2025",8,"Jersey Basket","Barang Keluar",8
-82,607,"05 February 2025",5,Piala,"Barang Keluar",6
-83,1679,"05 February 2025",8,"Jersey Basket","Barang Keluar",6
-84,1680,"05 February 2025",7,"Bola Basket","Barang Keluar",7
-85,1681,"05 February 2025",2,"Kaos Kaki Avo","Barang Keluar",7
-86,2724,"05 February 2025",6,"Sepatu Futsal","Barang Keluar",5
-87,2725,"05 February 2025",3,"Jersey Mills","Barang Keluar",5
-88,2726,"05 February 2025",7,"Bola Basket","Barang Keluar",5
-89,2727,"05 February 2025",2,"Kaos Kaki Avo","Barang Keluar",5
-90,219,"05 February 2025",8,"Jersey Basket","Barang Keluar",7
-91,220,"05 February 2025",7,"Bola Basket","Barang Keluar",8
-92,2597,"06 February 2025",7,"Bola Basket","Barang Keluar",7
-93,2598,"06 February 2025",8,"Jersey Basket","Barang Keluar",8
-94,24,"07 February 2025",3,"Jersey Mills","Barang Keluar",5
-95,25,"07 February 2025",2,"Kaos Kaki Avo","Barang Keluar",5
-96,1572,"07 February 2025",6,"Sepatu Futsal","Barang Keluar",5
-97,1573,"07 February 2025",3,"Jersey Mills","Barang Keluar",6
-98,1574,"07 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",5
-99,1575,"07 February 2025",7,"Bola Basket","Barang Keluar",7
-100,2091,"07 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",6
-101,2092,"07 February 2025",2,"Kaos Kaki Avo","Barang Keluar",7
-102,2093,"07 February 2025",7,"Bola Basket","Barang Keluar",7
-103,1071,"07 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
-104,1072,"07 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",5
-105,1589,"07 February 2025",5,Piala,"Barang Keluar",8
-106,1590,"07 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
-107,1591,"07 February 2025",2,"Kaos Kaki Avo","Barang Keluar",7
-108,1592,"07 February 2025",6,"Sepatu Futsal","Barang Keluar",8
-109,1340,"07 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",8
-110,1341,"07 February 2025",6,"Sepatu Futsal","Barang Keluar",7
-111,1342,"07 February 2025",8,"Jersey Basket","Barang Keluar",8
-112,1343,"07 February 2025",5,Piala,"Barang Keluar",5
-113,1599,"07 February 2025",7,"Bola Basket","Barang Keluar",8
-114,1600,"07 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",7
-115,1601,"07 February 2025",8,"Jersey Basket","Barang Keluar",7
-116,631,"07 February 2025",7,"Bola Basket","Barang Keluar",8
-117,632,"07 February 2025",5,Piala,"Barang Keluar",6
-118,1427,"07 February 2025",8,"Jersey Basket","Barang Keluar",7
-119,1428,"07 February 2025",2,"Kaos Kaki Avo","Barang Keluar",8
-120,1429,"07 February 2025",6,"Sepatu Futsal","Barang Keluar",8
-121,1430,"07 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",8
-122,160,"07 February 2025",7,"Bola Basket","Barang Keluar",7
-123,161,"07 February 2025",3,"Jersey Mills","Barang Keluar",6
-124,162,"07 February 2025",8,"Jersey Basket","Barang Keluar",7
-125,163,"07 February 2025",6,"Sepatu Futsal","Barang Keluar",7
-126,1314,"08 February 2025",3,"Jersey Mills","Barang Keluar",7
-127,1315,"08 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",6
-128,2234,"08 February 2025",6,"Sepatu Futsal","Barang Keluar",5
-129,2235,"08 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
-130,2236,"08 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",7
-131,81,"09 February 2025",3,"Jersey Mills","Barang Keluar",6
-132,82,"09 February 2025",7,"Bola Basket","Barang Keluar",8
-133,1394,"09 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",5
-134,1395,"09 February 2025",7,"Bola Basket","Barang Keluar",6
-135,1396,"09 February 2025",8,"Jersey Basket","Barang Keluar",6
-136,1397,"09 February 2025",5,Piala,"Barang Keluar",6
-137,433,"09 February 2025",2,"Kaos Kaki Avo","Barang Keluar",6
-138,434,"09 February 2025",7,"Bola Basket","Barang Keluar",7
-139,435,"09 February 2025",6,"Sepatu Futsal","Barang Keluar",7
-140,436,"09 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",8
-141,2525,"09 February 2025",8,"Jersey Basket","Barang Keluar",6
-142,2526,"09 February 2025",5,Piala,"Barang Keluar",7
-143,2527,"09 February 2025",6,"Sepatu Futsal","Barang Keluar",8
-144,2831,"10 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
-145,2832,"10 February 2025",7,"Bola Basket","Barang Keluar",5
-146,2833,"10 February 2025",5,Piala,"Barang Keluar",5
-147,2837,"10 February 2025",6,"Sepatu Futsal","Barang Keluar",7
-148,2838,"10 February 2025",8,"Jersey Basket","Barang Keluar",7
-149,2839,"10 February 2025",7,"Bola Basket","Barang Keluar",8
-150,1787,"10 February 2025",6,"Sepatu Futsal","Barang Keluar",5
-151,1788,"10 February 2025",8,"Jersey Basket","Barang Keluar",8
-152,107,"11 February 2025",2,"Kaos Kaki Avo","Barang Keluar",8
-153,108,"11 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",6
-154,109,"11 February 2025",5,Piala,"Barang Keluar",6
-155,110,"11 February 2025",8,"Jersey Basket","Barang Keluar",8
-156,655,"11 February 2025",2,"Kaos Kaki Avo","Barang Keluar",5
-157,656,"11 February 2025",3,"Jersey Mills","Barang Keluar",6
-158,657,"11 February 2025",5,Piala,"Barang Keluar",6
-159,1979,"11 February 2025",3,"Jersey Mills","Barang Keluar",7
-160,1980,"11 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
-161,1792,"12 February 2025",3,"Jersey Mills","Barang Keluar",6
-162,1793,"12 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",8
-163,2126,"12 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
-164,2127,"12 February 2025",8,"Jersey Basket","Barang Keluar",5
-165,2506,"12 February 2025",3,"Jersey Mills","Barang Keluar",5
-166,2507,"12 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",8
-167,1791,"12 February 2025",6,"Sepatu Futsal","Barang Keluar",8
-168,119,"13 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
-169,120,"13 February 2025",2,"Kaos Kaki Avo","Barang Keluar",6
-170,121,"13 February 2025",5,Piala,"Barang Keluar",5
-171,2826,"14 February 2025",6,"Sepatu Futsal","Barang Keluar",8
-172,2827,"14 February 2025",7,"Bola Basket","Barang Keluar",6
-173,2828,"14 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",8
-174,803,"14 February 2025",6,"Sepatu Futsal","Barang Keluar",8
-175,804,"14 February 2025",8,"Jersey Basket","Barang Keluar",7
-176,805,"14 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",5
-177,568,"14 February 2025",5,Piala,"Barang Keluar",6
-178,569,"14 February 2025",3,"Jersey Mills","Barang Keluar",7
-179,570,"14 February 2025",8,"Jersey Basket","Barang Keluar",7
-180,571,"14 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",5
-181,68,"14 February 2025",2,"Kaos Kaki Avo","Barang Keluar",6
-182,69,"14 February 2025",3,"Jersey Mills","Barang Keluar",8
-183,70,"14 February 2025",5,Piala,"Barang Keluar",6
-184,1884,"14 February 2025",6,"Sepatu Futsal","Barang Keluar",8
-185,1885,"14 February 2025",3,"Jersey Mills","Barang Keluar",5
-186,1886,"14 February 2025",5,Piala,"Barang Keluar",6
-187,100,"14 February 2025",8,"Jersey Basket","Barang Keluar",7
-188,101,"14 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",7
-189,102,"14 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",5
-190,1645,"14 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
-191,1646,"14 February 2025",2,"Kaos Kaki Avo","Barang Keluar",7
-192,2936,"14 February 2025",6,"Sepatu Futsal","Barang Keluar",5
-193,2937,"14 February 2025",3,"Jersey Mills","Barang Keluar",6
-194,2938,"14 February 2025",2,"Kaos Kaki Avo","Barang Keluar",7
-195,2939,"14 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",6
-196,1725,"14 February 2025",2,"Kaos Kaki Avo","Barang Keluar",7
-197,1726,"14 February 2025",5,Piala,"Barang Keluar",6
-198,1727,"14 February 2025",7,"Bola Basket","Barang Keluar",7
-199,2637,"15 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
-200,2638,"15 February 2025",2,"Kaos Kaki Avo","Barang Keluar",5
-201,2393,"15 February 2025",5,Piala,"Barang Keluar",5
-202,2394,"15 February 2025",6,"Sepatu Futsal","Barang Keluar",6
-203,2395,"15 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",8
-204,2396,"15 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",8
-205,664,"15 February 2025",3,"Jersey Mills","Barang Keluar",8
-206,665,"15 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",8
-207,666,"15 February 2025",7,"Bola Basket","Barang Keluar",8
-208,667,"15 February 2025",2,"Kaos Kaki Avo","Barang Keluar",5
-209,2732,"15 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",6
-210,2733,"15 February 2025",6,"Sepatu Futsal","Barang Keluar",7
-211,2734,"15 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",6
-212,2008,"15 February 2025",2,"Kaos Kaki Avo","Barang Keluar",6
-213,2009,"15 February 2025",3,"Jersey Mills","Barang Keluar",8
-214,2010,"15 February 2025",5,Piala,"Barang Keluar",5
-215,1565,"16 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",8
-216,1566,"16 February 2025",2,"Kaos Kaki Avo","Barang Keluar",5
-217,1567,"16 February 2025",7,"Bola Basket","Barang Keluar",8
-218,1091,"16 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",6
-219,1092,"16 February 2025",5,Piala,"Barang Keluar",8
-220,1093,"16 February 2025",2,"Kaos Kaki Avo","Barang Keluar",5
-221,1094,"16 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",5
-222,2840,"17 February 2025",3,"Jersey Mills","Barang Keluar",8
-223,2841,"17 February 2025",5,Piala,"Barang Keluar",5
-224,2842,"17 February 2025",8,"Jersey Basket","Barang Keluar",8
-225,2843,"17 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",5
-226,549,"17 February 2025",8,"Jersey Basket","Barang Keluar",5
-227,550,"17 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",5
-228,551,"17 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
-229,552,"17 February 2025",3,"Jersey Mills","Barang Keluar",5
-230,387,"17 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",8
-231,388,"17 February 2025",8,"Jersey Basket","Barang Keluar",6
-232,2465,"17 February 2025",3,"Jersey Mills","Barang Keluar",5
-233,2466,"17 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
-234,1200,"17 February 2025",3,"Jersey Mills","Barang Keluar",6
-235,1201,"17 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
-236,1202,"17 February 2025",5,Piala,"Barang Keluar",5
-237,2232,"17 February 2025",7,"Bola Basket","Barang Keluar",7
-238,2233,"17 February 2025",2,"Kaos Kaki Avo","Barang Keluar",5
-239,237,"17 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
-240,238,"17 February 2025",2,"Kaos Kaki Avo","Barang Keluar",8
-241,239,"17 February 2025",8,"Jersey Basket","Barang Keluar",5
-242,1044,"18 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",5
-243,1045,"18 February 2025",7,"Bola Basket","Barang Keluar",8
-244,286,"18 February 2025",6,"Sepatu Futsal","Barang Keluar",6
-245,287,"18 February 2025",3,"Jersey Mills","Barang Keluar",8
-246,1323,"18 February 2025",3,"Jersey Mills","Barang Keluar",7
-247,1324,"18 February 2025",6,"Sepatu Futsal","Barang Keluar",8
-248,1325,"18 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",6
-249,2498,"18 February 2025",8,"Jersey Basket","Barang Keluar",7
-250,2499,"18 February 2025",5,Piala,"Barang Keluar",7
-251,516,"19 February 2025",5,Piala,"Barang Keluar",5
-252,517,"19 February 2025",2,"Kaos Kaki Avo","Barang Keluar",7
-253,518,"19 February 2025",7,"Bola Basket","Barang Keluar",7
-254,1553,"19 February 2025",3,"Jersey Mills","Barang Keluar",8
-255,1554,"19 February 2025",5,Piala,"Barang Keluar",8
-256,1555,"19 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",8
-257,1556,"19 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",6
-258,790,"19 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",6
-259,791,"19 February 2025",6,"Sepatu Futsal","Barang Keluar",7
-260,792,"19 February 2025",5,Piala,"Barang Keluar",8
-261,735,"19 February 2025",7,"Bola Basket","Barang Keluar",8
-262,736,"19 February 2025",6,"Sepatu Futsal","Barang Keluar",7
-263,737,"19 February 2025",5,Piala,"Barang Keluar",7
-264,578,"20 February 2025",6,"Sepatu Futsal","Barang Keluar",8
-265,579,"20 February 2025",7,"Bola Basket","Barang Keluar",6
-266,855,"20 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",6
-267,856,"20 February 2025",8,"Jersey Basket","Barang Keluar",6
-268,857,"20 February 2025",3,"Jersey Mills","Barang Keluar",5
-269,858,"20 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
-270,1643,"20 February 2025",6,"Sepatu Futsal","Barang Keluar",7
-271,1644,"20 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",8
-272,909,"20 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",5
-273,910,"20 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",5
-274,966,"20 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",5
-275,967,"20 February 2025",2,"Kaos Kaki Avo","Barang Keluar",6
-276,968,"20 February 2025",7,"Bola Basket","Barang Keluar",6
-277,969,"20 February 2025",5,Piala,"Barang Keluar",7
-278,1377,"21 February 2025",7,"Bola Basket","Barang Keluar",6
-279,1378,"21 February 2025",8,"Jersey Basket","Barang Keluar",5
-280,1379,"21 February 2025",2,"Kaos Kaki Avo","Barang Keluar",7
-281,1380,"21 February 2025",6,"Sepatu Futsal","Barang Keluar",6
-282,2543,"21 February 2025",3,"Jersey Mills","Barang Keluar",8
-283,2544,"21 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",6
-284,2545,"21 February 2025",7,"Bola Basket","Barang Keluar",5
-285,1054,"22 February 2025",5,Piala,"Barang Keluar",8
-286,1055,"22 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",7
-287,1075,"22 February 2025",2,"Kaos Kaki Avo","Barang Keluar",7
-288,1076,"22 February 2025",8,"Jersey Basket","Barang Keluar",5
-289,653,"22 February 2025",7,"Bola Basket","Barang Keluar",5
-290,654,"22 February 2025",8,"Jersey Basket","Barang Keluar",7
-291,677,"22 February 2025",7,"Bola Basket","Barang Keluar",5
-292,678,"22 February 2025",6,"Sepatu Futsal","Barang Keluar",8
-293,936,"22 February 2025",7,"Bola Basket","Barang Keluar",6
-294,937,"22 February 2025",3,"Jersey Mills","Barang Keluar",8
-295,938,"22 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",7
-296,939,"22 February 2025",8,"Jersey Basket","Barang Keluar",8
-297,2270,"22 February 2025",6,"Sepatu Futsal","Barang Keluar",8
-298,2271,"22 February 2025",5,Piala,"Barang Keluar",8
-299,1512,"22 February 2025",7,"Bola Basket","Barang Keluar",8
-300,1513,"22 February 2025",6,"Sepatu Futsal","Barang Keluar",8
-301,1514,"22 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",8
-302,1515,"22 February 2025",2,"Kaos Kaki Avo","Barang Keluar",5
-303,1536,"23 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",5
-304,1537,"23 February 2025",2,"Kaos Kaki Avo","Barang Keluar",8
-305,1538,"23 February 2025",6,"Sepatu Futsal","Barang Keluar",7
-306,2569,"23 February 2025",7,"Bola Basket","Barang Keluar",7
-307,2570,"23 February 2025",5,Piala,"Barang Keluar",5
-308,2571,"23 February 2025",2,"Kaos Kaki Avo","Barang Keluar",6
-309,2572,"23 February 2025",8,"Jersey Basket","Barang Keluar",7
-310,1087,"23 February 2025",2,"Kaos Kaki Avo","Barang Keluar",6
-311,1088,"23 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",6
-312,1089,"23 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",6
-313,1090,"23 February 2025",7,"Bola Basket","Barang Keluar",8
-314,1894,"23 February 2025",2,"Kaos Kaki Avo","Barang Keluar",6
-315,1895,"23 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
-316,1896,"23 February 2025",8,"Jersey Basket","Barang Keluar",8
-317,1535,"23 February 2025",7,"Bola Basket","Barang Keluar",6
-318,9,"24 February 2025",7,"Bola Basket","Barang Keluar",7
-319,10,"24 February 2025",2,"Kaos Kaki Avo","Barang Keluar",8
-320,11,"24 February 2025",6,"Sepatu Futsal","Barang Keluar",5
-321,1037,"24 February 2025",5,Piala,"Barang Keluar",6
-322,1038,"24 February 2025",7,"Bola Basket","Barang Keluar",5
-323,1039,"24 February 2025",6,"Sepatu Futsal","Barang Keluar",8
-324,273,"24 February 2025",5,Piala,"Barang Keluar",7
-325,274,"24 February 2025",7,"Bola Basket","Barang Keluar",7
-326,1501,"24 February 2025",3,"Jersey Mills","Barang Keluar",8
-327,1502,"24 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",6
-328,512,"26 February 2025",2,"Kaos Kaki Avo","Barang Keluar",7
-329,1046,"26 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",8
-330,1047,"26 February 2025",7,"Bola Basket","Barang Keluar",7
-331,1048,"26 February 2025",6,"Sepatu Futsal","Barang Keluar",8
-332,2376,"26 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",8
-333,2377,"26 February 2025",7,"Bola Basket","Barang Keluar",5
-334,2378,"26 February 2025",5,Piala,"Barang Keluar",5
-335,1420,"26 February 2025",6,"Sepatu Futsal","Barang Keluar",6
-336,1421,"26 February 2025",7,"Bola Basket","Barang Keluar",5
-337,1422,"26 February 2025",8,"Jersey Basket","Barang Keluar",8
-338,757,"26 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",8
-339,758,"26 February 2025",2,"Kaos Kaki Avo","Barang Keluar",8
-340,759,"26 February 2025",3,"Jersey Mills","Barang Keluar",5
-341,511,"26 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",5
-342,2066,"27 February 2025",5,Piala,"Barang Keluar",8
-343,2067,"27 February 2025",7,"Bola Basket","Barang Keluar",5
-344,2068,"27 February 2025",6,"Sepatu Futsal","Barang Keluar",5
-345,2613,"27 February 2025",3,"Jersey Mills","Barang Keluar",5
-346,2614,"27 February 2025",5,Piala,"Barang Keluar",7
-347,2615,"27 February 2025",7,"Bola Basket","Barang Keluar",7
-348,2616,"27 February 2025",8,"Jersey Basket","Barang Keluar",7
-349,1104,"27 February 2025",3,"Jersey Mills","Barang Keluar",6
-350,1105,"27 February 2025",8,"Jersey Basket","Barang Keluar",5
-351,1106,"27 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",6
-352,1107,"27 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",7
-353,2135,"27 February 2025",7,"Bola Basket","Barang Keluar",7
-354,2136,"27 February 2025",8,"Jersey Basket","Barang Keluar",8
-355,2137,"27 February 2025",2,"Kaos Kaki Avo","Barang Keluar",5
-356,693,"27 February 2025",8,"Jersey Basket","Barang Keluar",6
-357,694,"27 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
-358,695,"27 February 2025",2,"Kaos Kaki Avo","Barang Keluar",6
-359,725,"27 February 2025",7,"Bola Basket","Barang Keluar",6
-360,726,"27 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",5
-361,727,"27 February 2025",8,"Jersey Basket","Barang Keluar",7
-362,1785,"27 February 2025",6,"Sepatu Futsal","Barang Keluar",5
-363,1786,"27 February 2025",7,"Bola Basket","Barang Keluar",7
-364,1614,"28 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",7
-365,1615,"28 February 2025",6,"Sepatu Futsal","Barang Keluar",6
-366,1616,"28 February 2025",5,Piala,"Barang Keluar",6
-367,1617,"28 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",6
-368,1879,"28 February 2025",3,"Jersey Mills","Barang Keluar",8
-369,1880,"28 February 2025",5,Piala,"Barang Keluar",7
-370,1881,"28 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",7
-371,2510,"28 February 2025",7,"Bola Basket","Barang Keluar",8
-372,2511,"28 February 2025",6,"Sepatu Futsal","Barang Keluar",8
+1,1557,"01 February 2025",6,"Sepatu Futsal","Barang Keluar",7
+2,1558,"01 February 2025",3,"Jersey Mills","Barang Keluar",7
+3,540,"01 February 2025",3,"Jersey Mills","Barang Keluar",5
+4,541,"01 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
+5,542,"01 February 2025",6,"Sepatu Futsal","Barang Keluar",5
+6,543,"01 February 2025",2,"Kaos Kaki Avo","Barang Keluar",6
+7,341,"01 February 2025",7,"Bola Basket","Barang Keluar",6
+8,342,"01 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",5
+9,343,"01 February 2025",8,"Jersey Basket","Barang Keluar",7
+10,2708,"01 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",8
+11,2709,"01 February 2025",2,"Kaos Kaki Avo","Barang Keluar",8
+12,2710,"01 February 2025",7,"Bola Basket","Barang Keluar",8
+13,2174,"02 February 2025",6,"Sepatu Futsal","Barang Keluar",8
+14,2175,"02 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",7
+15,2176,"02 February 2025",7,"Bola Basket","Barang Keluar",6
+16,2560,"03 February 2025",7,"Bola Basket","Barang Keluar",7
+17,2561,"03 February 2025",8,"Jersey Basket","Barang Keluar",8
+18,2562,"03 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",6
+19,2563,"03 February 2025",6,"Sepatu Futsal","Barang Keluar",6
+20,1351,"03 February 2025",7,"Bola Basket","Barang Keluar",6
+21,1352,"03 February 2025",8,"Jersey Basket","Barang Keluar",7
+22,2647,"03 February 2025",3,"Jersey Mills","Barang Keluar",7
+23,2648,"03 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
+24,2649,"03 February 2025",2,"Kaos Kaki Avo","Barang Keluar",7
+25,858,"03 February 2025",3,"Jersey Mills","Barang Keluar",7
+26,2650,"03 February 2025",6,"Sepatu Futsal","Barang Keluar",8
+27,859,"03 February 2025",5,Piala,"Barang Keluar",7
+28,1936,"03 February 2025",7,"Bola Basket","Barang Keluar",5
+29,1937,"03 February 2025",8,"Jersey Basket","Barang Keluar",7
+30,1938,"03 February 2025",3,"Jersey Mills","Barang Keluar",8
+31,1939,"03 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
+32,675,"03 February 2025",7,"Bola Basket","Barang Keluar",8
+33,676,"03 February 2025",5,Piala,"Barang Keluar",5
+34,950,"03 February 2025",8,"Jersey Basket","Barang Keluar",7
+35,951,"03 February 2025",6,"Sepatu Futsal","Barang Keluar",8
+36,2812,"03 February 2025",8,"Jersey Basket","Barang Keluar",8
+37,2813,"03 February 2025",7,"Bola Basket","Barang Keluar",5
+38,2814,"03 February 2025",6,"Sepatu Futsal","Barang Keluar",6
+39,2815,"03 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",6
+40,2564,"04 February 2025",5,Piala,"Barang Keluar",7
+41,2565,"04 February 2025",7,"Bola Basket","Barang Keluar",8
+42,2566,"04 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",5
+43,298,"04 February 2025",8,"Jersey Basket","Barang Keluar",6
+44,299,"04 February 2025",2,"Kaos Kaki Avo","Barang Keluar",7
+45,300,"04 February 2025",7,"Bola Basket","Barang Keluar",8
+46,301,"04 February 2025",3,"Jersey Mills","Barang Keluar",7
+47,560,"04 February 2025",6,"Sepatu Futsal","Barang Keluar",5
+48,561,"04 February 2025",3,"Jersey Mills","Barang Keluar",5
+49,1879,"04 February 2025",7,"Bola Basket","Barang Keluar",8
+50,1880,"04 February 2025",8,"Jersey Basket","Barang Keluar",7
+51,2145,"04 February 2025",2,"Kaos Kaki Avo","Barang Keluar",7
+52,2146,"04 February 2025",8,"Jersey Basket","Barang Keluar",5
+53,883,"04 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",8
+54,884,"04 February 2025",7,"Bola Basket","Barang Keluar",8
+55,885,"04 February 2025",5,Piala,"Barang Keluar",6
+56,152,"04 February 2025",8,"Jersey Basket","Barang Keluar",7
+57,153,"04 February 2025",2,"Kaos Kaki Avo","Barang Keluar",7
+58,154,"04 February 2025",7,"Bola Basket","Barang Keluar",5
+59,155,"04 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",5
+60,1057,"05 February 2025",7,"Bola Basket","Barang Keluar",5
+61,1058,"05 February 2025",8,"Jersey Basket","Barang Keluar",6
+62,1616,"05 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
+63,1617,"05 February 2025",2,"Kaos Kaki Avo","Barang Keluar",6
+64,1618,"05 February 2025",7,"Bola Basket","Barang Keluar",7
+65,2912,"05 February 2025",8,"Jersey Basket","Barang Keluar",5
+66,2913,"05 February 2025",5,Piala,"Barang Keluar",7
+67,2914,"05 February 2025",6,"Sepatu Futsal","Barang Keluar",6
+68,2915,"05 February 2025",7,"Bola Basket","Barang Keluar",5
+69,2765,"05 February 2025",3,"Jersey Mills","Barang Keluar",8
+70,2766,"05 February 2025",8,"Jersey Basket","Barang Keluar",6
+71,2767,"05 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",5
+72,2768,"05 February 2025",2,"Kaos Kaki Avo","Barang Keluar",8
+73,2518,"05 February 2025",7,"Bola Basket","Barang Keluar",5
+74,2519,"05 February 2025",8,"Jersey Basket","Barang Keluar",8
+75,2618,"06 February 2025",5,Piala,"Barang Keluar",5
+76,2619,"06 February 2025",3,"Jersey Mills","Barang Keluar",7
+77,2163,"06 February 2025",3,"Jersey Mills","Barang Keluar",6
+78,2164,"06 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",6
+79,2186,"06 February 2025",6,"Sepatu Futsal","Barang Keluar",6
+80,2187,"06 February 2025",3,"Jersey Mills","Barang Keluar",5
+81,2188,"06 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",5
+82,1497,"06 February 2025",2,"Kaos Kaki Avo","Barang Keluar",6
+83,1498,"06 February 2025",7,"Bola Basket","Barang Keluar",7
+84,748,"06 February 2025",6,"Sepatu Futsal","Barang Keluar",6
+85,749,"06 February 2025",3,"Jersey Mills","Barang Keluar",7
+86,1275,"06 February 2025",5,Piala,"Barang Keluar",6
+87,1276,"06 February 2025",6,"Sepatu Futsal","Barang Keluar",7
+88,2370,"07 February 2025",6,"Sepatu Futsal","Barang Keluar",7
+89,2371,"07 February 2025",3,"Jersey Mills","Barang Keluar",5
+90,2372,"07 February 2025",5,Piala,"Barang Keluar",8
+91,2691,"07 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",5
+92,2692,"07 February 2025",5,Piala,"Barang Keluar",6
+93,2693,"07 February 2025",3,"Jersey Mills","Barang Keluar",7
+94,670,"07 February 2025",3,"Jersey Mills","Barang Keluar",5
+95,671,"07 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",6
+96,1900,"08 February 2025",3,"Jersey Mills","Barang Keluar",6
+97,1901,"08 February 2025",6,"Sepatu Futsal","Barang Keluar",7
+98,2275,"08 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",7
+99,2276,"08 February 2025",3,"Jersey Mills","Barang Keluar",8
+100,2277,"08 February 2025",6,"Sepatu Futsal","Barang Keluar",8
+101,2278,"08 February 2025",8,"Jersey Basket","Barang Keluar",8
+102,97,"09 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",5
+103,98,"09 February 2025",7,"Bola Basket","Barang Keluar",7
+104,99,"09 February 2025",8,"Jersey Basket","Barang Keluar",7
+105,100,"09 February 2025",3,"Jersey Mills","Barang Keluar",7
+106,1146,"09 February 2025",2,"Kaos Kaki Avo","Barang Keluar",5
+107,1147,"09 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",6
+108,1148,"09 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
+109,1149,"09 February 2025",8,"Jersey Basket","Barang Keluar",7
+110,1964,"09 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",6
+111,1965,"09 February 2025",5,Piala,"Barang Keluar",6
+112,1966,"09 February 2025",7,"Bola Basket","Barang Keluar",5
+113,1967,"09 February 2025",2,"Kaos Kaki Avo","Barang Keluar",8
+114,1490,"09 February 2025",3,"Jersey Mills","Barang Keluar",7
+115,1491,"09 February 2025",6,"Sepatu Futsal","Barang Keluar",7
+116,1492,"09 February 2025",7,"Bola Basket","Barang Keluar",8
+117,1766,"09 February 2025",2,"Kaos Kaki Avo","Barang Keluar",5
+118,1767,"09 February 2025",7,"Bola Basket","Barang Keluar",6
+119,1768,"09 February 2025",6,"Sepatu Futsal","Barang Keluar",7
+120,1769,"09 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",6
+121,11,"10 February 2025",3,"Jersey Mills","Barang Keluar",6
+122,12,"10 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
+123,13,"10 February 2025",8,"Jersey Basket","Barang Keluar",5
+124,2851,"10 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",8
+125,2852,"10 February 2025",7,"Bola Basket","Barang Keluar",5
+126,2853,"10 February 2025",3,"Jersey Mills","Barang Keluar",7
+127,829,"10 February 2025",2,"Kaos Kaki Avo","Barang Keluar",6
+128,830,"10 February 2025",3,"Jersey Mills","Barang Keluar",7
+129,616,"10 February 2025",8,"Jersey Basket","Barang Keluar",6
+130,617,"10 February 2025",7,"Bola Basket","Barang Keluar",5
+131,618,"10 February 2025",3,"Jersey Mills","Barang Keluar",6
+132,1644,"10 February 2025",5,Piala,"Barang Keluar",6
+133,1645,"10 February 2025",7,"Bola Basket","Barang Keluar",6
+134,1646,"10 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",6
+135,1647,"10 February 2025",6,"Sepatu Futsal","Barang Keluar",8
+136,647,"10 February 2025",5,Piala,"Barang Keluar",6
+137,648,"10 February 2025",8,"Jersey Basket","Barang Keluar",6
+138,2184,"10 February 2025",3,"Jersey Mills","Barang Keluar",6
+139,2185,"10 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
+140,178,"10 February 2025",8,"Jersey Basket","Barang Keluar",5
+141,179,"10 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
+142,180,"10 February 2025",5,Piala,"Barang Keluar",5
+143,449,"10 February 2025",5,Piala,"Barang Keluar",8
+144,450,"10 February 2025",2,"Kaos Kaki Avo","Barang Keluar",5
+145,451,"10 February 2025",8,"Jersey Basket","Barang Keluar",5
+146,452,"10 February 2025",7,"Bola Basket","Barang Keluar",8
+147,2491,"11 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",6
+148,2492,"11 February 2025",2,"Kaos Kaki Avo","Barang Keluar",5
+149,2493,"11 February 2025",8,"Jersey Basket","Barang Keluar",6
+150,2494,"11 February 2025",3,"Jersey Mills","Barang Keluar",8
+151,2018,"11 February 2025",6,"Sepatu Futsal","Barang Keluar",5
+152,2019,"11 February 2025",3,"Jersey Mills","Barang Keluar",7
+153,2020,"11 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",8
+154,2021,"11 February 2025",5,Piala,"Barang Keluar",6
+155,2281,"11 February 2025",2,"Kaos Kaki Avo","Barang Keluar",5
+156,2282,"11 February 2025",7,"Bola Basket","Barang Keluar",5
+157,2283,"11 February 2025",5,Piala,"Barang Keluar",7
+158,2049,"12 February 2025",7,"Bola Basket","Barang Keluar",7
+159,2050,"12 February 2025",8,"Jersey Basket","Barang Keluar",7
+160,522,"12 February 2025",2,"Kaos Kaki Avo","Barang Keluar",6
+161,523,"12 February 2025",8,"Jersey Basket","Barang Keluar",8
+162,524,"12 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",5
+163,525,"12 February 2025",7,"Bola Basket","Barang Keluar",7
+164,2864,"12 February 2025",3,"Jersey Mills","Barang Keluar",8
+165,2865,"12 February 2025",5,Piala,"Barang Keluar",7
+166,2866,"12 February 2025",6,"Sepatu Futsal","Barang Keluar",5
+167,588,"12 February 2025",2,"Kaos Kaki Avo","Barang Keluar",6
+168,589,"12 February 2025",8,"Jersey Basket","Barang Keluar",6
+169,590,"12 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",8
+170,591,"12 February 2025",6,"Sepatu Futsal","Barang Keluar",7
+171,2410,"12 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",8
+172,2411,"12 February 2025",5,Piala,"Barang Keluar",8
+173,2412,"12 February 2025",3,"Jersey Mills","Barang Keluar",6
+174,2413,"12 February 2025",8,"Jersey Basket","Barang Keluar",5
+175,1473,"12 February 2025",7,"Bola Basket","Barang Keluar",5
+176,1474,"12 February 2025",8,"Jersey Basket","Barang Keluar",8
+177,1475,"12 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",6
+178,2043,"12 February 2025",7,"Bola Basket","Barang Keluar",5
+179,2044,"12 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
+180,1610,"13 February 2025",6,"Sepatu Futsal","Barang Keluar",7
+181,1611,"13 February 2025",3,"Jersey Mills","Barang Keluar",8
+182,2150,"13 February 2025",2,"Kaos Kaki Avo","Barang Keluar",5
+183,2151,"13 February 2025",7,"Bola Basket","Barang Keluar",8
+184,2152,"13 February 2025",8,"Jersey Basket","Barang Keluar",8
+185,2153,"13 February 2025",6,"Sepatu Futsal","Barang Keluar",8
+186,1213,"13 February 2025",3,"Jersey Mills","Barang Keluar",7
+187,1214,"13 February 2025",7,"Bola Basket","Barang Keluar",5
+188,1215,"13 February 2025",2,"Kaos Kaki Avo","Barang Keluar",6
+189,2797,"13 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",6
+190,2798,"13 February 2025",2,"Kaos Kaki Avo","Barang Keluar",8
+191,1,"14 February 2025",7,"Bola Basket","Barang Keluar",5
+192,2,"14 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",7
+193,3,"14 February 2025",3,"Jersey Mills","Barang Keluar",5
+194,4,"14 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",6
+195,2882,"14 February 2025",3,"Jersey Mills","Barang Keluar",8
+196,2883,"14 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",8
+197,2884,"14 February 2025",6,"Sepatu Futsal","Barang Keluar",8
+198,2885,"14 February 2025",8,"Jersey Basket","Barang Keluar",6
+199,1112,"14 February 2025",3,"Jersey Mills","Barang Keluar",7
+200,1113,"14 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
+201,1114,"14 February 2025",6,"Sepatu Futsal","Barang Keluar",6
+202,679,"14 February 2025",6,"Sepatu Futsal","Barang Keluar",6
+203,680,"14 February 2025",2,"Kaos Kaki Avo","Barang Keluar",6
+204,2022,"14 February 2025",2,"Kaos Kaki Avo","Barang Keluar",8
+205,2023,"14 February 2025",7,"Bola Basket","Barang Keluar",8
+206,754,"14 February 2025",3,"Jersey Mills","Barang Keluar",8
+207,755,"14 February 2025",6,"Sepatu Futsal","Barang Keluar",7
+208,526,"15 February 2025",8,"Jersey Basket","Barang Keluar",8
+209,527,"15 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",8
+210,528,"15 February 2025",2,"Kaos Kaki Avo","Barang Keluar",6
+211,28,"15 February 2025",6,"Sepatu Futsal","Barang Keluar",5
+212,29,"15 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",6
+213,1855,"15 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",8
+214,1856,"15 February 2025",3,"Jersey Mills","Barang Keluar",7
+215,1857,"15 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
+216,429,"15 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",7
+217,430,"15 February 2025",3,"Jersey Mills","Barang Keluar",7
+218,1776,"15 February 2025",2,"Kaos Kaki Avo","Barang Keluar",5
+219,1777,"15 February 2025",7,"Bola Basket","Barang Keluar",8
+220,1778,"15 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",6
+221,282,"16 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",8
+222,283,"16 February 2025",2,"Kaos Kaki Avo","Barang Keluar",5
+223,284,"16 February 2025",7,"Bola Basket","Barang Keluar",7
+224,285,"16 February 2025",3,"Jersey Mills","Barang Keluar",5
+225,856,"16 February 2025",5,Piala,"Barang Keluar",6
+226,857,"16 February 2025",2,"Kaos Kaki Avo","Barang Keluar",8
+227,1158,"16 February 2025",2,"Kaos Kaki Avo","Barang Keluar",8
+228,1159,"16 February 2025",6,"Sepatu Futsal","Barang Keluar",7
+229,688,"16 February 2025",5,Piala,"Barang Keluar",5
+230,689,"16 February 2025",2,"Kaos Kaki Avo","Barang Keluar",8
+231,2993,"16 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",8
+232,2994,"16 February 2025",8,"Jersey Basket","Barang Keluar",5
+233,453,"17 February 2025",5,Piala,"Barang Keluar",7
+234,454,"17 February 2025",2,"Kaos Kaki Avo","Barang Keluar",8
+235,2509,"17 February 2025",6,"Sepatu Futsal","Barang Keluar",6
+236,2510,"17 February 2025",3,"Jersey Mills","Barang Keluar",7
+237,2762,"18 February 2025",5,Piala,"Barang Keluar",6
+238,2763,"18 February 2025",6,"Sepatu Futsal","Barang Keluar",5
+239,2764,"18 February 2025",8,"Jersey Basket","Barang Keluar",7
+240,1328,"19 February 2025",7,"Bola Basket","Barang Keluar",7
+241,1329,"19 February 2025",8,"Jersey Basket","Barang Keluar",5
+242,1330,"19 February 2025",6,"Sepatu Futsal","Barang Keluar",6
+243,150,"19 February 2025",3,"Jersey Mills","Barang Keluar",7
+244,151,"19 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",8
+245,1974,"19 February 2025",2,"Kaos Kaki Avo","Barang Keluar",8
+246,1975,"19 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",8
+247,1976,"19 February 2025",5,Piala,"Barang Keluar",6
+248,1977,"19 February 2025",3,"Jersey Mills","Barang Keluar",8
+249,3012,"19 February 2025",3,"Jersey Mills","Barang Keluar",7
+250,3013,"19 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",5
+251,1537,"20 February 2025",6,"Sepatu Futsal","Barang Keluar",8
+252,1538,"20 February 2025",8,"Jersey Basket","Barang Keluar",7
+253,1539,"20 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",5
+254,1540,"20 February 2025",5,Piala,"Barang Keluar",5
+255,2060,"20 February 2025",5,Piala,"Barang Keluar",7
+256,2061,"20 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",8
+257,2062,"20 February 2025",8,"Jersey Basket","Barang Keluar",8
+258,1068,"20 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",6
+259,1069,"20 February 2025",5,Piala,"Barang Keluar",7
+260,1070,"20 February 2025",7,"Bola Basket","Barang Keluar",6
+261,1071,"20 February 2025",2,"Kaos Kaki Avo","Barang Keluar",8
+262,2873,"20 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",5
+263,2874,"20 February 2025",8,"Jersey Basket","Barang Keluar",6
+264,2375,"20 February 2025",3,"Jersey Mills","Barang Keluar",7
+265,2376,"20 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",6
+266,2377,"20 February 2025",8,"Jersey Basket","Barang Keluar",8
+267,2378,"20 February 2025",7,"Bola Basket","Barang Keluar",6
+268,1360,"20 February 2025",8,"Jersey Basket","Barang Keluar",5
+269,1361,"20 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",5
+270,1362,"20 February 2025",5,Piala,"Barang Keluar",7
+271,1363,"20 February 2025",7,"Bola Basket","Barang Keluar",8
+272,1130,"20 February 2025",7,"Bola Basket","Barang Keluar",7
+273,1131,"20 February 2025",3,"Jersey Mills","Barang Keluar",6
+274,1132,"20 February 2025",8,"Jersey Basket","Barang Keluar",6
+275,1133,"20 February 2025",6,"Sepatu Futsal","Barang Keluar",6
+276,931,"20 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",8
+277,932,"20 February 2025",8,"Jersey Basket","Barang Keluar",6
+278,933,"20 February 2025",3,"Jersey Mills","Barang Keluar",5
+279,1216,"20 February 2025",3,"Jersey Mills","Barang Keluar",8
+280,1217,"20 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
+281,1218,"20 February 2025",2,"Kaos Kaki Avo","Barang Keluar",5
+282,2590,"21 February 2025",7,"Bola Basket","Barang Keluar",5
+283,2591,"21 February 2025",8,"Jersey Basket","Barang Keluar",7
+284,2592,"21 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",7
+285,2593,"21 February 2025",5,Piala,"Barang Keluar",6
+286,1832,"21 February 2025",3,"Jersey Mills","Barang Keluar",6
+287,1833,"21 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",8
+288,1834,"21 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",5
+289,1835,"21 February 2025",5,Piala,"Barang Keluar",7
+290,1629,"21 February 2025",6,"Sepatu Futsal","Barang Keluar",8
+291,1630,"21 February 2025",3,"Jersey Mills","Barang Keluar",6
+292,1631,"21 February 2025",2,"Kaos Kaki Avo","Barang Keluar",7
+293,1632,"21 February 2025",7,"Bola Basket","Barang Keluar",8
+294,2147,"21 February 2025",6,"Sepatu Futsal","Barang Keluar",8
+295,2148,"21 February 2025",3,"Jersey Mills","Barang Keluar",8
+296,2149,"21 February 2025",8,"Jersey Basket","Barang Keluar",8
+297,221,"21 February 2025",7,"Bola Basket","Barang Keluar",7
+298,222,"21 February 2025",8,"Jersey Basket","Barang Keluar",5
+299,1758,"21 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",8
+300,223,"21 February 2025",3,"Jersey Mills","Barang Keluar",7
+301,1759,"21 February 2025",3,"Jersey Mills","Barang Keluar",7
+302,224,"21 February 2025",5,Piala,"Barang Keluar",5
+303,1760,"21 February 2025",7,"Bola Basket","Barang Keluar",6
+304,1761,"21 February 2025",8,"Jersey Basket","Barang Keluar",5
+305,79,"22 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
+306,80,"22 February 2025",6,"Sepatu Futsal","Barang Keluar",6
+307,81,"22 February 2025",7,"Bola Basket","Barang Keluar",8
+308,1187,"22 February 2025",3,"Jersey Mills","Barang Keluar",8
+309,1188,"22 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
+310,1192,"22 February 2025",3,"Jersey Mills","Barang Keluar",7
+311,1193,"22 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
+312,1194,"22 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",5
+313,958,"22 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",6
+314,959,"22 February 2025",2,"Kaos Kaki Avo","Barang Keluar",5
+315,1024,"23 February 2025",3,"Jersey Mills","Barang Keluar",6
+316,267,"23 February 2025",6,"Sepatu Futsal","Barang Keluar",5
+317,268,"23 February 2025",2,"Kaos Kaki Avo","Barang Keluar",5
+318,269,"23 February 2025",3,"Jersey Mills","Barang Keluar",5
+319,1051,"23 February 2025",3,"Jersey Mills","Barang Keluar",5
+320,1052,"23 February 2025",6,"Sepatu Futsal","Barang Keluar",8
+321,2110,"23 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",6
+322,2111,"23 February 2025",3,"Jersey Mills","Barang Keluar",8
+323,2112,"23 February 2025",6,"Sepatu Futsal","Barang Keluar",7
+324,2113,"23 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",8
+325,584,"23 February 2025",3,"Jersey Mills","Barang Keluar",7
+326,585,"23 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",8
+327,586,"23 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",6
+328,587,"23 February 2025",5,Piala,"Barang Keluar",7
+329,892,"23 February 2025",3,"Jersey Mills","Barang Keluar",6
+330,893,"23 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
+331,2971,"23 February 2025",5,Piala,"Barang Keluar",6
+332,2972,"23 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",5
+333,2973,"23 February 2025",7,"Bola Basket","Barang Keluar",5
+334,934,"23 February 2025",6,"Sepatu Futsal","Barang Keluar",5
+335,935,"23 February 2025",3,"Jersey Mills","Barang Keluar",7
+336,168,"23 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",6
+337,169,"23 February 2025",3,"Jersey Mills","Barang Keluar",6
+338,170,"23 February 2025",7,"Bola Basket","Barang Keluar",6
+339,171,"23 February 2025",5,Piala,"Barang Keluar",8
+340,2475,"23 February 2025",2,"Kaos Kaki Avo","Barang Keluar",6
+341,2476,"23 February 2025",5,Piala,"Barang Keluar",8
+342,2477,"23 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",5
+343,1022,"23 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",5
+344,1023,"23 February 2025",7,"Bola Basket","Barang Keluar",8
+345,1344,"24 February 2025",7,"Bola Basket","Barang Keluar",8
+346,1345,"24 February 2025",8,"Jersey Basket","Barang Keluar",7
+347,1346,"24 February 2025",2,"Kaos Kaki Avo","Barang Keluar",7
+348,1256,"24 February 2025",7,"Bola Basket","Barang Keluar",7
+349,1257,"24 February 2025",8,"Jersey Basket","Barang Keluar",8
+350,1258,"24 February 2025",6,"Sepatu Futsal","Barang Keluar",7
+351,1259,"24 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",6
+352,1390,"25 February 2025",6,"Sepatu Futsal","Barang Keluar",5
+353,1391,"25 February 2025",7,"Bola Basket","Barang Keluar",7
+354,1392,"25 February 2025",5,Piala,"Barang Keluar",6
+355,1488,"25 February 2025",6,"Sepatu Futsal","Barang Keluar",6
+356,1489,"25 February 2025",3,"Jersey Mills","Barang Keluar",6
+357,1541,"26 February 2025",2,"Kaos Kaki Avo","Barang Keluar",7
+358,1542,"26 February 2025",7,"Bola Basket","Barang Keluar",6
+359,786,"26 February 2025",3,"Jersey Mills","Barang Keluar",7
+360,787,"26 February 2025",7,"Bola Basket","Barang Keluar",6
+361,788,"26 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",8
+362,789,"26 February 2025",6,"Sepatu Futsal","Barang Keluar",7
+363,568,"26 February 2025",7,"Bola Basket","Barang Keluar",5
+364,569,"26 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
+365,1512,"26 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
+366,1513,"26 February 2025",2,"Kaos Kaki Avo","Barang Keluar",5
+367,1514,"26 February 2025",8,"Jersey Basket","Barang Keluar",6
+368,1530,"26 February 2025",6,"Sepatu Futsal","Barang Keluar",8
+369,1531,"26 February 2025",2,"Kaos Kaki Avo","Barang Keluar",6
+370,1532,"26 February 2025",5,Piala,"Barang Keluar",5
+371,2844,"27 February 2025",6,"Sepatu Futsal","Barang Keluar",8
+372,2845,"27 February 2025",3,"Jersey Mills","Barang Keluar",6
+373,2846,"27 February 2025",8,"Jersey Basket","Barang Keluar",6
+374,2847,"27 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",5
+375,1600,"27 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
+376,1601,"27 February 2025",3,"Jersey Mills","Barang Keluar",6
+377,655,"27 February 2025",6,"Sepatu Futsal","Barang Keluar",8
+378,656,"27 February 2025",3,"Jersey Mills","Barang Keluar",6
+379,2961,"27 February 2025",3,"Jersey Mills","Barang Keluar",7
+380,2962,"27 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
+381,2963,"27 February 2025",6,"Sepatu Futsal","Barang Keluar",7
+382,2964,"27 February 2025",8,"Jersey Basket","Barang Keluar",5
+383,207,"27 February 2025",3,"Jersey Mills","Barang Keluar",8
+384,208,"27 February 2025",2,"Kaos Kaki Avo","Barang Keluar",5
+385,209,"27 February 2025",6,"Sepatu Futsal","Barang Keluar",7
+386,502,"27 February 2025",3,"Jersey Mills","Barang Keluar",7
+387,503,"27 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",6
+388,504,"27 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
+389,555,"28 February 2025",6,"Sepatu Futsal","Barang Keluar",5
+390,556,"28 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",6
+391,1840,"28 February 2025",7,"Bola Basket","Barang Keluar",7
+392,1841,"28 February 2025",2,"Kaos Kaki Avo","Barang Keluar",6
+393,1842,"28 February 2025",5,Piala,"Barang Keluar",6
+394,2613,"28 February 2025",3,"Jersey Mills","Barang Keluar",8
+395,2614,"28 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",5
+396,2615,"28 February 2025",7,"Bola Basket","Barang Keluar",7
+397,2651,"28 February 2025",3,"Jersey Mills","Barang Keluar",6
+398,2652,"28 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
+399,1705,"28 February 2025",7,"Bola Basket","Barang Keluar",7
+400,1706,"28 February 2025",8,"Jersey Basket","Barang Keluar",8
+401,1707,"28 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
+402,1708,"28 February 2025",3,"Jersey Mills","Barang Keluar",5
+403,2478,"28 February 2025",5,Piala,"Barang Keluar",8
+404,2479,"28 February 2025",4,"Tali Sepatu Kipzkapz","Barang Keluar",7
+405,2480,"28 February 2025",1,"Sepatu Bola Ortus","Barang Keluar",7
+406,2795,"28 February 2025",8,"Jersey Basket","Barang Keluar",5
+407,2796,"28 February 2025",6,"Sepatu Futsal","Barang Keluar",6
