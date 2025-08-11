@@ -3,8 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class StoreIncomingItemRequest extends FormRequest
+class UpdateIncomingItemRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,8 +22,15 @@ class StoreIncomingItemRequest extends FormRequest
      */
     public function rules(): array
     {
+        $incomingItem = $this->route('incoming_item');
+
         return [
-            'transaction_id' => 'required|string|max:255|unique:incoming_items,transaction_id',
+            'transaction_id' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('incoming_items', 'transaction_id')->ignore($incomingItem->id)
+            ],
             'incoming_date' => 'required|date',
             'item_id' => 'required|exists:items,id',
             'quantity' => 'required|integer|min:1',

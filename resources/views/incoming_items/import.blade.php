@@ -1,16 +1,16 @@
 @extends('layouts.app')
 
-@section('title', 'Import Barang Keluar')
+@section('title', 'Import Barang Masuk')
 
 @section('content')
 <!-- Header Section -->
 <div class="mb-6">
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900">Import Barang Keluar</h1>
-            <p class="text-gray-600 mt-1">Upload file Excel atau CSV untuk menambah data barang keluar</p>
+            <h1 class="text-2xl font-bold text-gray-900">Import Barang Masuk</h1>
+            <p class="text-gray-600 mt-1">Upload file Excel atau CSV untuk menambah data barang masuk</p>
         </div>
-        <a href="{{ route('outgoing_items.index') }}"
+        <a href="{{ route('incoming_items.index') }}"
             class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium transition-colors">
             Kembali
         </a>
@@ -28,7 +28,7 @@
             <li>• Pastikan format kolom sesuai dengan template</li>
             <li>• ID Transaksi wajib diisi untuk setiap baris</li>
             <li>• Nama barang harus sudah ada dalam sistem</li>
-            <li>• Stok barang harus mencukupi untuk jumlah yang akan dikeluarkan</li>
+            <li>• Stok akan otomatis bertambah setelah import</li>
             <li>• Data akan langsung diimport setelah upload</li>
         </ul>
     </div>
@@ -37,7 +37,7 @@
     <div class="mb-6 p-4 bg-gray-50 rounded-lg">
         <h3 class="text-lg font-medium text-gray-900 mb-2">Template File</h3>
         <p class="text-sm text-gray-600 mb-4">Download template untuk memastikan format data yang benar:</p>
-        <a href="{{ route('outgoing_items.template') }}"
+        <a href="{{ route('incoming_items.template') }}"
             class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -48,7 +48,7 @@
     </div>
 
     <!-- Upload Form -->
-    <form id="import-form" action="{{ route('outgoing_items.import') }}" method="POST" enctype="multipart/form-data">
+    <form id="import-form" action="{{ route('incoming_items.import') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         <div class="mb-6">
@@ -104,17 +104,6 @@
                             </div>
                             @endif
 
-                            @if(isset(session('import_errors')['stock']))
-                            <div class="mb-3">
-                                <h4 class="font-medium text-red-800">Masalah Stok:</h4>
-                                <ul class="mt-1 list-disc list-inside">
-                                    @foreach(session('import_errors')['stock'] as $error)
-                                    <li>Baris {{ $error['row'] }}: {{ $error['error'] }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                            @endif
-
                             @if(isset(session('import_errors')['validation']))
                             <div class="mb-3">
                                 <h4 class="font-medium text-red-800">Error Validasi:</h4>
@@ -132,9 +121,6 @@
                                     <strong>Tips:</strong>
                                     @if(isset(session('import_errors')['not_found']))
                                     Pastikan nama barang sudah terdaftar di master data.
-                                    @endif
-                                    @if(isset(session('import_errors')['stock']))
-                                    Periksa stok tersedia sebelum import.
                                     @endif
                                     Download template untuk format yang benar.
                                 </p>
@@ -190,7 +176,7 @@
         </div>
 
         <div class="flex justify-end space-x-3">
-            <a href="{{ route('outgoing_items.index') }}"
+            <a href="{{ route('incoming_items.index') }}"
                 class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors">
                 Batal
             </a>
@@ -219,24 +205,27 @@
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Nama Barang</th>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Kategori</th>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Jumlah</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Harga Satuan</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
                 <tr>
                     <td class="px-4 py-2 text-sm">1</td>
-                    <td class="px-4 py-2 text-sm">TRX20250803001</td>
-                    <td class="px-4 py-2 text-sm">03/08/2025</td>
+                    <td class="px-4 py-2 text-sm">TRX20250810001</td>
+                    <td class="px-4 py-2 text-sm">10/08/2025</td>
                     <td class="px-4 py-2 text-sm">Barang A</td>
                     <td class="px-4 py-2 text-sm">Kategori A</td>
-                    <td class="px-4 py-2 text-sm">2</td>
+                    <td class="px-4 py-2 text-sm">50</td>
+                    <td class="px-4 py-2 text-sm">15000</td>
                 </tr>
                 <tr>
                     <td class="px-4 py-2 text-sm">2</td>
-                    <td class="px-4 py-2 text-sm">TRX20250803002</td>
-                    <td class="px-4 py-2 text-sm">03/08/2025</td>
+                    <td class="px-4 py-2 text-sm">TRX20250810002</td>
+                    <td class="px-4 py-2 text-sm">10/08/2025</td>
                     <td class="px-4 py-2 text-sm">Barang B</td>
                     <td class="px-4 py-2 text-sm">Kategori B</td>
-                    <td class="px-4 py-2 text-sm">1</td>
+                    <td class="px-4 py-2 text-sm">25</td>
+                    <td class="px-4 py-2 text-sm">8000</td>
                 </tr>
             </tbody>
         </table>
@@ -395,7 +384,7 @@ function displayPreview(data) {
         const headers = previewData[0] || [];
         headerMapping = getHeaderMapping(headers);
         // Expected headers in order - these should match exactly
-        const expectedHeaders = ["NO","ID TRANSAKSI", "TANGGAL TRANSAKSI", "NAMA BARANG", "KATEGORI", "JUMLAH"];
+        const expectedHeaders = ["NO","ID TRANSAKSI", "TANGGAL TRANSAKSI", "NAMA BARANG", "KATEGORI", "JUMLAH", "HARGA SATUAN"];
 
         headers.forEach((header, index) => {
             const headerStr = header ? String(header).trim() : '';
@@ -485,7 +474,7 @@ function displayPreview(data) {
 }
 
 function getHeaderMapping(headers) {
-    const expectedHeaders = ["NO","ID TRANSAKSI", "TANGGAL TRANSAKSI", "NAMA BARANG", "KATEGORI", "JUMLAH"];
+    const expectedHeaders = ["NO","ID TRANSAKSI", "TANGGAL TRANSAKSI", "NAMA BARANG", "KATEGORI", "JUMLAH", "HARGA SATUAN"];
     const mapping = {};
 
     expectedHeaders.forEach(expected => {
@@ -731,19 +720,11 @@ function showImportError(errors, errorCount) {
 
     let errorHTML = `<p class="font-medium mb-2">Ditemukan ${errorCount} kesalahan:</p>`;
 
-        if (errors.not_found && errors.not_found.length > 0) {
-            errorHTML += '<div class="mb-3">';
-            errorHTML += '<h4 class="font-medium text-red-800">Nama Barang Tidak Ditemukan:</h4>';
-            errorHTML += '<ul class="mt-1 list-disc list-inside text-sm">';
-            errors.not_found.forEach(error => {
-                errorHTML += `<li>Baris ${error.row}: ${error.error}</li>`;
-            });
-            errorHTML += '</ul></div>';
-        }    if (errors.stock && errors.stock.length > 0) {
+    if (errors.not_found && errors.not_found.length > 0) {
         errorHTML += '<div class="mb-3">';
-        errorHTML += '<h4 class="font-medium text-red-800">Stok Tidak Mencukupi:</h4>';
+        errorHTML += '<h4 class="font-medium text-red-800">Nama Barang Tidak Ditemukan:</h4>';
         errorHTML += '<ul class="mt-1 list-disc list-inside text-sm">';
-        errors.stock.forEach(error => {
+        errors.not_found.forEach(error => {
             errorHTML += `<li>Baris ${error.row}: ${error.error}</li>`;
         });
         errorHTML += '</ul></div>';
@@ -768,9 +749,6 @@ function showImportError(errors, errorCount) {
     errorHTML += '<strong>Tips:</strong> ';
     if (errors.not_found && errors.not_found.length > 0) {
         errorHTML += 'Pastikan nama barang sudah terdaftar di master data. ';
-    }
-    if (errors.stock && errors.stock.length > 0) {
-        errorHTML += 'Periksa stok tersedia sebelum import. ';
     }
     errorHTML += 'Download template untuk format yang benar.';
     errorHTML += '</p></div>';

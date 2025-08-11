@@ -67,15 +67,6 @@
                                 {{ number_format($item->stock) }}
                             </div>
                             <div class="text-sm text-gray-600 mt-1">Current Stock</div>
-                            @if($item->stock <= $item->minimum_stock)
-                                <div class="text-xs mt-1">⚠️ Stock Rendah</div>
-                                @endif
-                        </div>
-
-                        <div class="bg-white border border-gray-300 rounded-lg p-4 text-center">
-                            <div class="text-3xl font-bold">{{ number_format($item->minimum_stock) }}
-                            </div>
-                            <div class="text-sm text-gray-600 mt-1">Minimum Stock</div>
                         </div>
 
                         <div class="bg-white border border-gray-300 rounded-lg p-4 text-center">

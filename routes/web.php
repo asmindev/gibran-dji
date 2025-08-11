@@ -21,6 +21,8 @@ Route::resource('items', ItemController::class);
 // Incoming Items
 Route::get('incoming_items/export', [IncomingItemController::class, 'export'])->name('incoming_items.export');
 Route::get('incoming_items/template', [IncomingItemController::class, 'template'])->name('incoming_items.template');
+Route::get('incoming_items/import', [IncomingItemController::class, 'importForm'])->name('incoming_items.import.form');
+Route::post('incoming_items/import', [IncomingItemController::class, 'import'])->name('incoming_items.import');
 Route::resource('incoming_items', IncomingItemController::class);
 
 // Outgoing Items

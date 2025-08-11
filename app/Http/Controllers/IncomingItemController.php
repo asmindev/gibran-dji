@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Item;
 use App\Models\IncomingItem;
 use App\Http\Requests\StoreIncomingItemRequest;
+use App\Http\Requests\UpdateIncomingItemRequest;
 use App\Exports\IncomingItemsExport;
+use App\Exports\IncomingItemsTemplateExport;
+use App\Imports\IncomingItemsImport;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -97,10 +100,19 @@ class IncomingItemController extends Controller
      */
     public function store(StoreIncomingItemRequest $request)
     {
-        IncomingItem::create($request->validated());
 
-        return redirect()->route('incoming_items.index')
-            ->with('success', 'Incoming item recorded successfully.');
+        // add item stock increment logic here
+        $item = Item::find($request->item_id);
+        if ($item) {
+            IncomingItem::create($request->validated());
+            $item->increment('stock', $request->quantity);
+            return redirect()->route('incoming_items.index')
+                ->with('success', 'Incoming item recorded successfully.');
+        } else {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Item not found. Stock increment failed.');
+        }
     }
 
     /**
@@ -124,7 +136,7 @@ class IncomingItemController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(StoreIncomingItemRequest $request, IncomingItem $incomingItem)
+    public function update(UpdateIncomingItemRequest $request, IncomingItem $incomingItem)
     {
         $incomingItem->update($request->validated());
 
@@ -164,9 +176,123 @@ class IncomingItemController extends Controller
     public function template()
     {
         $filename = 'template_barang_masuk.xlsx';
+        return Excel::download(new IncomingItemsTemplateExport(), $filename);
+    }
 
-        // Create a simple template with sample data
-        $export = new IncomingItemsExport(request());
-        return Excel::download($export, $filename);
+    /**
+     * Import incoming items from Excel/CSV
+     */
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,csv|max:10240', // Max 10MB
+        ], [
+            'file.required' => 'File import wajib dipilih.',
+            'file.mimes' => 'File harus berformat Excel (.xlsx) atau CSV (.csv).',
+            'file.max' => 'Ukuran file maksimal 10MB.',
+        ]);
+
+        try {
+            $import = new IncomingItemsImport();
+            Excel::import($import, $request->file('file'));
+
+            // Check for validation errors
+            $validationErrors = $import->getValidationErrors();
+            $hasValidationErrors = !empty($validationErrors);
+
+            if ($hasValidationErrors) {
+                $errorDetails = [];
+                foreach ($validationErrors as $error) {
+                    $errorDetails[] = [
+                        'row' => $error['row'],
+                        'error' => $error['message']
+                    ];
+                }
+
+                if ($request->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'errors' => ['validation' => $errorDetails],
+                        'error_count' => count($errorDetails)
+                    ]);
+                }
+
+                return redirect()->back()
+                    ->withInput()
+                    ->with('import_errors', ['validation' => $errorDetails])
+                    ->with('error_count', count($errorDetails));
+            }
+
+            if ($request->ajax()) {
+                // Set flash session for success message
+                session()->flash('success', 'Data barang masuk berhasil diimport.');
+
+                return response()->json([
+                    'success' => true,
+                    'redirect_url' => route('incoming_items.index')
+                ]);
+            }
+
+            return redirect()->route('incoming_items.index')
+                ->with('success', 'Data barang masuk berhasil diimport.');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+            $errorDetails = [];
+
+            foreach ($failures as $failure) {
+                $row = $failure->row();
+                $errors = $failure->errors();
+
+                foreach ($errors as $error) {
+                    $errorDetails[] = [
+                        'row' => $row,
+                        'error' => $error
+                    ];
+                }
+            }
+
+            // Group errors by type for better display
+            $groupedErrors = [];
+            foreach ($errorDetails as $detail) {
+                if (strpos($detail['error'], 'tidak ditemukan') !== false) {
+                    $groupedErrors['not_found'][] = $detail;
+                } else {
+                    $groupedErrors['validation'][] = $detail;
+                }
+            }
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $groupedErrors,
+                    'error_count' => count($errorDetails)
+                ]);
+            }
+
+            return redirect()->back()
+                ->withInput()
+                ->with('import_errors', $groupedErrors)
+                ->with('error_count', count($errorDetails));
+        } catch (\Exception $e) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => ['general' => 'Import gagal: ' . $e->getMessage()],
+                    'error_count' => 1
+                ]);
+            }
+
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Import gagal: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Show import form
+     */
+    public function importForm()
+    {
+        return view('incoming_items.import');
     }
 }

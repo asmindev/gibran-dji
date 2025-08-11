@@ -58,9 +58,9 @@
                     </div>
 
                     <div class="p-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="">
                             <!-- Item Code -->
-                            <div class="space-y-2">
+                            {{-- <div class="space-y-2">
                                 <label for="item_code" class="block text-sm font-semibold text-gray-700">
                                     Kode Item <span class="text-red-500">*</span>
                                 </label>
@@ -87,7 +87,7 @@
                                     {{ $message }}
                                 </p>
                                 @enderror
-                            </div>
+                            </div> --}}
 
                             <!-- Category -->
                             <div class="space-y-2">
@@ -300,7 +300,7 @@
                             </div>
 
                             <!-- Minimum Stock -->
-                            <div class="space-y-2">
+                            {{-- <div class="space-y-2">
                                 <label for="minimum_stock" class="block text-sm font-semibold text-gray-700">
                                     Stok Minimum <span class="text-red-500">*</span>
                                 </label>
@@ -322,10 +322,10 @@
                                     {{ $message }}
                                 </p>
                                 @enderror
-                            </div>
+                            </div> --}}
 
                             <!-- Purchase Price -->
-                            <div class="space-y-2">
+                            {{-- <div class="space-y-2">
                                 <label for="purchase_price" class="block text-sm font-semibold text-gray-700">
                                     Harga Beli <span class="text-red-500">*</span>
                                 </label>
@@ -349,7 +349,7 @@
                                     {{ $message }}
                                 </p>
                                 @enderror
-                            </div>
+                            </div> --}}
 
                             <!-- Selling Price -->
                             <div class="space-y-2">

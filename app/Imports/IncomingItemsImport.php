@@ -3,11 +3,10 @@
 namespace App\Imports;
 
 use App\Models\Item;
-use App\Models\OutgoingItem;
+use App\Models\IncomingItem;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
-use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
@@ -18,17 +17,16 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 
-class OutgoingItemsImport implements
+class IncomingItemsImport implements
     ToModel,
     WithHeadingRow,
     WithValidation,
-    WithBatchInserts,
     WithChunkReading,
     WithMapping
 {
     use Importable;
 
-    private $stockValidationErrors = [];
+    private $validationErrors = [];
     private $processedRows = 0;
 
     /**
@@ -40,7 +38,7 @@ class OutgoingItemsImport implements
     {
         $this->processedRows++;
 
-        // Find item by name since we're no longer using item_code
+        // Find item by name
         $item = Item::where('item_name', $row['nama_barang'])->first();
 
         if (!$item) {
@@ -49,28 +47,33 @@ class OutgoingItemsImport implements
         }
 
         // Parse date dengan validasi
-        $outgoingDate = $this->parseDate($row['tanggal_transaksi'] ?? null);
+        $incomingDate = $this->parseDate($row['tanggal_transaksi'] ?? null);
 
-        // decrement stock before creating outgoing item
-        $item->decrement('stock', $row['jumlah']);
-
-        $outgoingItem = new OutgoingItem([
-            'transaction_id' => $row['id_transaksi'] ?? null,
+        // Buat incoming item
+        $incomingItem = IncomingItem::create([
+            'transaction_id' => $row['id_transaksi'],
             'item_id' => $item->id,
             'quantity' => $row['jumlah'],
-            'outgoing_date' => $outgoingDate,
-            'notes' => '', // Tidak ada catatan dalam format baru
+            'unit_cost' => $row['harga_satuan'] ?? 0,
+            'incoming_date' => $incomingDate,
+            'notes' => 'Import dari file Excel - ID Transaksi: ' . ($row['id_transaksi'] ?? 'N/A'),
         ]);
 
-        return $outgoingItem;
+        // Manual increment stok untuk memastikan (karena observer mungkin tidak dipanggil dalam import)
+        $item->refresh(); // Refresh item data
+        $item->increment('stock', $row['jumlah']);
+
+        return $incomingItem;
     }
 
     public function rules(): array
     {
         return [
             'id_transaksi' => [
-                'nullable',
-                'max:50'
+                'required',
+                'string',
+                'max:255',
+                'unique:incoming_items,transaction_id'
             ],
             'nama_barang' => [
                 'required',
@@ -87,6 +90,12 @@ class OutgoingItemsImport implements
                 'min:1',
                 'max:999999'
             ],
+            'harga_satuan' => [
+                'nullable',
+                'numeric',
+                'min:0',
+                'max:999999999'
+            ],
             'kategori' => 'nullable|string|max:255',
         ];
     }
@@ -94,7 +103,9 @@ class OutgoingItemsImport implements
     public function customValidationMessages(): array
     {
         return [
-            'id_transaksi.max' => 'ID Transaksi maksimal 50 karakter.',
+            'id_transaksi.required' => 'ID Transaksi wajib diisi.',
+            'id_transaksi.unique' => 'ID Transaksi ":input" sudah ada dalam database.',
+            'id_transaksi.max' => 'ID Transaksi maksimal 255 karakter.',
             'nama_barang.required' => 'Nama barang wajib diisi.',
             'nama_barang.exists' => 'Nama barang ":input" tidak ditemukan dalam database.',
             'nama_barang.max' => 'Nama barang maksimal 255 karakter.',
@@ -103,18 +114,16 @@ class OutgoingItemsImport implements
             'jumlah.numeric' => 'Jumlah harus berupa angka.',
             'jumlah.min' => 'Jumlah minimal 1.',
             'jumlah.max' => 'Jumlah maksimal 999,999.',
+            'harga_satuan.numeric' => 'Harga satuan harus berupa angka.',
+            'harga_satuan.min' => 'Harga satuan minimal 0.',
+            'harga_satuan.max' => 'Harga satuan maksimal 999,999,999.',
             'kategori.max' => 'Kategori maksimal 255 karakter.',
         ];
     }
 
-    public function getStockValidationErrors()
+    public function getValidationErrors()
     {
-        return $this->stockValidationErrors;
-    }
-
-    public function batchSize(): int
-    {
-        return 100; // Process in batches of 100
+        return $this->validationErrors;
     }
 
     public function chunkSize(): int
@@ -247,6 +256,7 @@ class OutgoingItemsImport implements
             'nama barang' => 'nama_barang',
             'kategori' => 'kategori',
             'jumlah' => 'jumlah',
+            'harga satuan' => 'harga_satuan',
         ];
 
         $mappedData = [];

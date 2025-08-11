@@ -71,7 +71,7 @@
                             No
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-50 uppercase tracking-wider">
-                            ID Barang
+                            Stock
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-50 uppercase tracking-wider">
                             Nama Barang
@@ -94,7 +94,7 @@
                             {{ ($items->currentPage() - 1) * $items->perPage() + $index + 1 }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-50">
-                            {{ $item->item_code }}
+                            {{ $item->stock }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-50">
                             {{ $item->item_name }}

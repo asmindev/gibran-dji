@@ -27,81 +27,65 @@ class TransactionDataSeeder extends Seeder
         // 2. Buat 8 Item Olahraga
         $items = [
             [
-                'item_code' => 'SPB-001',
                 'item_name' => 'Sepatu Bola Ortus',
                 'category_id' => $sportsCategory->id,
                 'stock' => 200, // Stock yang lebih besar untuk simulasi
-                'minimum_stock' => 10,
                 'purchase_price' => 180000,
                 'selling_price' => 250000,
                 'description' => 'Sepatu bola berkualitas tinggi merk Ortus'
             ],
             [
-                'item_code' => 'KK-002',
                 'item_name' => 'Kaos Kaki Avo',
                 'category_id' => $sportsCategory->id,
                 'stock' => 200,
-                'minimum_stock' => 20,
                 'purchase_price' => 15000,
                 'selling_price' => 25000,
                 'description' => 'Kaos kaki olahraga merk Avo'
             ],
             [
-                'item_code' => 'JER-003',
                 'item_name' => 'Jersey Mills',
                 'category_id' => $sportsCategory->id,
                 'stock' => 150,
-                'minimum_stock' => 15,
                 'purchase_price' => 80000,
                 'selling_price' => 120000,
                 'description' => 'Jersey olahraga merk Mills'
             ],
             [
-                'item_code' => 'TS-004',
                 'item_name' => 'Tali Sepatu Kipzkapz',
                 'category_id' => $sportsCategory->id,
                 'stock' => 200,
-                'minimum_stock' => 50,
                 'purchase_price' => 8000,
                 'selling_price' => 15000,
                 'description' => 'Tali sepatu berkualitas merk Kipzkapz'
             ],
             [
-                'item_code' => 'PL-005',
                 'item_name' => 'Piala',
                 'category_id' => $sportsCategory->id,
                 'stock' => 150,
-                'minimum_stock' => 5,
                 'purchase_price' => 45000,
                 'selling_price' => 75000,
                 'description' => 'Piala untuk kejuaraan olahraga'
             ],
             [
-                'item_code' => 'SPF-006',
                 'item_name' => 'Sepatu Futsal',
                 'category_id' => $sportsCategory->id,
                 'stock' => 150,
-                'minimum_stock' => 8,
                 'purchase_price' => 150000,
                 'selling_price' => 220000,
                 'description' => 'Sepatu futsal untuk indoor'
             ],
             [
-                'item_code' => 'BB-007',
                 'item_name' => 'Bola Basket',
                 'category_id' => $sportsCategory->id,
                 'stock' => 200,
-                'minimum_stock' => 5,
                 'purchase_price' => 120000,
                 'selling_price' => 180000,
                 'description' => 'Bola basket standar kompetisi'
             ],
             [
-                'item_code' => 'JB-008',
                 'item_name' => 'Jersey Basket',
                 'category_id' => $sportsCategory->id,
                 'stock' => 150,
-                'minimum_stock' => 12,
                 'purchase_price' => 70000,
                 'selling_price' => 110000,
                 'description' => 'Jersey basket untuk latihan dan pertandingan'

@@ -39,8 +39,7 @@
     <div class="bg-white shadow rounded-lg overflow-hidden">
         <div class="px-6 py-4 bg-primary text-white">
             <div class="flex items-center justify-between">
-                <h2 class="text-xl font-semibold">ID Transaksi: #{{ str_pad($incomingItem->id, 6, '0', STR_PAD_LEFT) }}
-                </h2>
+                <h2 class="text-xl font-semibold">{{ $incomingItem->transaction_id }}</h2>
                 <div class="flex space-x-2">
                     <a href="{{ route('incoming_items.edit', $incomingItem) }}"
                         class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
@@ -62,6 +61,11 @@
 
                     <div class="space-y-3">
                         <div>
+                            <label class="block text-sm font-medium text-gray-600">ID Transaksi</label>
+                            <p class="text-gray-900 font-medium">{{ $incomingItem->transaction_id }}</p>
+                        </div>
+
+                        <div>
                             <label class="block text-sm font-medium text-gray-600">Tanggal Masuk</label>
                             <p class="text-gray-900">{{ $incomingItem->incoming_date->format('d F Y') }}</p>
                         </div>
@@ -73,21 +77,27 @@
 
                         <div>
                             <label class="block text-sm font-medium text-gray-600">Jumlah</label>
-                            <p class="font-semibold text-primary text-lg">+{{ number_format($incomingItem->quantity)
-                                }}</p>
+                            <p class="font-semibold text-primary text-lg">+{{ number_format($incomingItem->quantity) }}
+                            </p>
                         </div>
 
-                        @if($incomingItem->supplier)
+                        @if($incomingItem->unit_cost)
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">Supplier</label>
-                            <p class="text-gray-900">{{ $incomingItem->supplier }}</p>
+                            <label class="block text-sm font-medium text-gray-600">Harga Satuan</label>
+                            <p class="text-gray-900">Rp {{ number_format($incomingItem->unit_cost, 0, ',', '.') }}</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600">Total Nilai</label>
+                            <p class="text-gray-900 font-semibold">Rp {{ number_format($incomingItem->unit_cost *
+                                $incomingItem->quantity, 0, ',', '.') }}</p>
                         </div>
                         @endif
 
-                        @if($incomingItem->description)
+                        @if($incomingItem->notes)
                         <div>
-                            <label class="block text-sm font-medium text-gray-600">Keterangan</label>
-                            <p class="text-gray-900 bg-gray-50 p-3 rounded-lg">{{ $incomingItem->description }}</p>
+                            <label class="block text-sm font-medium text-gray-600">Catatan</label>
+                            <p class="text-gray-900 bg-gray-50 p-3 rounded-lg">{{ $incomingItem->notes }}</p>
                         </div>
                         @endif
                     </div>

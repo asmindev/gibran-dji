@@ -74,6 +74,7 @@ class OutgoingItemController extends Controller
 
         OutgoingItem::create($request->validated());
 
+
         return redirect()->route('outgoing_items.index')
             ->with('success', 'Outgoing item recorded successfully.');
     }

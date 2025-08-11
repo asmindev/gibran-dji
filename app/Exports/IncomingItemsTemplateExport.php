@@ -5,7 +5,7 @@ namespace App\Exports;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class OutgoingItemsTemplateExport implements FromArray, WithHeadings
+class IncomingItemsTemplateExport implements FromArray, WithHeadings
 {
     public function array(): array
     {
@@ -13,11 +13,12 @@ class OutgoingItemsTemplateExport implements FromArray, WithHeadings
         return [
             [
                 '1',
-                'TRX20250803001',
-                '03/08/2025',
+                'TRX20250810001',
+                '10/08/2025',
                 'Barang A',
                 'Kategori A',
-                2
+                50,
+                15000
             ]
         ];
     }
@@ -30,7 +31,8 @@ class OutgoingItemsTemplateExport implements FromArray, WithHeadings
             'TANGGAL TRANSAKSI',
             'NAMA BARANG',
             'KATEGORI',
-            'JUMLAH'
+            'JUMLAH',
+            'HARGA SATUAN'
         ];
     }
 }
