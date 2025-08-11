@@ -55,7 +55,7 @@ class AnalysisController extends Controller
         }
 
         // Get product data with images for modal
-        $products = Item::select('item_name', 'image_path', 'item_code')
+        $products = Item::select('item_name', 'image_path', 'id')
             ->get()
             ->keyBy('item_name')
             ->toArray();

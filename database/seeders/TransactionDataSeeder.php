@@ -134,9 +134,9 @@ class TransactionDataSeeder extends Seeder
         ];
 
         for ($i = 1; $i <= 1000; $i++) {
-            // Tanggal random antara 1 Januari 2025 - 1 Agustus 2025 (8 bulan)
-            $startDate = Carbon::create(2025, 1, 1);
-            $endDate = Carbon::create(2025, 8, 7);
+            // Tanggal random antara 1 Mei 2025 - 1 Agustus 2025 (3 bulan)
+            $startDate = Carbon::create(2025, 5, 1);
+            $endDate = Carbon::create(2025, 8, 10);
             $daysDiff = $startDate->diffInDays($endDate);
             $transactionDate = $startDate->addDays($faker->numberBetween(0, $daysDiff));
 

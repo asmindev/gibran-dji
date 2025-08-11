@@ -46,19 +46,6 @@
                     <h3 class="text-lg font-medium text-gray-900 mb-4">Informasi Dasar</h3>
 
                     <div class="space-y-4">
-                        <!-- Item Code -->
-                        {{-- <div>
-                            <label for="item_code" class="block text-sm font-medium text-gray-700 mb-2">
-                                Kode Barang <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="item_code" id="item_code" value="{{ old('item_code') }}" required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
-                                placeholder="Contoh: ITM001">
-                            @error('item_code')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div> --}}
-
                         <!-- Item Name -->
                         <div>
                             <label for="item_name" class="block text-sm font-medium text-gray-700 mb-2">

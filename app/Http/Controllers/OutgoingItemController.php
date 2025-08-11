@@ -25,8 +25,7 @@ class OutgoingItemController extends Controller
         if ($request->filled('search')) {
             $search = $request->get('search');
             $query->whereHas('item', function ($itemQuery) use ($search) {
-                $itemQuery->where('item_name', 'like', "%{$search}%")
-                    ->orWhere('item_code', 'like', "%{$search}%");
+                $itemQuery->where('item_name', 'like', "%{$search}%");
             });
         }
 
@@ -342,11 +341,11 @@ class OutgoingItemController extends Controller
                 }
 
                 // Check if item exists and stock availability
-                if (!empty($mappedRow['kode_barang'])) {
-                    $item = Item::where('item_code', $mappedRow['kode_barang'])->first();
+                if (!empty($mappedRow['nama_barang'])) {
+                    $item = Item::where('item_name', $mappedRow['nama_barang'])->first();
 
                     if (!$item) {
-                        $rowErrors[] = "Item dengan kode '{$mappedRow['kode_barang']}' tidak ditemukan";
+                        $rowErrors[] = "Item dengan nama '{$mappedRow['nama_barang']}' tidak ditemukan";
                     } elseif (is_numeric($mappedRow['jumlah']) && $item->stock < $mappedRow['jumlah']) {
                         $stockErrors[] = "Stok tidak mencukupi untuk {$item->item_name}. Diminta: {$mappedRow['jumlah']}, Tersedia: {$item->stock}";
                     }

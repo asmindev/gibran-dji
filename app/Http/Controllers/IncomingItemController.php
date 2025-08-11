@@ -27,8 +27,7 @@ class IncomingItemController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('notes', 'like', "%{$search}%")
                     ->orWhereHas('item', function ($itemQuery) use ($search) {
-                        $itemQuery->where('item_name', 'like', "%{$search}%")
-                            ->orWhere('item_code', 'like', "%{$search}%");
+                        $itemQuery->where('item_name', 'like', "%{$search}%");
                     });
             });
         }

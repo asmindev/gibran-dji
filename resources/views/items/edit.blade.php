@@ -59,36 +59,6 @@
 
                     <div class="p-6">
                         <div class="">
-                            <!-- Item Code -->
-                            {{-- <div class="space-y-2">
-                                <label for="item_code" class="block text-sm font-semibold text-gray-700">
-                                    Kode Item <span class="text-red-500">*</span>
-                                </label>
-                                <div class="relative">
-                                    <input type="text" name="item_code" id="item_code"
-                                        value="{{ old('item_code', $item->item_code) }}" required
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 bg-gray-50 focus:bg-white"
-                                        placeholder="Contoh: ITM001">
-                                    <div class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                                        </svg>
-                                    </div>
-                                </div>
-                                @error('item_code')
-                                <p class="text-sm text-red-600 flex items-center">
-                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                    {{ $message }}
-                                </p>
-                                @enderror
-                            </div> --}}
-
                             <!-- Category -->
                             <div class="space-y-2">
                                 <label for="category_id" class="block text-sm font-semibold text-gray-700">

@@ -87,7 +87,7 @@
                             </div>
                             <div class="ml-4">
                                 <div class="text-sm font-medium text-gray-900">{{ $item->item_name }}</div>
-                                <div class="text-sm text-gray-500">{{ $item->item_code }}</div>
+                                <div class="text-sm text-gray-500">ID: {{ $item->id }}</div>
                             </div>
                         </div>
                     </td>

@@ -18,10 +18,9 @@
                         class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                         <option value="">Pilih produk...</option>
                         @foreach($items as $item)
-                        <option value="{{ $item->id }}" data-name="{{ $item->name }}" data-code="{{ $item->item_code }}"
-                            data-stock="{{ $item->stock }}"
+                        <option value="{{ $item->id }}" data-name="{{ $item->name }}" data-stock="{{ $item->stock }}"
                             data-category="{{ $item->category->name ?? 'No Category' }}">
-                            {{ $item->name }} {{ $item->item_code ? '(' . $item->item_code . ')' : '' }}
+                            {{ $item->name }}
                         </option>
                         @endforeach
                     </select>
@@ -125,7 +124,7 @@
         // Form submission handler
         const predictionForm = document.getElementById('prediction-form');
         if (predictionForm) {
-            predictionForm.addEventListener('submit', function(e) {
+            predictionForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
 
                 const formData = new FormData(this);
@@ -138,15 +137,17 @@
                 btnText.textContent = 'Generating...';
                 loadingSpinner.classList.remove('hidden');
 
-                // Make prediction request
-                axios.post('{{ route("predictions.predict") }}', formData, {
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    }
-                })
-                .then(response => {
+                try {
+                    // Make prediction request
+                    const response = await axios.post('{{ route("predictions.predict") }}', formData, {
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        }
+                    });
+
+                    console.log('Prediction response:', response.data);
                     const data = response.data;
-                    console.log('Prediction response:', data);
+
                     if (data.success) {
                         // merge data.results and data.prediction
                         window.showPredictionResults(Object.assign({}, data.results, data.prediction, data.product));
@@ -154,21 +155,19 @@
                     } else {
                         window.showAlert(data.message || 'Gagal membuat prediksi', 'error');
                     }
-                })
-                .catch(error => {
+                } catch (error) {
                     console.error('Prediction error:', error);
                     let errorMessage = 'Terjadi kesalahan saat membuat prediksi';
                     if (error.response && error.response.data && error.response.data.message) {
                         errorMessage = error.response.data.message;
                     }
                     window.showAlert(errorMessage, 'error');
-                })
-                .finally(() => {
+                } finally {
                     // Reset button state
                     predictBtn.disabled = false;
                     btnText.textContent = 'Generate Prediksi';
                     loadingSpinner.classList.add('hidden');
-                });
+                }
             });
         }
     }

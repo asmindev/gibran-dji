@@ -53,6 +53,10 @@ class QueueWorkerCommand extends Command
     {
         if ($this->isWorkerRunning()) {
             $this->warn('Queue worker is already running');
+            $processes = $this->getWorkerProcesses();
+            if (!empty($processes)) {
+                $this->table(['PID', 'Command'], $processes);
+            }
             return Command::SUCCESS;
         }
 
@@ -64,19 +68,34 @@ class QueueWorkerCommand extends Command
 
         if ($isWindows) {
             // Windows: Use start command to run in background
-            $command = "start /B php \"{$artisanPath}\" queue:work --queue=model-training --timeout=600 --sleep=3 --daemon > nul 2>&1";
+            $command = "start /B php \"{$artisanPath}\" queue:work --queue=model-training --timeout=600 --sleep=3 --tries=3";
+            $result = PlatformCompatibilityService::executeCommand($command);
         } else {
-            // Unix: Use traditional background process
-            $command = "php \"{$artisanPath}\" queue:work --queue=model-training --timeout=600 --sleep=3 --daemon > /dev/null 2>&1 &";
+            // Unix: Use shell_exec for proper background execution
+            $command = "nohup php \"{$artisanPath}\" queue:work --queue=model-training --timeout=600 --sleep=3 --tries=3 > /dev/null 2>&1 & echo $!";
+
+            // Use shell_exec instead of PlatformCompatibilityService for background processes
+            $pid = shell_exec($command);
+            $result = [
+                'success' => !empty($pid),
+                'output' => $pid ? ["Process started with PID: " . trim($pid)] : ["Failed to start process"],
+                'outputString' => $pid ? "Process started with PID: " . trim($pid) : "Failed to start process",
+                'command' => $command
+            ];
         }
 
-        $result = PlatformCompatibilityService::executeCommand($command);
-
-        sleep(2); // Wait a moment
+        // Wait a bit longer for the process to start
+        sleep(3);
 
         if ($this->isWorkerRunning()) {
             $this->info('✅ Queue worker started successfully');
             $this->line("Platform: " . (PlatformCompatibilityService::isWindows() ? 'Windows' : 'Unix'));
+
+            // Show the running processes
+            $processes = $this->getWorkerProcesses();
+            if (!empty($processes)) {
+                $this->table(['PID', 'Command'], $processes);
+            }
             return Command::SUCCESS;
         } else {
             $this->error('❌ Failed to start queue worker');
@@ -84,6 +103,13 @@ class QueueWorkerCommand extends Command
             if (!empty($result['outputString'])) {
                 $this->line("Output: " . $result['outputString']);
             }
+
+            // Try alternative method without background execution for debugging
+            $this->warn('Trying alternative start method...');
+            $debugCommand = "php \"{$artisanPath}\" queue:work --queue=model-training --timeout=600 --sleep=3 --tries=3 --verbose";
+            $this->line("Debug command: {$debugCommand}");
+            $this->warn('Note: For production, use --daemon flag or run in background');
+
             return Command::FAILURE;
         }
     }
@@ -223,13 +249,34 @@ class QueueWorkerCommand extends Command
                 }
             }
         } else {
-            // Unix/Linux: Use ps and grep
-            $result = PlatformCompatibilityService::executeCommand('ps aux | grep -E "queue:work.*model-training" | grep -v grep');
+            // Unix/Linux: Use ps with wider output and grep
+            $result = PlatformCompatibilityService::executeCommand('ps axuww | grep "queue:work" | grep -v grep');
 
-            if ($result['success']) {
+            if ($result['success'] && !empty($result['output'])) {
                 foreach ($result['output'] as $line) {
-                    if (preg_match('/(\d+).*?(php.*queue:work.*)/', $line, $matches)) {
-                        $processes[] = [$matches[1], $matches[2]];
+                    // Check if line contains model-training queue
+                    if (strpos($line, 'model-training') !== false || strpos($line, 'model-tr') !== false) {
+                        // More flexible regex to match PID and command
+                        if (preg_match('/\S+\s+(\d+)\s+.*?(php.*artisan.*queue:work.*)/', $line, $matches)) {
+                            $pid = $matches[1];
+                            $command = trim($matches[2]);
+                            $processes[] = [$pid, $command];
+                        }
+                    }
+                }
+            }
+
+            // If no processes found, try alternative method
+            if (empty($processes)) {
+                $fallbackResult = PlatformCompatibilityService::executeCommand('ps axuww | grep "artisan" | grep "queue:work" | grep -v grep');
+
+                if ($fallbackResult['success'] && !empty($fallbackResult['output'])) {
+                    foreach ($fallbackResult['output'] as $line) {
+                        if (preg_match('/\S+\s+(\d+)\s+.*?(php.*artisan.*queue:work.*)/', $line, $matches)) {
+                            $pid = $matches[1];
+                            $command = trim($matches[2]);
+                            $processes[] = [$pid, $command];
+                        }
                     }
                 }
             }

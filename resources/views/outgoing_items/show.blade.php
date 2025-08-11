@@ -108,7 +108,7 @@
                         <div class="text-center">
                             <h4 class="font-semibold text-lg text-gray-900">{{ $outgoingItem->item->item_name }}</h4>
                             <p class="text-gray-600">{{ $outgoingItem->item->category->category_name }}</p>
-                            <p class="text-sm text-gray-500 mt-1">Kode: {{ $outgoingItem->item->item_code }}</p>
+                            <p class="text-sm text-gray-500 mt-1">ID: {{ $outgoingItem->item->id }}</p>
                         </div>
 
                         <div class="mt-4 text-center">

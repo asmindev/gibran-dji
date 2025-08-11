@@ -85,7 +85,7 @@
                             'selected' : '' }}
                             data-stock="{{ $item->stock }}" data-price="{{ $item->selling_price }}" data-min-stock="{{
                             $item->minimum_stock }}">
-                            {{ $item->item_name }} ({{ $item->item_code }}) - Stok: {{ $item->stock }}
+                            {{ $item->item_name }} - Stok: {{ $item->stock }}
                         </option>
                         @endforeach
                     </select>

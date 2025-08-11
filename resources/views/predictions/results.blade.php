@@ -77,17 +77,85 @@
             performanceText = 'Data tidak tersedia';
         }
 
+        // Check for understock warning
+        const currentStock = prediction.current_stock || 0;
+        const predictedDemand = Math.round(prediction.prediction);
+        const isUnderstock = predictedDemand > currentStock;
+        const stockDifference = predictedDemand - currentStock;
+
+        // Stock status
+        let stockWarning = '';
+        if (isUnderstock) {
+            stockWarning = `
+                <div class="mt-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800">⚠️ Peringatan Understock!</h3>
+                            <div class="mt-2 text-sm text-red-700">
+                                <p>Prediksi permintaan <strong>${predictedDemand} unit</strong> melebihi stok tersedia <strong>${currentStock} unit</strong>.</p>
+                                <p class="mt-1">Anda perlu menambah stok sebanyak <strong class="text-red-800">${stockDifference} unit</strong> untuk memenuhi prediksi permintaan.</p>
+                            </div>
+                            <div class="mt-3">
+                                <div class="flex items-center space-x-4">
+                                    <div class="text-sm">
+                                        <span class="text-red-600">📉 Stok Saat Ini: ${currentStock}</span>
+                                    </div>
+                                    <div class="text-sm">
+                                        <span class="text-red-800">📈 Prediksi Permintaan: ${predictedDemand}</span>
+                                    </div>
+                                    <div class="text-sm">
+                                        <span class="text-red-900">🛒 Perlu Ditambah: ${stockDifference}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else {
+            const surplus = currentStock - predictedDemand;
+            stockWarning = `
+                <div class="mt-6 bg-green-50 border-l-4 border-green-500 p-4 rounded-lg">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-green-800">✅ Stok Mencukupi</h3>
+                            <div class="mt-2 text-sm text-green-700">
+                                <p>Stok saat ini <strong>${currentStock} unit</strong> mencukupi untuk prediksi permintaan <strong>${predictedDemand} unit</strong>.</p>
+                                <p class="mt-1">Surplus stok: <strong class="text-green-800">${surplus} unit</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
         contentContainer.innerHTML = `
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
                 <div class="bg-blue-50 rounded-lg p-4">
                     <h4 class="font-semibold text-blue-900 mb-2">📦 Produk</h4>
-                    <p class="text-blue-800">${prediction.name}</p>
+                    <p class="text-blue-800">${prediction.name || 'Tidak diketahui'}</p>
                 </div>
 
                 <div class="bg-green-50 rounded-lg p-4">
                     <h4 class="font-semibold text-green-900 mb-2">📊 Prediksi Penjualan</h4>
                     <p class="text-2xl font-bold text-green-800">${Math.round(prediction.prediction)}</p>
                     <p class="text-sm text-green-600">Unit untuk ${prediction.type === 'daily' ? 'hari' : 'bulan'}</p>
+                </div>
+
+                <div class="bg-indigo-50 rounded-lg p-4">
+                    <h4 class="font-semibold text-indigo-900 mb-2">📦 Stok Saat Ini</h4>
+                    <p class="text-2xl font-bold ${isUnderstock ? 'text-red-600' : 'text-indigo-800'}">${currentStock}</p>
+                    <p class="text-sm ${isUnderstock ? 'text-red-600' : 'text-indigo-600'}">Unit tersedia</p>
                 </div>
 
                 <div class="bg-gray-50 rounded-lg p-4">
@@ -104,6 +172,8 @@
                     <p class="text-sm text-purple-600">${performanceText}</p>
                 </div>
             </div>
+
+            ${stockWarning}
 
             ${prediction.input_parameters ? `
                 <div class="mt-6 bg-gray-50 rounded-lg p-4">

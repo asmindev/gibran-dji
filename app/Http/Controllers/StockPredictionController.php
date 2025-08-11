@@ -77,7 +77,8 @@ class StockPredictionController extends Controller
                 "product" => [
                     'id' => $item->id,
                     'name' => $item->name,
-                    'category' => $item->category ? $item->category->name : 'Uncategorized'
+                    'category' => $item->category ? $item->category->name : 'Uncategorized',
+                    'current_stock' => $item->stock ?? 0
                 ]
             ]);
         } catch (\Exception $e) {
