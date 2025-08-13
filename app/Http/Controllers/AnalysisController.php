@@ -36,7 +36,7 @@ class AnalysisController extends Controller
 
         if (!empty($selectedDate)) {
             $hasCalculation = true;
-            
+
             // Start timing execution
             $startTime = microtime(true);
 
@@ -388,7 +388,7 @@ class AnalysisController extends Controller
         foreach ($groupedTransactions as $transactionId => $items) {
             // Get the first item to extract common transaction data
             $firstItem = $items->first();
-            
+
             $itemNames = $items->map(function ($item) {
                 return $item->item->item_name;
             })->unique()->values()->toArray();

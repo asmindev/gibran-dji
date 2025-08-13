@@ -37,14 +37,14 @@
                     </li>
                     <li><strong>Tanggal Analisis:</strong>
                         @if($hasCalculation)
-                            @if($selectedDate === 'all')
-                            Semua tanggal ({{ count($sampleTransactions) }} transaksi)
-                            @else
-                            {{ \Carbon\Carbon::parse($selectedDate)->format('d M Y') }} ({{ count($sampleTransactions) }}
-                            transaksi)
-                            @endif
+                        @if($selectedDate === 'all')
+                        Semua tanggal ({{ count($sampleTransactions) }} transaksi)
                         @else
-                            <span class="text-gray-500 italic">Belum dipilih</span>
+                        {{ \Carbon\Carbon::parse($selectedDate)->format('d M Y') }} ({{ count($sampleTransactions) }}
+                        transaksi)
+                        @endif
+                        @else
+                        <span class="text-gray-500 italic">Belum dipilih</span>
                         @endif
                     </li>
                     <li><strong>Minimum Support:</strong> {{ $minSupport }}% (ambang batas frekuensi itemset)</li>
@@ -61,15 +61,15 @@
         <form method="GET" action="{{ route('analysis.apriori-process') }}" class="grid md:grid-cols-5 gap-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Transaksi *</label>
-                <select name="transaction_date" 
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" 
+                <select name="transaction_date"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
                     required>
-                    <option value="" {{ $selectedDate === '' ? 'selected' : '' }}>-- Pilih Tanggal --</option>
-                    <option value="all" {{ $selectedDate === 'all' ? 'selected' : '' }}>Semua Tanggal</option>
+                    <option value="" {{ $selectedDate==='' ? 'selected' : '' }}>-- Pilih Tanggal --</option>
+                    <option value="all" {{ $selectedDate==='all' ? 'selected' : '' }}>Semua Tanggal</option>
                     @foreach($availableDates as $date)
-                        <option value="{{ $date }}" {{ $selectedDate === $date ? 'selected' : '' }}>
-                            {{ \Carbon\Carbon::parse($date)->format('d M Y') }}
-                        </option>
+                    <option value="{{ $date }}" {{ $selectedDate===$date ? 'selected' : '' }}>
+                        {{ \Carbon\Carbon::parse($date)->format('d M Y') }}
+                    </option>
                     @endforeach
                 </select>
                 <div class="text-xs text-gray-500 mt-1">
@@ -99,7 +99,7 @@
         </form>
     </div>
 
-@if($hasCalculation)
+    @if($hasCalculation)
     <!-- Sample Transaction Data -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-8">
         <div class="flex justify-between items-center mb-4">
@@ -168,30 +168,30 @@
     </div>
 </div>
 @else
-    <!-- Placeholder when no calculation performed -->
-    <div class="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-8 mb-8 border border-gray-200">
-        <div class="text-center">
-            <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 mb-4">
-                <i class="fas fa-calculator text-blue-600 text-2xl"></i>
-            </div>
-            <h3 class="text-xl font-semibold text-gray-800 mb-2">Pilih Tanggal untuk Memulai Analisis</h3>
-            <p class="text-gray-600 mb-4">
-                Silakan pilih tanggal transaksi pada form di atas untuk memulai perhitungan algoritma Apriori.
-            </p>
-            <div class="bg-white rounded-lg p-4 max-w-md mx-auto">
-                <h4 class="font-medium text-gray-800 mb-2">📋 Data Tersedia:</h4>
-                <div class="text-sm text-gray-600">
-                    @if(!empty($availableDates))
-                        <p><strong>{{ count($availableDates) }}</strong> hari transaksi tersedia</p>
-                        <p>Dari {{ \Carbon\Carbon::parse(min($availableDates))->format('d M Y') }} 
-                           hingga {{ \Carbon\Carbon::parse(max($availableDates))->format('d M Y') }}</p>
-                    @else
-                        <p class="text-red-600">Tidak ada data transaksi yang tersedia</p>
-                    @endif
-                </div>
+<!-- Placeholder when no calculation performed -->
+<div class="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-8 mb-8 border border-gray-200">
+    <div class="text-center">
+        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 mb-4">
+            <i class="fas fa-calculator text-blue-600 text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-2">Pilih Tanggal untuk Memulai Analisis</h3>
+        <p class="text-gray-600 mb-4">
+            Silakan pilih tanggal transaksi pada form di atas untuk memulai perhitungan algoritma Apriori.
+        </p>
+        <div class="bg-white rounded-lg p-4 max-w-md mx-auto">
+            <h4 class="font-medium text-gray-800 mb-2">📋 Data Tersedia:</h4>
+            <div class="text-sm text-gray-600">
+                @if(!empty($availableDates))
+                <p><strong>{{ count($availableDates) }}</strong> hari transaksi tersedia</p>
+                <p>Dari {{ \Carbon\Carbon::parse(min($availableDates))->format('d M Y') }}
+                    hingga {{ \Carbon\Carbon::parse(max($availableDates))->format('d M Y') }}</p>
+                @else
+                <p class="text-red-600">Tidak ada data transaksi yang tersedia</p>
+                @endif
             </div>
         </div>
     </div>
+</div>
 @endif
 
 @if($hasCalculation && $algorithmSteps)
