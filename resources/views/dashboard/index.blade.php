@@ -82,23 +82,23 @@
 
     <!-- Charts Section -->
     <div class="grid grid-cols-1 gap-y-6">
-        <!-- Stock by Category Chart -->
+        <!-- Apriori Analysis Chart -->
         <div class="bg-white shadow rounded-lg">
             <div class="p-6 border-b border-gray-200">
-                <h3 class="text-lg font-semibold text-gray-900">Stok per Kategori</h3>
-                <p class="text-sm text-gray-600 mt-1">Distribusi inventory berdasarkan kategori</p>
+                <h3 class="text-lg font-semibold text-gray-900">Analisis Apriori</h3>
+                <p class="text-sm text-gray-600 mt-1">Association rules dengan confidence dan support tertinggi</p>
             </div>
             <div class="p-6">
-                @if($stockByCategory->count() > 0)
+                @if($aprioriData->count() > 0)
                 <div class="relative h-64">
-                    <canvas id="stockByCategoryChart"></canvas>
+                    <canvas id="aprioriAnalysisChart"></canvas>
                 </div>
                 @else
                 <div class="text-center py-8">
-                    <p class="text-gray-500 mb-2">Belum ada kategori dengan stok</p>
-                    <a href="{{ route('categories.create') }}"
+                    <p class="text-gray-500 mb-2">Belum ada data analisis Apriori</p>
+                    <a href="{{ route('analysis.apriori-process') }}"
                         class="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                        Buat kategori pertama
+                        Mulai analisis Apriori
                     </a>
                 </div>
                 @endif
@@ -200,40 +200,70 @@
         }
     };
 
-    // Stock by Category Chart
-    @if($stockByCategory->count() > 0)
-    const stockByCategoryCtx = document.getElementById('stockByCategoryChart').getContext('2d');
+    // Apriori Analysis Chart
+    @if($aprioriData->count() > 0)
+    const aprioriAnalysisCtx = document.getElementById('aprioriAnalysisChart').getContext('2d');
 
-    // Generate colors for each category
-    const categoryColors = [
-        '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6',
-        '#ec4899', '#06b6d4', '#22c55e', '#f97316', '#a855f7'
-    ];
-
-    const stockByCategoryChart = new Chart(stockByCategoryCtx, {
+    const aprioriAnalysisChart = new Chart(aprioriAnalysisCtx, {
         type: 'bar',
         data: {
-            labels: {!! json_encode($stockByCategory->pluck('name')) !!},
-            datasets: [{
-                label: 'Stock',
-                data: {!! json_encode($stockByCategory->pluck('total_stock')) !!},
-                backgroundColor: categoryColors.slice(0, {!! $stockByCategory->count() !!}).map(color => color + '20'),
-                borderColor: categoryColors.slice(0, {!! $stockByCategory->count() !!}),
-                borderWidth: 2,
-                borderRadius: 6,
-                borderSkipped: false,
-            }]
+            labels: {!! json_encode($aprioriData->pluck('label')) !!},
+            datasets: [
+                {
+                    label: 'Confidence',
+                    data: {!! json_encode($aprioriData->pluck('confidence')) !!},
+                    backgroundColor: '#ef444420',
+                    borderColor: '#ef4444',
+                    borderWidth: 2,
+                    borderRadius: 6,
+                    borderSkipped: false,
+                },
+                {
+                    label: 'Support',
+                    data: {!! json_encode($aprioriData->pluck('support')) !!},
+                    backgroundColor: '#3b82f620',
+                    borderColor: '#3b82f6',
+                    borderWidth: 2,
+                    borderRadius: 6,
+                    borderSkipped: false,
+                }
+            ]
         },
         options: {
             ...commonOptions,
             plugins: {
                 ...commonOptions.plugins,
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 20,
+                        font: {
+                            size: 12
+                        }
+                    }
+                },
                 tooltip: {
-                    ...commonOptions.plugins.tooltip,                callbacks: {
-                    label: function(context) {
-                        return context.parsed.y + ' items';
+                    ...commonOptions.plugins.tooltip,
+                    callbacks: {
+                        label: function(context) {
+                            return context.dataset.label + ': ' + context.parsed.y + '%';
+                        }
                     }
                 }
+            },
+            scales: {
+                ...commonOptions.scales,
+                y: {
+                    ...commonOptions.scales.y,
+                    max: 100,
+                    ticks: {
+                        ...commonOptions.scales.y.ticks,
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    }
                 }
             }
         }
