@@ -13,10 +13,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create admin user
-        User::factory()->create([
-            'name' => 'Admin User',
-            'email' => 'admin@test.com',
+        // Seed users first
+        $this->call([
+            UserSeeder::class,
         ]);
 
         // Seed transaction data (categories, items, and simulated transactions)

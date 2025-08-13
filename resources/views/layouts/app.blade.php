@@ -195,7 +195,29 @@
 
                 <!-- Footer in Sidebar -->
                 <div class="p-4 border-t border-gray-200">
-                    <div class="text-xs text-gray-500 text-center">
+                    <div class="space-y-2">
+                        <!-- User Info -->
+                        <div class="text-sm text-gray-700">
+                            <div class="font-medium">{{ Auth::user()->name }}</div>
+                            <div class="text-xs text-gray-500">{{ Auth::user()->email }}</div>
+                        </div>
+
+                        <!-- Logout Button -->
+                        <form method="POST" action="{{ route('logout') }}" class="w-full">
+                            @csrf
+                            <button type="submit"
+                                class="w-full flex items-center px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 hover:text-red-800 rounded-lg transition-colors duration-200">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 16l4-4m0 0l-4-4m4 4H3m14 0a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v4">
+                                    </path>
+                                </svg>
+                                Keluar
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="text-xs text-gray-500 text-center mt-2">
                         © 2025 Inventory System
                     </div>
                 </div>
