@@ -136,32 +136,82 @@
             </div>
         </div>
 
-        <!-- Monthly Transactions Chart -->
+        <!-- Stock Predictions Chart -->
         <div class="bg-white shadow rounded-lg">
             <div class="p-6 border-b border-gray-200">
-                <h3 class="text-lg font-semibold text-gray-900">Transaksi Bulanan</h3>
-                <p class="text-sm text-gray-600 mt-1">Barang masuk vs keluar bulan ini</p>
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900">Prediksi vs Aktual Stok</h3>
+                        <p class="text-sm text-gray-600 mt-1">Perbandingan prediksi dan penjualan aktual per produk</p>
+                    </div>
+                    @if($availablePredictionMonths->count() > 0)
+                    <div class="flex items-center space-x-2">
+                        <label for="predictionMonthFilter" class="text-sm font-medium text-gray-700">Bulan:</label>
+                        <select id="predictionMonthFilter" name="prediction_month"
+                            class="text-sm border border-gray-300 rounded-md px-3 py-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            onchange="filterByPredictionMonth()">
+                            @foreach($availablePredictionMonths as $month)
+                            <option value="{{ $month['value'] }}" {{ $selectedPredictionMonth===$month['value']
+                                ? 'selected' : '' }}>
+                                {{ $month['label'] }}
+                            </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @endif
+                </div>
             </div>
             <div class="p-6">
+                @if(count($predictionLabels) > 0)
                 <div class="relative h-64">
-                    <canvas id="monthlyTransactionsChart"></canvas>
+                    <canvas id="stockPredictionsChart"></canvas>
                 </div>
-
-                <!-- Net Change Summary -->
-                <div class="mt-6 pt-4 border-t border-gray-200">
-                    @php
-                    $netChange = $monthlyIncoming - $monthlyOutgoing;
-                    @endphp
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-700">Perubahan Bersih Bulan Ini</span>
-                        <span class="text-sm font-semibold {{ $netChange >= 0 ? 'text-green-600' : 'text-red-600' }}">
-                            {{ $netChange >= 0 ? '+' : '' }}{{ number_format($netChange) }}
-                        </span>
-                    </div>
-                    <p class="text-xs text-gray-500 mt-1">
-                        {{ now()->format('F Y') }}
+                <div class="mt-4 text-center">
+                    <p class="text-xs text-gray-500">
+                        Menampilkan data untuk {{ \Carbon\Carbon::parse($selectedPredictionMonth . '-01')->format('F Y')
+                        }}
                     </p>
                 </div>
+
+                <!-- Accuracy Summary -->
+                <div class="mt-6 pt-4 border-t border-gray-200">
+                    @php
+                    $totalPredicted = array_sum($predictionData);
+                    $totalActual = array_sum($actualData);
+                    $overallAccuracy = $totalPredicted > 0 ? (1 - abs($totalPredicted - $totalActual) /
+                    max($totalPredicted, $totalActual)) * 100 : 0;
+                    @endphp
+                    <div class="grid grid-cols-3 gap-4 text-center">
+                        <div>
+                            <span class="text-sm font-medium text-gray-700">Total Prediksi</span>
+                            <p class="text-lg font-semibold text-blue-600">{{ number_format($totalPredicted) }}</p>
+                        </div>
+                        <div>
+                            <span class="text-sm font-medium text-gray-700">Total Aktual</span>
+                            <p class="text-lg font-semibold text-red-600">{{ number_format($totalActual) }}</p>
+                        </div>
+                        <div>
+                            <span class="text-sm font-medium text-gray-700">Akurasi Keseluruhan</span>
+                            <p
+                                class="text-lg font-semibold {{ $overallAccuracy >= 75 ? 'text-green-600' : ($overallAccuracy >= 50 ? 'text-yellow-600' : 'text-red-600') }}">
+                                {{ number_format($overallAccuracy, 1) }}%
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                @else
+                <div class="text-center py-8">
+                    @if($availablePredictionMonths->count() > 0)
+                    <p class="text-gray-500 mb-2">Tidak ada data prediksi untuk {{
+                        \Carbon\Carbon::parse($selectedPredictionMonth . '-01')->format('F Y') }}</p>
+                    <p class="text-xs text-gray-400 mb-4">Coba pilih bulan lain untuk melihat data prediksi</p>
+                    @else
+                    <p class="text-gray-500 mb-2">Belum ada data prediksi stok</p>
+                    <p class="text-xs text-gray-400 mb-4">Jalankan command berikut untuk membuat prediksi:</p>
+                    <code class="text-xs bg-gray-100 px-2 py-1 rounded">php artisan predictions:backfill</code>
+                    @endif
+                </div>
+                @endif
             </div>
         </div>
     </div>
@@ -233,106 +283,164 @@
 
     // Apriori Analysis Chart
     @if($aprioriData->count() > 0)
-    const aprioriAnalysisCtx = document.getElementById('aprioriAnalysisChart').getContext('2d');
-
-    const aprioriAnalysisChart = new Chart(aprioriAnalysisCtx, {
-        type: 'bar',
-        data: {
-            labels: {!! json_encode($aprioriData->pluck('label')) !!},
-            datasets: [
-                {
-                    label: 'Confidence',
-                    data: {!! json_encode($aprioriData->pluck('confidence')) !!},
-                    backgroundColor: '#ef444420',
-                    borderColor: '#ef4444',
-                    borderWidth: 2,
-                    borderRadius: 6,
-                    borderSkipped: false,
-                },
-                {
-                    label: 'Support',
-                    data: {!! json_encode($aprioriData->pluck('support')) !!},
-                    backgroundColor: '#3b82f620',
-                    borderColor: '#3b82f6',
-                    borderWidth: 2,
-                    borderRadius: 6,
-                    borderSkipped: false,
-                }
-            ]
-        },
-        options: {
-            ...commonOptions,
-            plugins: {
-                ...commonOptions.plugins,
-                legend: {
-                    display: true,
-                    position: 'top',
-                    labels: {
-                        usePointStyle: true,
-                        padding: 20,
-                        font: {
-                            size: 12
-                        }
+    const aprioriAnalysisCtx = document.getElementById('aprioriAnalysisChart');
+    if (aprioriAnalysisCtx) {
+        const aprioriAnalysisChart = new Chart(aprioriAnalysisCtx.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: {!! json_encode($aprioriData->pluck('label')) !!},
+                datasets: [
+                    {
+                        label: 'Confidence',
+                        data: {!! json_encode($aprioriData->pluck('confidence')) !!},
+                        backgroundColor: '#ef444420',
+                        borderColor: '#ef4444',
+                        borderWidth: 2,
+                        borderRadius: 6,
+                        borderSkipped: false,
+                    },
+                    {
+                        label: 'Support',
+                        data: {!! json_encode($aprioriData->pluck('support')) !!},
+                        backgroundColor: '#3b82f620',
+                        borderColor: '#3b82f6',
+                        borderWidth: 2,
+                        borderRadius: 6,
+                        borderSkipped: false,
                     }
-                },
-                tooltip: {
-                    ...commonOptions.plugins.tooltip,
-                    callbacks: {
-                        label: function(context) {
-                            return context.dataset.label + ': ' + context.parsed.y + '%';
-                        }
-                    }
-                }
+                ]
             },
-            scales: {
-                ...commonOptions.scales,
-                y: {
-                    ...commonOptions.scales.y,
-                    max: 100,
-                    ticks: {
-                        ...commonOptions.scales.y.ticks,
-                        callback: function(value) {
-                            return value + '%';
+            options: {
+                ...commonOptions,
+                plugins: {
+                    ...commonOptions.plugins,
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        ...commonOptions.plugins.tooltip,
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.y + '%';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    ...commonOptions.scales,
+                    y: {
+                        ...commonOptions.scales.y,
+                        max: 100,
+                        ticks: {
+                            ...commonOptions.scales.y.ticks,
+                            callback: function(value) {
+                                return value + '%';
+                            }
                         }
                     }
                 }
             }
-        }
-    });
+        });
+    }
     @endif
 
-    // Monthly Transactions Chart
-    const monthlyTransactionsCtx = document.getElementById('monthlyTransactionsChart').getContext('2d');
-    const monthlyTransactionsChart = new Chart(monthlyTransactionsCtx, {
-        type: 'bar',
-        data: {
-            labels: ['Incoming', 'Outgoing'],
-            datasets: [{
-                label: 'Transactions',
-                data: [{{ $monthlyIncoming }}, {{ $monthlyOutgoing }}],
-                backgroundColor: ['#10b98120', '#ef444420'],
-                borderColor: ['#10b981', '#ef4444'],
-                borderWidth: 2,
-                borderRadius: 6,
-                borderSkipped: false,
-            }]
-        },
-        options: {
-            ...commonOptions,
-            plugins: {
-                ...commonOptions.plugins,
-                tooltip: {
-                    ...commonOptions.plugins.tooltip,                callbacks: {
-                    label: function(context) {
-                        const label = context.label;
-                        const value = context.parsed.y;
-                        return `${label}: ${value} item`;
+    // Stock Predictions Chart
+    @if(count($predictionLabels) > 0)
+    const stockPredictionsCtx = document.getElementById('stockPredictionsChart');
+    if (stockPredictionsCtx) {
+        const stockPredictionsChart = new Chart(stockPredictionsCtx.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: {!! json_encode($predictionLabels) !!},
+                datasets: [
+                    {
+                        label: 'Prediksi',
+                        data: {!! json_encode($predictionData) !!},
+                        borderColor: '#ef4444',
+                        backgroundColor: '#ef444410',
+                        borderWidth: 3,
+                        fill: false,
+                        tension: 0.4,
+                        pointBackgroundColor: '#ef4444',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                    },
+                    {
+                        label: 'Aktual',
+                        data: {!! json_encode($actualData) !!},
+                        borderColor: '#3b82f6',
+                        backgroundColor: '#3b82f610',
+                        borderWidth: 3,
+                        fill: false,
+                        tension: 0.4,
+                        pointBackgroundColor: '#3b82f6',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                    }
+                ]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    ...commonOptions.plugins,
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        ...commonOptions.plugins.tooltip,
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.dataset.label;
+                                const value = context.parsed.y;
+                                return `${label}: ${value} unit`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    ...commonOptions.scales,
+                    x: {
+                        ...commonOptions.scales.x,
+                        ticks: {
+                            ...commonOptions.scales.x.ticks,
+                            maxRotation: 45,
+                            minRotation: 0
+                        }
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                },
+                elements: {
+                    point: {
+                        hoverBackgroundColor: '#ffffff'
                     }
                 }
-                }
             }
-        }
-    });
+        });
+    }
+    @endif
 });
 
 // Function to filter chart by month
@@ -340,6 +448,14 @@ function filterByMonth() {
     const selectedMonth = document.getElementById('monthFilter').value;
     const currentUrl = new URL(window.location);
     currentUrl.searchParams.set('month', selectedMonth);
+    window.location.href = currentUrl.toString();
+}
+
+// Function to filter prediction chart by month
+function filterByPredictionMonth() {
+    const selectedMonth = document.getElementById('predictionMonthFilter').value;
+    const currentUrl = new URL(window.location);
+    currentUrl.searchParams.set('prediction_month', selectedMonth);
     window.location.href = currentUrl.toString();
 }
 </script>

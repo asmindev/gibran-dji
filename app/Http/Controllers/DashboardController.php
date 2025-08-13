@@ -7,6 +7,8 @@ use App\Models\Category;
 use App\Models\IncomingItem;
 use App\Models\OutgoingItem;
 use App\Models\AprioriAnalysis;
+
+use App\Models\StockPrediction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -14,10 +16,26 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        // Get month filter parameter, default to current month
-        $selectedMonth = $request->get('month', now()->format('Y-m'));
+        // Get available months for Apriori filter first
+        $availableAprioriMonths = AprioriAnalysis::distinct()
+            ->orderBy('transaction_date', 'desc')
+            ->get(['transaction_date'])
+            ->map(function ($analysis) {
+                $monthFormat = \Carbon\Carbon::parse($analysis->transaction_date)->format('Y-m');
+                return [
+                    'value' => $monthFormat,
+                    'label' => \Carbon\Carbon::parse($analysis->transaction_date)->format('F Y')
+                ];
+            })
+            ->unique('value')
+            ->values();
 
-        // Basic Statistics
+        // Get month filter parameter, default to first available month for Apriori or current month
+        $defaultAprioriMonth = $availableAprioriMonths->isNotEmpty() ? $availableAprioriMonths->first()['value'] : now()->format('Y-m');
+        $selectedMonth = $request->get('month', $defaultAprioriMonth);
+
+        // Get prediction month filter parameter, default to current month
+        $selectedPredictionMonth = $request->get('prediction_month', now()->format('Y-m'));        // Basic Statistics
         $totalItems = Item::count();
         $totalCategories = Category::count();
         $lowStockItems = Item::whereRaw('stock <= minimum_stock')->get();
@@ -56,17 +74,32 @@ class DashboardController extends Controller
                 ];
             });
 
-        // Get available months for filter dropdown
-        $availableMonths = AprioriAnalysis::selectRaw("DATE_FORMAT(transaction_date, '%Y-%m') as month")
-            ->distinct()
+        // Get available months for filter dropdown (use the already computed data)
+        $availableMonths = $availableAprioriMonths;
+
+        // Stock Predictions Data for Chart (selected month)
+        $stockPredictions = StockPrediction::whereRaw("DATE_FORMAT(month, '%Y-%m') = ?", [$selectedPredictionMonth])
+            ->orderBy('product')
+            ->get();
+
+        // Prepare data for chart
+        $predictionLabels = $stockPredictions->pluck('product')->toArray();
+        $predictionData = $stockPredictions->pluck('prediction')->toArray();
+        $actualData = $stockPredictions->pluck('actual')->toArray();
+
+        // Get available months for prediction filter
+        $availablePredictionMonths = StockPrediction::distinct()
             ->orderBy('month', 'desc')
-            ->pluck('month')
-            ->map(function ($month) {
+            ->get(['month'])
+            ->map(function ($prediction) {
+                $monthFormat = \Carbon\Carbon::parse($prediction->month)->format('Y-m');
                 return [
-                    'value' => $month,
-                    'label' => \Carbon\Carbon::parse($month . '-01')->format('F Y')
+                    'value' => $monthFormat,
+                    'label' => \Carbon\Carbon::parse($prediction->month)->format('F Y')
                 ];
-            });
+            })
+            ->unique('value')
+            ->values();
 
         return view('dashboard.index', compact(
             'totalItems',
@@ -78,7 +111,13 @@ class DashboardController extends Controller
             'monthlyOutgoing',
             'aprioriData',
             'selectedMonth',
-            'availableMonths'
+            'availableMonths',
+            'stockPredictions',
+            'predictionLabels',
+            'predictionData',
+            'actualData',
+            'availablePredictionMonths',
+            'selectedPredictionMonth'
         ));
     }
 }
