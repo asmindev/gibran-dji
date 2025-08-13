@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Category;
 use App\Models\Item;
 use App\Models\OutgoingItem;
+use App\Models\IncomingItem;
 use Carbon\Carbon;
 use Faker\Factory as Faker;
 
@@ -24,12 +25,13 @@ class TransactionDataSeeder extends Seeder
             'description' => 'Kategori untuk semua peralatan dan perlengkapan olahraga'
         ]);
 
-        // 2. Buat 8 Item Olahraga
+        // 2. Buat 8 Item Olahraga dengan minimum_stock
         $items = [
             [
                 'item_name' => 'Sepatu Bola Ortus',
                 'category_id' => $sportsCategory->id,
-                'stock' => 200, // Stock yang lebih besar untuk simulasi
+                'stock' => 500, // Stock yang lebih besar untuk simulasi penjualan tinggi
+                'minimum_stock' => 20,
                 'purchase_price' => 180000,
                 'selling_price' => 250000,
                 'description' => 'Sepatu bola berkualitas tinggi merk Ortus'
@@ -37,7 +39,8 @@ class TransactionDataSeeder extends Seeder
             [
                 'item_name' => 'Kaos Kaki Avo',
                 'category_id' => $sportsCategory->id,
-                'stock' => 200,
+                'stock' => 800,
+                'minimum_stock' => 50,
                 'purchase_price' => 15000,
                 'selling_price' => 25000,
                 'description' => 'Kaos kaki olahraga merk Avo'
@@ -45,7 +48,8 @@ class TransactionDataSeeder extends Seeder
             [
                 'item_name' => 'Jersey Mills',
                 'category_id' => $sportsCategory->id,
-                'stock' => 150,
+                'stock' => 300,
+                'minimum_stock' => 15,
                 'purchase_price' => 80000,
                 'selling_price' => 120000,
                 'description' => 'Jersey olahraga merk Mills'
@@ -53,7 +57,8 @@ class TransactionDataSeeder extends Seeder
             [
                 'item_name' => 'Tali Sepatu Kipzkapz',
                 'category_id' => $sportsCategory->id,
-                'stock' => 200,
+                'stock' => 1000,
+                'minimum_stock' => 100,
                 'purchase_price' => 8000,
                 'selling_price' => 15000,
                 'description' => 'Tali sepatu berkualitas merk Kipzkapz'
@@ -61,7 +66,8 @@ class TransactionDataSeeder extends Seeder
             [
                 'item_name' => 'Piala',
                 'category_id' => $sportsCategory->id,
-                'stock' => 150,
+                'stock' => 200,
+                'minimum_stock' => 5,
                 'purchase_price' => 45000,
                 'selling_price' => 75000,
                 'description' => 'Piala untuk kejuaraan olahraga'
@@ -69,7 +75,8 @@ class TransactionDataSeeder extends Seeder
             [
                 'item_name' => 'Sepatu Futsal',
                 'category_id' => $sportsCategory->id,
-                'stock' => 150,
+                'stock' => 400,
+                'minimum_stock' => 25,
                 'purchase_price' => 150000,
                 'selling_price' => 220000,
                 'description' => 'Sepatu futsal untuk indoor'
@@ -77,7 +84,8 @@ class TransactionDataSeeder extends Seeder
             [
                 'item_name' => 'Bola Basket',
                 'category_id' => $sportsCategory->id,
-                'stock' => 200,
+                'stock' => 300,
+                'minimum_stock' => 10,
                 'purchase_price' => 120000,
                 'selling_price' => 180000,
                 'description' => 'Bola basket standar kompetisi'
@@ -85,7 +93,8 @@ class TransactionDataSeeder extends Seeder
             [
                 'item_name' => 'Jersey Basket',
                 'category_id' => $sportsCategory->id,
-                'stock' => 150,
+                'stock' => 250,
+                'minimum_stock' => 12,
                 'purchase_price' => 70000,
                 'selling_price' => 110000,
                 'description' => 'Jersey basket untuk latihan dan pertandingan'
@@ -133,65 +142,143 @@ class TransactionDataSeeder extends Seeder
             [$bolaBasket->id, $jerseyBasket->id]
         ];
 
-        for ($i = 1; $i <= 1000; $i++) {
-            // Tanggal random antara 1 Mei 2025 - 1 Agustus 2025 (3 bulan)
-            $startDate = Carbon::create(2025, 5, 1);
-            $endDate = Carbon::create(2025, 8, 10);
-            $daysDiff = $startDate->diffInDays($endDate);
-            $transactionDate = $startDate->addDays($faker->numberBetween(0, $daysDiff));
+        // Buat transaksi per hari dengan minimal 8 transaksi per hari
+        $startDate = Carbon::create(2025, 5, 1);
+        $endDate = Carbon::today();
 
-            // Pilih customer random
-            $customer = $faker->randomElement($customers);
+        $currentDate = $startDate->copy();
+        $totalTransactions = 0;
+        $totalIncomingItems = 0;
 
-            // Tentukan jumlah item per transaksi (2-4 item)
-            $itemCount = $faker->numberBetween(2, 4);
+        while ($currentDate->lte($endDate)) {
+            // Cek apakah perlu restocking (setiap 3-5 hari sekali atau jika ada item stock rendah)
+            $needsRestocking = ($currentDate->day % $faker->numberBetween(3, 5) == 0);
 
-            $selectedItems = [];
+            // Atau jika ada item yang stocknya sangat rendah (di bawah 20% dari minimum stock)
+            $hasLowStockItems = $allItems->some(function ($item) {
+                return $item->fresh()->stock <= ($item->minimum_stock * 0.2);
+            });
 
-            // 30% kemungkinan gunakan strong association
-            if ($faker->numberBetween(1, 100) <= 30) {
-                $association = $faker->randomElement($strongAssociations);
-                $selectedItems = $association;
+            if ($needsRestocking || $hasLowStockItems) {
+                // Lakukan restocking untuk item yang stocknya rendah
+                foreach ($allItems as $item) {
+                    $currentStock = $item->fresh()->stock; // Ambil stock terkini
+                    $minimumStock = $item->minimum_stock;
 
-                // Jika masih perlu item tambahan
-                if ($itemCount > 2) {
-                    $remainingCount = $itemCount - 2;
-                    $availableItems = $allItems->whereNotIn('id', $selectedItems)->pluck('id')->toArray();
-                    $additionalItems = $faker->randomElements($availableItems, $remainingCount);
-                    $selectedItems = array_merge($selectedItems, $additionalItems);
+                    // Jika stock di bawah atau mendekati minimum stock (dengan buffer 50%)
+                    if ($currentStock <= ($minimumStock * 1.5)) {
+                        // Restock untuk mencapai 3-5x minimum stock
+                        $targetStock = $minimumStock * $faker->numberBetween(3, 5);
+                        $restockQuantity = max(50, $targetStock - $currentStock);
+
+                        IncomingItem::create([
+                            'transaction_id' => 'IN-' . strtoupper($faker->unique()->lexify('??????')),
+                            'incoming_date' => $currentDate->copy()->addHours($faker->numberBetween(6, 8)), // Pagi hari untuk restocking
+                            'item_id' => $item->id,
+                            'quantity' => $restockQuantity,
+                            'unit_cost' => $item->purchase_price,
+                            'notes' => "Restocking otomatis (stock: {$currentStock}, min: {$minimumStock}) tanggal " . $currentDate->format('d-m-Y')
+                        ]);
+
+                        // Update stock item
+                        $item->update([
+                            'stock' => $currentStock + $restockQuantity
+                        ]);
+
+                        $totalIncomingItems++;
+                    }
                 }
-            } else {
-                // Pilih item secara random
-                $selectedItems = $faker->randomElements($allItems->pluck('id')->toArray(), $itemCount);
-            }
+            }            // Minimal 8 transaksi per hari, maksimal 15 transaksi per hari
+            $dailyTransactions = $faker->numberBetween(8, 15);
 
-            // Buat outgoing items untuk setiap item dalam transaksi
-            foreach ($selectedItems as $itemId) {
-                $item = $allItems->find($itemId);
+            for ($i = 0; $i < $dailyTransactions; $i++) {
+                // Waktu transaksi dalam hari (jam operasional 8:00 - 20:00)
+                $transactionTime = $currentDate->copy()->addHours($faker->numberBetween(8, 20))->addMinutes($faker->numberBetween(0, 59));
 
-                OutgoingItem::create([
-                    'outgoing_date' => $transactionDate,
-                    'item_id' => $itemId,
-                    'quantity' => $faker->numberBetween(5, 8),
-                    'unit_price' => $item->selling_price,
-                    'transaction_id' => 'TRX-' . strtoupper($faker->unique()->lexify('??????')),
-                    'notes' => "Transaksi simulasi tanggal " . $transactionDate->format('d-m-Y')
-                ]);
+                // Buat transaction_id yang sama untuk semua items dalam 1 customer session
+                $sessionTransactionId = 'TRX-' . strtoupper($faker->unique()->lexify('??????'));
 
-                // Update stock item
-                // Pastikan stock tidak negatif
+                // Pilih customer random
+                $customer = $faker->randomElement($customers);
 
-                $item->update([
-                    "stock" => max(0, $item->stock - 1) // Kurangi stock tapi tidak boleh negatif
-                ]);
-            }
+                // Tentukan jumlah item per transaksi (2-4 item)
+                $itemCount = $faker->numberBetween(2, 4);
+
+                $selectedItems = [];
+
+                // 30% kemungkinan gunakan strong association
+                if ($faker->numberBetween(1, 100) <= 30) {
+                    $association = $faker->randomElement($strongAssociations);
+                    $selectedItems = $association;
+
+                    // Jika masih perlu item tambahan
+                    if ($itemCount > 2) {
+                        $remainingCount = $itemCount - 2;
+                        $availableItems = $allItems->whereNotIn('id', $selectedItems)->pluck('id')->toArray();
+                        $additionalItems = $faker->randomElements($availableItems, $remainingCount);
+                        $selectedItems = array_merge($selectedItems, $additionalItems);
+                    }
+                } else {
+                    // Pilih item secara random
+                    $selectedItems = $faker->randomElements($allItems->pluck('id')->toArray(), $itemCount);
+                }
+
+                // Track apakah session ini berhasil membuat minimal 1 item
+                $sessionSuccessful = false;
+
+                // Buat outgoing items untuk setiap item dalam transaksi
+                foreach ($selectedItems as $itemId) {
+                    $item = $allItems->find($itemId);
+                    $currentStock = $item->fresh()->stock; // Ambil stock terkini
+
+                    // Tentukan quantity yang realistis berdasarkan stock yang tersedia
+                    $maxQuantity = min(5, max(1, intval($currentStock / 10))); // Maksimal 5 atau 10% dari stock
+                    $quantity = $faker->numberBetween(1, $maxQuantity);
+
+                    // Hanya buat transaksi jika stock mencukupi
+                    if ($currentStock >= $quantity) {
+                        OutgoingItem::create([
+                            'outgoing_date' => $transactionTime,
+                            'item_id' => $itemId,
+                            'quantity' => $quantity,
+                            'unit_price' => $item->selling_price,
+                            'transaction_id' => $sessionTransactionId, // Gunakan transaction_id yang sama
+                            'notes' => "Transaksi simulasi tanggal " . $transactionTime->format('d-m-Y H:i')
+                        ]);
+
+                        // Update stock item dengan quantity yang benar
+                        $item->update([
+                            "stock" => max(0, $currentStock - $quantity)
+                        ]);
+
+                        $sessionSuccessful = true;
+                    }
+                }
+
+                // Hitung hanya jika session berhasil membuat minimal 1 item
+                if ($sessionSuccessful) {
+                    $totalTransactions++;
+                }
+            }            // Pindah ke hari berikutnya
+            $currentDate->addDay();
         }
+
+        // Hitung total hari dan rata-rata transaksi per hari
+        $totalDays = $startDate->diffInDays($endDate) + 1;
+        $totalLineItems = OutgoingItem::count();
 
         $this->command->info('✅ Berhasil membuat:');
         $this->command->info('   - 1 Kategori: Peralatan Olahraga');
-        $this->command->info('   - 8 Item olahraga');
-        $this->command->info('   - 1000 transaksi simulasi (Mei-Juli 2025)');
-        $this->command->info('   - Data mencakup 3 bulan untuk training ML');
-        $this->command->info('   - Stock item telah disesuaikan');
+        $this->command->info('   - 8 Item olahraga dengan minimum_stock');
+        $this->command->info("   - {$totalTransactions} transaksi customer sessions");
+        $this->command->info("   - {$totalLineItems} line items penjualan total");
+        $this->command->info("   - {$totalIncomingItems} transaksi pembelian/restocking (incoming)");
+        $this->command->info("   - {$totalDays} hari dengan minimal 8 transaksi per hari");
+        $this->command->info('   - Rata-rata ' . round($totalTransactions / $totalDays, 1) . ' customer sessions per hari');
+        $this->command->info('   - Rata-rata ' . round($totalLineItems / $totalDays, 1) . ' items terjual per hari');
+        $this->command->info('   - Restocking otomatis setiap 3-5 hari atau saat stock rendah');
+        $this->command->info('   - Target restocking: 3-5x minimum stock per item');
+        $this->command->info('   - Data optimal untuk Apriori analysis (transaction grouping)');
+        $this->command->info('   - Stock item terjaga dengan sistem restocking cerdas');
     }
 }

@@ -150,7 +150,9 @@
 
                     if (data.success) {
                         // merge data.results and data.prediction
-                        window.showPredictionResults(Object.assign({}, data.results, data.prediction, data.product));
+                        const results = Object.assign({}, data.results, data.prediction);
+                        results.product = data.product || {};
+                        window.showPredictionResults(results);
                         window.showAlert('Prediksi berhasil dibuat!', 'success');
                     } else {
                         window.showAlert(data.message || 'Gagal membuat prediksi', 'error');

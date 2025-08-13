@@ -63,10 +63,21 @@
                     <!-- Stock Information -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="bg-white border border-gray-300 rounded-lg p-4 text-center">
-                            <div class="text-3xl font-bold">
+                            <div
+                                class="text-3xl font-bold {{ $item->stock <= $item->minimum_stock ? 'text-red-600' : 'text-green-600' }}">
                                 {{ number_format($item->stock) }}
                             </div>
                             <div class="text-sm text-gray-600 mt-1">Current Stock</div>
+                            @if($item->stock <= $item->minimum_stock)
+                                <div class="text-xs text-red-600 mt-1 font-medium">⚠️ Low Stock!</div>
+                                @endif
+                        </div>
+
+                        <div class="bg-white border border-gray-300 rounded-lg p-4 text-center">
+                            <div class="text-3xl font-bold text-orange-600">
+                                {{ number_format($item->minimum_stock) }}
+                            </div>
+                            <div class="text-sm text-gray-600 mt-1">Minimum Stock</div>
                         </div>
 
                         <div class="bg-white border border-gray-300 rounded-lg p-4 text-center">

@@ -19,39 +19,61 @@ class AnalysisController extends Controller
      */
     public function aprioriProcess(Request $request)
     {
-        // Start timing execution
-        $startTime = microtime(true);
-
         // Get algorithm parameters - keep as percentage
         $minSupport = $request->get('min_support', 50); // Keep as percentage (50)
         $minConfidence = $request->get('min_confidence', 70); // Keep as percentage (70)
-        $selectedDate = $request->get('transaction_date', 'all'); // Default all dates
+        $selectedDate = $request->get('transaction_date', ''); // Default empty, no calculation
 
-        // Handle empty date input as 'all'
-        if (empty($selectedDate) || $selectedDate === '') {
-            $selectedDate = 'all';
-        }
-
-        // Get real transaction data from database
+        // Get real transaction data from database for available dates
         $allTransactions = $this->getTransactionDataFromDatabase();
+        $availableDates = array_unique(array_column($allTransactions, 'date'));
+        sort($availableDates);
 
-        // Filter transactions by selected date if specified
-        $sampleTransactions = $allTransactions;
-        if ($selectedDate !== 'all') {
-            $sampleTransactions = array_filter($allTransactions, function ($transaction) use ($selectedDate) {
-                // Use Carbon for proper date comparison
-                $transactionDate = Carbon::parse($transaction['date'])->format('Y-m-d');
-                $filterDate = Carbon::parse($selectedDate)->format('Y-m-d');
-                return $transactionDate === $filterDate;
-            });
-            // Reset array keys after filtering
-            $sampleTransactions = array_values($sampleTransactions);
-        }
+        // Only perform calculation if a date is selected
+        $sampleTransactions = [];
+        $algorithmSteps = null;
+        $hasCalculation = false;
 
-        // If no transactions found for selected date, use all transactions
-        if (empty($sampleTransactions) && $selectedDate !== 'all') {
-            $sampleTransactions = $allTransactions;
-            $selectedDate = 'all'; // Indicate all dates are being used
+        if (!empty($selectedDate)) {
+            $hasCalculation = true;
+            
+            // Start timing execution
+            $startTime = microtime(true);
+
+            // Filter transactions by selected date
+            if ($selectedDate === 'all') {
+                $sampleTransactions = $allTransactions;
+            } else {
+                $sampleTransactions = array_filter($allTransactions, function ($transaction) use ($selectedDate) {
+                    // Use Carbon for proper date comparison
+                    $transactionDate = Carbon::parse($transaction['date'])->format('Y-m-d');
+                    $filterDate = Carbon::parse($selectedDate)->format('Y-m-d');
+                    return $transactionDate === $filterDate;
+                });
+                // Reset array keys after filtering
+                $sampleTransactions = array_values($sampleTransactions);
+            }
+
+            // If no transactions found for selected date, show message
+            if (empty($sampleTransactions)) {
+                $algorithmSteps = $this->getEmptyAlgorithmSteps($minSupport, $minConfidence);
+            } else {
+                // Simulate apriori algorithm steps - pass original percentage values for display
+                $algorithmSteps = $this->simulateAprioriSteps(
+                    $sampleTransactions,
+                    $minSupport,
+                    $minConfidence,
+                );
+
+                // Calculate execution time
+                $endTime = microtime(true);
+                $executionTimeMs = round(($endTime - $startTime) * 1000, 2);
+
+                // Add execution time to algorithm steps summary
+                $algorithmSteps['summary']['execution_time_ms'] = $executionTimeMs;
+                $algorithmSteps['summary']['execution_time_start'] = $startTime;
+                $algorithmSteps['summary']['execution_time_end'] = $endTime;
+            }
         }
 
         // Get product data with images for modal
@@ -60,32 +82,13 @@ class AnalysisController extends Controller
             ->keyBy('item_name')
             ->toArray();
 
-        // Simulate apriori algorithm steps - pass original percentage values for display
-        $algorithmSteps = $this->simulateAprioriSteps(
-            $sampleTransactions,
-            $minSupport,
-            $minConfidence,
-        );
-
-        // Calculate execution time
-        $endTime = microtime(true);
-        $executionTimeMs = round(($endTime - $startTime) * 1000, 2);
-
-        // Add execution time to algorithm steps summary
-        $algorithmSteps['summary']['execution_time_ms'] = $executionTimeMs;
-        $algorithmSteps['summary']['execution_time_start'] = $startTime;
-        $algorithmSteps['summary']['execution_time_end'] = $endTime;
-
-        // Get available dates for dropdown
-        $availableDates = array_unique(array_column($allTransactions, 'date'));
-        sort($availableDates);
-
         return view('analysis.apriori-process', compact(
             'sampleTransactions',
             'algorithmSteps',
             'selectedDate',
             'availableDates',
-            'products'
+            'products',
+            'hasCalculation'
         ))->with([
             'minSupport' => $minSupport, // Send as percentage for display
             'minConfidence' => $minConfidence // Send as percentage for display
@@ -371,38 +374,35 @@ class AnalysisController extends Controller
      */
     private function getTransactionDataFromDatabase(): array
     {
-        // Group outgoing items by date and customer to form transactions
+        // Group outgoing items by transaction_id to form actual transactions
         $outgoingItems = OutgoingItem::with('item')
             ->orderBy('outgoing_date')
-            ->orderBy('customer')
+            ->orderBy('transaction_id')
             ->get();
 
         $transactions = [];
-        $transactionId = 1;
 
-        // Group by date and customer to form unique transactions
-        $groupedTransactions = $outgoingItems->groupBy(function ($item) {
-            // Use string casting for the date
-            return (string)$item->outgoing_date . '|' . $item->customer;
-        });
+        // Group by transaction_id to form unique transactions
+        $groupedTransactions = $outgoingItems->groupBy('transaction_id');
 
-        foreach ($groupedTransactions as $key => $items) {
-            $parts = explode('|', $key);
-            $date = $parts[0];
-            $customer = $parts[1];
-
+        foreach ($groupedTransactions as $transactionId => $items) {
+            // Get the first item to extract common transaction data
+            $firstItem = $items->first();
+            
             $itemNames = $items->map(function ($item) {
                 return $item->item->item_name;
             })->unique()->values()->toArray();
 
-            // Include all transactions (even single items) for complete analysis
-            $transactions[] = [
-                'id' => $transactionId++,
-                'date' => $date,
-                'customer' => $customer,
-                'items' => $itemNames,
-                'item_count' => count($itemNames)
-            ];
+            // Only include transactions with at least one item
+            if (count($itemNames) > 0) {
+                $transactions[] = [
+                    'id' => $transactionId,
+                    'date' => Carbon::parse($firstItem->outgoing_date)->format('Y-m-d'),
+                    'customer' => $firstItem->customer ?? 'Unknown',
+                    'items' => $itemNames,
+                    'item_count' => count($itemNames)
+                ];
+            }
         }
 
         return $transactions;

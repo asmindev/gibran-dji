@@ -39,9 +39,16 @@ class Item extends Model
         return $this->hasMany(OutgoingItem::class);
     }
 
-    public function isLowStock($threshold = 10): bool
+    public function isLowStock($threshold = null): bool
     {
-        return $this->stock <= $threshold;
+        $effectiveThreshold = $threshold ?? $this->minimum_stock ?? 10;
+        return $this->stock <= $effectiveThreshold;
+    }
+
+    // Check if item is understock based on minimum stock
+    public function isUnderstock(): bool
+    {
+        return $this->stock <= ($this->minimum_stock ?? 5);
     }
 
     // Accessor for name to map to item_name

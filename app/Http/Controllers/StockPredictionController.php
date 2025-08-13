@@ -78,7 +78,8 @@ class StockPredictionController extends Controller
                     'id' => $item->id,
                     'name' => $item->name,
                     'category' => $item->category ? $item->category->name : 'Uncategorized',
-                    'current_stock' => $item->stock ?? 0
+                    'current_stock' => $item->stock ?? 0,
+                    'minimum_stock' => $item->minimum_stock ?? 5
                 ]
             ]);
         } catch (\Exception $e) {

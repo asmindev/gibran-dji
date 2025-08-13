@@ -36,11 +36,15 @@
                     <li><strong>Dataset:</strong> Daftar transaksi (setiap transaksi = set item yang dibeli bersama)
                     </li>
                     <li><strong>Tanggal Analisis:</strong>
-                        @if($selectedDate === 'all')
-                        Semua tanggal ({{ count($sampleTransactions) }} transaksi)
+                        @if($hasCalculation)
+                            @if($selectedDate === 'all')
+                            Semua tanggal ({{ count($sampleTransactions) }} transaksi)
+                            @else
+                            {{ \Carbon\Carbon::parse($selectedDate)->format('d M Y') }} ({{ count($sampleTransactions) }}
+                            transaksi)
+                            @endif
                         @else
-                        {{ \Carbon\Carbon::parse($selectedDate)->format('d M Y') }} ({{ count($sampleTransactions) }}
-                        transaksi)
+                            <span class="text-gray-500 italic">Belum dipilih</span>
                         @endif
                     </li>
                     <li><strong>Minimum Support:</strong> {{ $minSupport }}% (ambang batas frekuensi itemset)</li>
@@ -56,11 +60,18 @@
         <h2 class="text-xl font-semibold text-gray-800 mb-4">🔧 Kontrol Parameter</h2>
         <form method="GET" action="{{ route('analysis.apriori-process') }}" class="grid md:grid-cols-5 gap-4">
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Transaksi</label>
-                <input type="date" name="transaction_date" value="{{ $selectedDate !== 'all' ? $selectedDate : '' }}"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                    min="{{ !empty($availableDates) ? min($availableDates) : '' }}"
-                    max="{{ !empty($availableDates) ? max($availableDates) : '' }}">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Transaksi *</label>
+                <select name="transaction_date" 
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" 
+                    required>
+                    <option value="" {{ $selectedDate === '' ? 'selected' : '' }}>-- Pilih Tanggal --</option>
+                    <option value="all" {{ $selectedDate === 'all' ? 'selected' : '' }}>Semua Tanggal</option>
+                    @foreach($availableDates as $date)
+                        <option value="{{ $date }}" {{ $selectedDate === $date ? 'selected' : '' }}>
+                            {{ \Carbon\Carbon::parse($date)->format('d M Y') }}
+                        </option>
+                    @endforeach
+                </select>
                 <div class="text-xs text-gray-500 mt-1">
                     @if(!empty($availableDates))
                     Rentang data: {{ \Carbon\Carbon::parse(min($availableDates))->format('d M Y') }} - {{
@@ -82,12 +93,13 @@
             </div>
             <div class="col-span-2 flex items-end">
                 <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md">
-                    Update Parameter
+                    <i class="fas fa-calculator mr-2"></i>Hitung Apriori
                 </button>
             </div>
         </form>
     </div>
 
+@if($hasCalculation)
     <!-- Sample Transaction Data -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-8">
         <div class="flex justify-between items-center mb-4">
@@ -119,7 +131,7 @@
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($sampleTransactions as $transaction)
                     <tr>
-                        <td class="px-4 py-2 text-sm font-medium text-gray-900">T{{ $transaction['id'] }}</td>
+                        <td class="px-4 py-2 text-sm font-medium text-gray-900">{{ $transaction['id'] }}</td>
                         <td class="px-4 py-2 text-sm text-gray-600">{{
                             \Carbon\Carbon::parse($transaction['date'])->format('d/m/Y') }}</td>
                         <td class="px-4 py-2 text-sm text-gray-900">
@@ -155,7 +167,34 @@
         @endif
     </div>
 </div>
+@else
+    <!-- Placeholder when no calculation performed -->
+    <div class="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-8 mb-8 border border-gray-200">
+        <div class="text-center">
+            <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 mb-4">
+                <i class="fas fa-calculator text-blue-600 text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">Pilih Tanggal untuk Memulai Analisis</h3>
+            <p class="text-gray-600 mb-4">
+                Silakan pilih tanggal transaksi pada form di atas untuk memulai perhitungan algoritma Apriori.
+            </p>
+            <div class="bg-white rounded-lg p-4 max-w-md mx-auto">
+                <h4 class="font-medium text-gray-800 mb-2">📋 Data Tersedia:</h4>
+                <div class="text-sm text-gray-600">
+                    @if(!empty($availableDates))
+                        <p><strong>{{ count($availableDates) }}</strong> hari transaksi tersedia</p>
+                        <p>Dari {{ \Carbon\Carbon::parse(min($availableDates))->format('d M Y') }} 
+                           hingga {{ \Carbon\Carbon::parse(max($availableDates))->format('d M Y') }}</p>
+                    @else
+                        <p class="text-red-600">Tidak ada data transaksi yang tersedia</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+@endif
 
+@if($hasCalculation && $algorithmSteps)
 <!-- Algorithm Steps -->
 <div class="space-y-8">
     <h2 class="text-2xl font-bold text-gray-800">🔄 Langkah-langkah Proses Algoritma</h2>
@@ -647,6 +686,7 @@
     @endif
 </div>
 @endif
+@endif
 
 <!-- Key Insights -->
 {{-- <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-6 mt-8 border border-indigo-200">
@@ -944,13 +984,8 @@ document.addEventListener('keydown', function(e) {
 
 // Date input enhancement
 document.addEventListener('DOMContentLoaded', function() {
-    const dateInput = document.querySelector('input[name="transaction_date"]');
-    const form = dateInput.closest('form');
-
-    // Auto-submit form when date is selected or cleared
-    dateInput.addEventListener('change', function() {
-        form.submit();
-    });
+    // Removed auto-submit functionality - user must click button to calculate
+    console.log('Apriori analysis page loaded');
 });
 </script>
 </div>

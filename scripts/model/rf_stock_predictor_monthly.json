@@ -1,21 +1,21 @@
 {
   "model_type": "monthly",
   "version": "3.0",
-  "training_date": "2025-08-11 18:11:06",
+  "training_date": "2025-08-13 11:30:06",
   "performance_metrics": {
-    "mae": 73.26009523809525,
-    "mse": 9820.674021422992,
-    "rmse": 99.0993139301327,
-    "r2": 0.8592919936164063,
-    "mape": 0.19476056995679444,
-    "cv_mae_mean": 166.69029431216936,
-    "cv_mae_std": 91.28745202716105,
-    "cv_r2_mean": 0.4035328443323247,
-    "cv_r2_std": 0.39655107854224536
+    "mae": 63.869521284271286,
+    "mse": 5188.123156988932,
+    "rmse": 72.02862734350094,
+    "r2": 0.6750483956163307,
+    "mape": 0.2918634492775638,
+    "cv_mae_mean": 117.99203637566136,
+    "cv_mae_std": 7.390118056680975,
+    "cv_r2_mean": -0.5423771337037915,
+    "cv_r2_std": 0.4708922055197848
   },
   "config": {
     "MODEL_VERSION": "3.0",
-    "TRAINING_DATE": "2025-08-11 18:11:06",
+    "TRAINING_DATE": "2025-08-13 11:30:06",
     "MIN_SAMPLES_DAILY": 5,
     "MIN_SAMPLES_MONTHLY": 3,
     "RANDOM_STATE": 42,
@@ -36,13 +36,13 @@
     "8"
   ],
   "product_mapping": {
-    "7": "Bola Basket",
-    "1": "Sepatu Bola Ortus",
-    "8": "Jersey Basket",
     "2": "Kaos Kaki Avo",
+    "5": "Piala",
     "4": "Tali Sepatu Kipzkapz",
-    "6": "Sepatu Futsal",
+    "7": "Bola Basket",
+    "8": "Jersey Basket",
+    "1": "Sepatu Bola Ortus",
     "3": "Jersey Mills",
-    "5": "Piala"
+    "6": "Sepatu Futsal"
   }
 }

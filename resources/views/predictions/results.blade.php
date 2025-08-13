@@ -77,15 +77,37 @@
             performanceText = 'Data tidak tersedia';
         }
 
-        // Check for understock warning
-        const currentStock = prediction.current_stock || 0;
+                // Check for understock warning
+        const currentStock = prediction.product?.current_stock || 0;
+        const minimumStock = prediction.product?.minimum_stock || 5;
         const predictedDemand = Math.round(prediction.prediction);
-        const isUnderstock = predictedDemand > currentStock;
-        const stockDifference = predictedDemand - currentStock;
 
-        // Stock status
+        // Check multiple understock conditions
+        const isUnderstockByPrediction = predictedDemand > currentStock;
+        const isUnderstockByMinimum = currentStock <= minimumStock;
+        const isUnderstock = isUnderstockByPrediction || isUnderstockByMinimum;
+
+        const stockDifference = predictedDemand - currentStock;
+        const minimumDifference = minimumStock - currentStock;
+
+        // Stock status with enhanced warnings
         let stockWarning = '';
         if (isUnderstock) {
+            let warningMessage = '';
+            let recommendations = [];
+
+            if (isUnderstockByPrediction && isUnderstockByMinimum) {
+                warningMessage = '🚨 Peringatan Kritis: Stok di bawah minimum DAN tidak cukup untuk prediksi!';
+                const requiredStock = Math.max(predictedDemand, minimumStock);
+                recommendations.push(`Tambah stok minimal <strong>${requiredStock - currentStock} unit</strong> untuk memenuhi kebutuhan.`);
+            } else if (isUnderstockByPrediction) {
+                warningMessage = '⚠️ Peringatan: Stok tidak cukup untuk prediksi permintaan!';
+                recommendations.push(`Tambah stok <strong>${stockDifference} unit</strong> untuk memenuhi prediksi permintaan.`);
+            } else if (isUnderstockByMinimum) {
+                warningMessage = '📉 Peringatan: Stok di bawah batas minimum!';
+                recommendations.push(`Tambah stok minimal <strong>${Math.abs(minimumDifference)} unit</strong> untuk mencapai minimum stock.`);
+            }
+
             stockWarning = `
                 <div class="mt-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
                     <div class="flex items-start">
@@ -95,21 +117,27 @@
                             </svg>
                         </div>
                         <div class="ml-3">
-                            <h3 class="text-sm font-medium text-red-800">⚠️ Peringatan Understock!</h3>
+                            <h3 class="text-sm font-medium text-red-800">${warningMessage}</h3>
                             <div class="mt-2 text-sm text-red-700">
-                                <p>Prediksi permintaan <strong>${predictedDemand} unit</strong> melebihi stok tersedia <strong>${currentStock} unit</strong>.</p>
-                                <p class="mt-1">Anda perlu menambah stok sebanyak <strong class="text-red-800">${stockDifference} unit</strong> untuk memenuhi prediksi permintaan.</p>
+                                ${recommendations.map(rec => `<p class="mb-1">${rec}</p>`).join('')}
                             </div>
                             <div class="mt-3">
-                                <div class="flex items-center space-x-4">
-                                    <div class="text-sm">
-                                        <span class="text-red-600">📉 Stok Saat Ini: ${currentStock}</span>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                                    <div class="bg-red-100 p-2 rounded">
+                                        <span class="font-medium text-red-800">📦 Stok Saat Ini</span><br>
+                                        <span class="text-red-600">${currentStock} unit</span>
                                     </div>
-                                    <div class="text-sm">
-                                        <span class="text-red-800">📈 Prediksi Permintaan: ${predictedDemand}</span>
+                                    <div class="bg-orange-100 p-2 rounded">
+                                        <span class="font-medium text-orange-800">📉 Minimum Stock</span><br>
+                                        <span class="text-orange-600">${minimumStock} unit</span>
                                     </div>
-                                    <div class="text-sm">
-                                        <span class="text-red-900">🛒 Perlu Ditambah: ${stockDifference}</span>
+                                    <div class="bg-blue-100 p-2 rounded">
+                                        <span class="font-medium text-blue-800">📈 Prediksi Demand</span><br>
+                                        <span class="text-blue-600">${predictedDemand} unit</span>
+                                    </div>
+                                    <div class="bg-purple-100 p-2 rounded">
+                                        <span class="font-medium text-purple-800">🎯 Status</span><br>
+                                        <span class="text-purple-600">${isUnderstockByPrediction && isUnderstockByMinimum ? 'Kritis' : 'Perlu Perhatian'}</span>
                                     </div>
                                 </div>
                             </div>
@@ -119,6 +147,8 @@
             `;
         } else {
             const surplus = currentStock - predictedDemand;
+            const aboveMinimum = currentStock - minimumStock;
+
             stockWarning = `
                 <div class="mt-6 bg-green-50 border-l-4 border-green-500 p-4 rounded-lg">
                     <div class="flex items-start">
@@ -131,7 +161,27 @@
                             <h3 class="text-sm font-medium text-green-800">✅ Stok Mencukupi</h3>
                             <div class="mt-2 text-sm text-green-700">
                                 <p>Stok saat ini <strong>${currentStock} unit</strong> mencukupi untuk prediksi permintaan <strong>${predictedDemand} unit</strong>.</p>
-                                <p class="mt-1">Surplus stok: <strong class="text-green-800">${surplus} unit</strong></p>
+                                <p class="mt-1">Surplus stok: <strong class="text-green-800">${surplus} unit</strong> | Di atas minimum: <strong class="text-green-800">${aboveMinimum} unit</strong></p>
+                            </div>
+                            <div class="mt-3">
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                                    <div class="bg-green-100 p-2 rounded">
+                                        <span class="font-medium text-green-800">📦 Stok Saat Ini</span><br>
+                                        <span class="text-green-600">${currentStock} unit</span>
+                                    </div>
+                                    <div class="bg-blue-100 p-2 rounded">
+                                        <span class="font-medium text-blue-800">📉 Minimum Stock</span><br>
+                                        <span class="text-blue-600">${minimumStock} unit</span>
+                                    </div>
+                                    <div class="bg-purple-100 p-2 rounded">
+                                        <span class="font-medium text-purple-800">📈 Prediksi Demand</span><br>
+                                        <span class="text-purple-600">${predictedDemand} unit</span>
+                                    </div>
+                                    <div class="bg-emerald-100 p-2 rounded">
+                                        <span class="font-medium text-emerald-800">🎯 Status</span><br>
+                                        <span class="text-emerald-600">Aman</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -270,18 +270,18 @@
                             </div>
 
                             <!-- Minimum Stock -->
-                            {{-- <div class="space-y-2">
+                            <div class="space-y-2">
                                 <label for="minimum_stock" class="block text-sm font-semibold text-gray-700">
                                     Stok Minimum <span class="text-red-500">*</span>
                                 </label>
                                 <div class="relative">
                                     <input type="number" name="minimum_stock" id="minimum_stock"
-                                        value="{{ old('minimum_stock', $item->minimum_stock) }}" min="0" required
+                                        value="{{ old('minimum_stock', $item->minimum_stock ?? 5) }}" min="0" required
                                         class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 bg-gray-50 focus:bg-white"
-                                        placeholder="10">
+                                        placeholder="5">
 
                                 </div>
-                                <p class="text-xs text-gray-500">Alert jika stok di bawah ini</p>
+                                <p class="text-xs text-gray-500">Batas minimum stok untuk peringatan understock</p>
                                 @error('minimum_stock')
                                 <p class="text-sm text-red-600 flex items-center">
                                     <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -292,7 +292,7 @@
                                     {{ $message }}
                                 </p>
                                 @enderror
-                            </div> --}}
+                            </div>
 
                             <!-- Purchase Price -->
                             {{-- <div class="space-y-2">
