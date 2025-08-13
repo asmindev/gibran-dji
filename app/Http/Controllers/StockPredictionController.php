@@ -68,12 +68,13 @@ class StockPredictionController extends Controller
             }
 
             // Save prediction to database
-            // product prediction result only
-            // include item n
+            $stockPrediction = $this->savePredictionToDatabase($item, $result, $request->prediction_period);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Prediksi berhasil dibuat!',
                 'results' => $result,
+                'prediction_id' => $stockPrediction->id,
                 "product" => [
                     'id' => $item->id,
                     'name' => $item->name,
@@ -725,6 +726,188 @@ class StockPredictionController extends Controller
                 'worker_running' => false,
                 'error' => $e->getMessage(),
                 'message' => 'Error checking worker status'
+            ], 500);
+        }
+    }
+
+    /**
+     * Save prediction result to database
+     */
+    private function savePredictionToDatabase($item, $result, $predictionPeriod)
+    {
+        // Determine prediction month based on type
+        if ($predictionPeriod === 'daily') {
+            // For daily predictions, we use current month
+            $predictionMonth = now()->startOfMonth();
+        } else {
+            // For monthly predictions, we use next month
+            $predictionMonth = now()->addMonth()->startOfMonth();
+        }
+
+        // Check if prediction for this item and month already exists
+        $existingPrediction = StockPrediction::where('item_id', $item->id)
+            ->where('prediction_month', $predictionMonth->format('Y-m-d'))
+            ->where('prediction_type', $predictionPeriod)
+            ->first();
+
+        $predictionData = [
+            'item_id' => $item->id,
+            'predicted_quantity' => $result['prediction'],
+            'prediction_type' => $predictionPeriod,
+            'prediction_month' => $predictionMonth->format('Y-m-d'),
+            'input_data' => $result['input_data'] ?? null,
+            'confidence' => $result['confidence'] ?? null,
+            'execution_time_ms' => $result['execution_time_ms'] ?? null,
+            'model_prediction_time_ms' => $result['model_prediction_time_ms'] ?? null,
+            'predicted_at' => now(),
+        ];
+
+        if ($existingPrediction) {
+            // Update existing prediction
+            $existingPrediction->update($predictionData);
+            Log::info('Updated existing stock prediction', [
+                'prediction_id' => $existingPrediction->id,
+                'item_id' => $item->id,
+                'prediction_month' => $predictionMonth->format('Y-m-d')
+            ]);
+            return $existingPrediction;
+        } else {
+            // Create new prediction
+            $stockPrediction = StockPrediction::create($predictionData);
+            Log::info('Created new stock prediction', [
+                'prediction_id' => $stockPrediction->id,
+                'item_id' => $item->id,
+                'prediction_month' => $predictionMonth->format('Y-m-d')
+            ]);
+            return $stockPrediction;
+        }
+    }
+
+    /**
+     * Update actual sales data for predictions
+     */
+    public function updateActualData(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'year' => 'required|integer|min:2020|max:2030',
+                'month' => 'required|integer|min:1|max:12',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            $year = $request->year;
+            $month = $request->month;
+            $updatedCount = 0;
+
+            // Get all predictions for the specified month
+            $predictions = StockPrediction::whereYear('prediction_month', $year)
+                ->whereMonth('prediction_month', $month)
+                ->whereNull('actual_quantity')
+                ->get();
+
+            foreach ($predictions as $prediction) {
+                // Calculate actual sales for this item in the specified month
+                $actualSales = OutgoingItem::where('item_id', $prediction->item_id)
+                    ->whereYear('outgoing_date', $year)
+                    ->whereMonth('outgoing_date', $month)
+                    ->sum('quantity');
+
+                // Update prediction with actual data
+                $prediction->update([
+                    'actual_quantity' => $actualSales,
+                    'actual_updated_at' => now()
+                ]);
+
+                $updatedCount++;
+
+                Log::info('Updated actual data for prediction', [
+                    'prediction_id' => $prediction->id,
+                    'item_id' => $prediction->item_id,
+                    'actual_quantity' => $actualSales,
+                    'predicted_quantity' => $prediction->predicted_quantity
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => "Data aktual berhasil diperbarui untuk {$updatedCount} prediksi",
+                'updated_count' => $updatedCount,
+                'month' => Carbon::create($year, $month)->locale('id')->format('F Y')
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Update actual data error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memperbarui data aktual: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get prediction history and accuracy
+     */
+    public function getPredictionHistory(Request $request)
+    {
+        try {
+            $itemId = $request->get('item_id');
+            $limit = $request->get('limit', 10);
+
+            $query = StockPrediction::with('item.category')
+                ->orderBy('prediction_month', 'desc');
+
+            if ($itemId) {
+                $query->where('item_id', $itemId);
+            }
+
+            $predictions = $query->limit($limit)->get();
+
+            $formattedPredictions = $predictions->map(function ($prediction) {
+                return [
+                    'id' => $prediction->id,
+                    'item_name' => $prediction->item->name,
+                    'category' => $prediction->item->category ? $prediction->item->category->name : 'Uncategorized',
+                    'prediction_month' => $prediction->formatted_month,
+                    'prediction_type' => $prediction->prediction_type,
+                    'predicted_quantity' => $prediction->predicted_quantity,
+                    'actual_quantity' => $prediction->actual_quantity,
+                    'accuracy' => $prediction->accuracy,
+                    'confidence' => $prediction->confidence,
+                    'predicted_at' => $prediction->predicted_at->format('d/m/Y H:i'),
+                    'actual_updated_at' => $prediction->actual_updated_at ? $prediction->actual_updated_at->format('d/m/Y H:i') : null
+                ];
+            });
+
+            // Calculate overall accuracy statistics
+            $predictionsWithActual = $predictions->filter(function ($prediction) {
+                return $prediction->actual_quantity !== null;
+            });
+
+            $averageAccuracy = $predictionsWithActual->avg('accuracy');
+            $totalPredictions = $predictions->count();
+            $predictionsWithActualCount = $predictionsWithActual->count();
+
+            return response()->json([
+                'success' => true,
+                'predictions' => $formattedPredictions,
+                'statistics' => [
+                    'total_predictions' => $totalPredictions,
+                    'predictions_with_actual' => $predictionsWithActualCount,
+                    'average_accuracy' => $averageAccuracy ? round($averageAccuracy, 2) : null,
+                    'completion_rate' => $totalPredictions > 0 ? round(($predictionsWithActualCount / $totalPredictions) * 100, 2) : 0
+                ]
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Get prediction history error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat mengambil riwayat prediksi: ' . $e->getMessage()
             ], 500);
         }
     }

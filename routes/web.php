@@ -40,6 +40,8 @@ Route::prefix('predictions')->name('predictions.')->group(function () {
     Route::post('/generate-model', [StockPredictionController::class, 'generateModel'])->name('generate-model');
     Route::get('/training-status', [StockPredictionController::class, 'getTrainingStatus'])->name('training-status');
     Route::get('/worker-status', [StockPredictionController::class, 'getWorkerStatus'])->name('worker-status');
+    Route::post('/update-actual', [StockPredictionController::class, 'updateActualData'])->name('update-actual');
+    Route::get('/history', [StockPredictionController::class, 'getPredictionHistory'])->name('history');
     Route::delete('/{prediction}', [StockPredictionController::class, 'destroy'])->name('destroy');
 });
 

@@ -39,6 +39,11 @@ class Item extends Model
         return $this->hasMany(OutgoingItem::class);
     }
 
+    public function stockPredictions(): HasMany
+    {
+        return $this->hasMany(StockPrediction::class);
+    }
+
     public function isLowStock($threshold = null): bool
     {
         $effectiveThreshold = $threshold ?? $this->minimum_stock ?? 10;
