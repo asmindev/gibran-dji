@@ -95,6 +95,18 @@
                 <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md">
                     <i class="fas fa-calculator mr-2"></i>Hitung Apriori
                 </button>
+                @if($hasCalculation && $analysisSaved && $savedRulesCount > 0)
+                <div class="ml-3 text-sm text-green-600 bg-green-50 px-3 py-2 rounded-md border border-green-200">
+                    <i class="fas fa-check-circle mr-1"></i>
+                    {{ $savedRulesCount }} association rule{{ $savedRulesCount > 1 ? 's' : '' }} telah disimpan ke
+                    database
+                </div>
+                @elseif($hasCalculation && !$analysisSaved)
+                <div class="ml-3 text-sm text-amber-600 bg-amber-50 px-3 py-2 rounded-md border border-amber-200">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    Analisis selesai, tetapi tidak ada association rules yang dihasilkan
+                </div>
+                @endif
             </div>
         </form>
     </div>

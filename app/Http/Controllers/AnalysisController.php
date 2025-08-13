@@ -6,8 +6,10 @@ use App\Models\InventoryRecommendation;
 use App\Models\StockPrediction;
 use App\Models\Item;
 use App\Models\OutgoingItem;
+use App\Models\AprioriAnalysis;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class AnalysisController extends Controller
@@ -33,6 +35,8 @@ class AnalysisController extends Controller
         $sampleTransactions = [];
         $algorithmSteps = null;
         $hasCalculation = false;
+        $analysisSaved = false; // Tambahan variabel untuk tracking penyimpanan
+        $savedRulesCount = 0; // Jumlah rules yang berhasil disimpan
 
         if (!empty($selectedDate)) {
             $hasCalculation = true;
@@ -73,6 +77,40 @@ class AnalysisController extends Controller
                 $algorithmSteps['summary']['execution_time_ms'] = $executionTimeMs;
                 $algorithmSteps['summary']['execution_time_start'] = $startTime;
                 $algorithmSteps['summary']['execution_time_end'] = $endTime;
+
+                // Save analysis results to database (satu per satu association rule)
+                try {
+                    $savedCount = AprioriAnalysis::saveAnalysis(
+                        $algorithmSteps,
+                        $selectedDate,
+                        $minSupport,
+                        $minConfidence,
+                        $sampleTransactions,
+                        Auth::user()->name ?? 'System'
+                    );
+
+                    if ($savedCount && $savedCount > 0) {
+                        $analysisSaved = true; // Set true jika berhasil disimpan
+                        $savedRulesCount = $savedCount; // Simpan jumlah rules
+                        Log::info('Apriori analysis saved successfully', [
+                            'rules_saved' => $savedCount,
+                            'selected_date' => $selectedDate
+                        ]);
+                    } else {
+                        Log::info('Apriori analysis not saved - no association rules generated', [
+                            'selected_date' => $selectedDate,
+                            'min_support' => $minSupport,
+                            'min_confidence' => $minConfidence
+                        ]);
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Failed to save Apriori analysis', [
+                        'error' => $e->getMessage(),
+                        'selected_date' => $selectedDate,
+                        'min_support' => $minSupport,
+                        'min_confidence' => $minConfidence
+                    ]);
+                }
             }
         }
 
@@ -88,7 +126,9 @@ class AnalysisController extends Controller
             'selectedDate',
             'availableDates',
             'products',
-            'hasCalculation'
+            'hasCalculation',
+            'analysisSaved',
+            'savedRulesCount'
         ))->with([
             'minSupport' => $minSupport, // Send as percentage for display
             'minConfidence' => $minConfidence // Send as percentage for display
