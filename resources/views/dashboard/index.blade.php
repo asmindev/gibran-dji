@@ -85,17 +85,48 @@
         <!-- Apriori Analysis Chart -->
         <div class="bg-white shadow rounded-lg">
             <div class="p-6 border-b border-gray-200">
-                <h3 class="text-lg font-semibold text-gray-900">Analisis Apriori</h3>
-                <p class="text-sm text-gray-600 mt-1">Association rules dengan confidence dan support tertinggi</p>
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900">Analisis Apriori</h3>
+                        <p class="text-sm text-gray-600 mt-1">Association rules dengan confidence dan support tertinggi
+                        </p>
+                    </div>
+                    @if($availableMonths->count() > 0)
+                    <div class="flex items-center space-x-2">
+                        <label for="monthFilter" class="text-sm font-medium text-gray-700">Bulan:</label>
+                        <select id="monthFilter" name="month"
+                            class="text-sm border border-gray-300 rounded-md px-3 py-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            onchange="filterByMonth()">
+                            @foreach($availableMonths as $month)
+                            <option value="{{ $month['value'] }}" {{ $selectedMonth===$month['value'] ? 'selected' : ''
+                                }}>
+                                {{ $month['label'] }}
+                            </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @endif
+                </div>
             </div>
             <div class="p-6">
                 @if($aprioriData->count() > 0)
                 <div class="relative h-64">
                     <canvas id="aprioriAnalysisChart"></canvas>
                 </div>
+                <div class="mt-4 text-center">
+                    <p class="text-xs text-gray-500">
+                        Menampilkan data untuk {{ \Carbon\Carbon::parse($selectedMonth . '-01')->format('F Y') }}
+                    </p>
+                </div>
                 @else
                 <div class="text-center py-8">
+                    @if($availableMonths->count() > 0)
+                    <p class="text-gray-500 mb-2">Tidak ada data analisis Apriori untuk {{
+                        \Carbon\Carbon::parse($selectedMonth . '-01')->format('F Y') }}</p>
+                    <p class="text-xs text-gray-400 mb-4">Coba pilih bulan lain atau buat analisis baru</p>
+                    @else
                     <p class="text-gray-500 mb-2">Belum ada data analisis Apriori</p>
+                    @endif
                     <a href="{{ route('analysis.apriori-process') }}"
                         class="text-blue-600 hover:text-blue-700 text-sm font-medium">
                         Mulai analisis Apriori
@@ -303,5 +334,13 @@
         }
     });
 });
+
+// Function to filter chart by month
+function filterByMonth() {
+    const selectedMonth = document.getElementById('monthFilter').value;
+    const currentUrl = new URL(window.location);
+    currentUrl.searchParams.set('month', selectedMonth);
+    window.location.href = currentUrl.toString();
+}
 </script>
 @endsection

@@ -12,8 +12,11 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        // Get month filter parameter, default to current month
+        $selectedMonth = $request->get('month', now()->format('Y-m'));
+
         // Basic Statistics
         $totalItems = Item::count();
         $totalCategories = Category::count();
@@ -37,8 +40,9 @@ class DashboardController extends Controller
         $monthlyOutgoing = OutgoingItem::whereRaw("DATE_FORMAT(outgoing_date, '%Y-%m') = ?", [$currentMonth])
             ->sum('quantity');
 
-        // Apriori Analysis Data for Chart
+        // Apriori Analysis Data for Chart (filtered by month)
         $aprioriData = AprioriAnalysis::select('rules', 'confidence', 'support')
+            ->whereRaw("DATE_FORMAT(transaction_date, '%Y-%m') = ?", [$selectedMonth])
             ->orderBy('confidence', 'desc')
             ->limit(5) // Ambil 5 data teratas berdasarkan confidence
             ->get()
@@ -52,6 +56,18 @@ class DashboardController extends Controller
                 ];
             });
 
+        // Get available months for filter dropdown
+        $availableMonths = AprioriAnalysis::selectRaw("DATE_FORMAT(transaction_date, '%Y-%m') as month")
+            ->distinct()
+            ->orderBy('month', 'desc')
+            ->pluck('month')
+            ->map(function ($month) {
+                return [
+                    'value' => $month,
+                    'label' => \Carbon\Carbon::parse($month . '-01')->format('F Y')
+                ];
+            });
+
         return view('dashboard.index', compact(
             'totalItems',
             'totalCategories',
@@ -60,7 +76,9 @@ class DashboardController extends Controller
             'stockByCategory',
             'monthlyIncoming',
             'monthlyOutgoing',
-            'aprioriData'
+            'aprioriData',
+            'selectedMonth',
+            'availableMonths'
         ));
     }
 }
