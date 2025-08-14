@@ -15,7 +15,7 @@ return [
         | Here you can specify how big the chunk should be.
         |
         */
-        'chunk_size'             => 1000,
+        'chunk_size'             => 25, // Further reduced for better memory management
 
         /*
         |--------------------------------------------------------------------------
@@ -257,7 +257,7 @@ return [
         |
         */
         'batch'       => [
-            'memory_limit' => 60000,
+            'memory_limit' => 32000, // Reduced memory limit for batch caching
         ],
 
         /*

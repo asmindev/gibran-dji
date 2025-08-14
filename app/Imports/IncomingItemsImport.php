@@ -4,23 +4,19 @@ namespace App\Imports;
 
 use App\Models\Item;
 use App\Models\IncomingItem;
-use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Validators\Failure;
-use Illuminate\Validation\Rule;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class IncomingItemsImport implements
-    ToModel,
+    ToCollection,
     WithHeadingRow,
-    WithValidation,
     WithChunkReading,
     WithMapping
 {
@@ -30,95 +26,68 @@ class IncomingItemsImport implements
     private $processedRows = 0;
 
     /**
-     * @param array $row
-     *
-     * @return \Illuminate\Database\Eloquent\Model|null
+     * @param Collection $collection
      */
-    public function model(array $row)
+    public function collection(Collection $collection)
     {
-        $this->processedRows++;
+        DB::beginTransaction();
 
-        // Find item by name
-        $item = Item::where('item_name', $row['nama_barang'])->first();
+        try {
+            foreach ($collection as $index => $row) {
+                $this->processedRows++;
 
-        if (!$item) {
-            // Item tidak ditemukan, akan di-handle oleh validation rules
-            return null;
+                // Skip empty rows
+                if (empty($row['nama_barang'])) {
+                    continue;
+                }
+
+                // Validate required fields
+                if (empty($row['id_transaksi']) || empty($row['nama_barang']) || empty($row['jumlah'])) {
+                    $this->validationErrors[] = [
+                        'row' => $index + 2, // +2 because of header and 0-based index
+                        'message' => 'Data tidak lengkap pada baris ' . ($index + 2)
+                    ];
+                    continue;
+                }
+
+                // Find item by name
+                $item = Item::where('item_name', $row['nama_barang'])->first();
+
+                if (!$item) {
+                    $this->validationErrors[] = [
+                        'row' => $index + 2,
+                        'message' => "Barang '{$row['nama_barang']}' tidak ditemukan"
+                    ];
+                    continue;
+                }
+
+                // Parse date
+                $incomingDate = $this->parseDate($row['tanggal_transaksi'] ?? null);
+
+                // Create incoming item
+                IncomingItem::create([
+                    'transaction_id' => $row['id_transaksi'],
+                    'item_id' => $item->id,
+                    'quantity' => $row['jumlah'],
+                    'unit_cost' => $row['harga_satuan'] ?? 0,
+                    'incoming_date' => $incomingDate,
+                    'notes' => 'Import dari file Excel - ID Transaksi: ' . ($row['id_transaksi'] ?? 'N/A'),
+                ]);
+
+                // Update stock
+                $item->increment('stock', $row['jumlah']);
+
+                // Clear memory periodically
+                if ($this->processedRows % 25 === 0) {
+                    gc_collect_cycles();
+                }
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            throw $e;
         }
-
-        // Parse date dengan validasi
-        $incomingDate = $this->parseDate($row['tanggal_transaksi'] ?? null);
-
-        // Buat incoming item
-        $incomingItem = IncomingItem::create([
-            'transaction_id' => $row['id_transaksi'],
-            'item_id' => $item->id,
-            'quantity' => $row['jumlah'],
-            'unit_cost' => $row['harga_satuan'] ?? 0,
-            'incoming_date' => $incomingDate,
-            'notes' => 'Import dari file Excel - ID Transaksi: ' . ($row['id_transaksi'] ?? 'N/A'),
-        ]);
-
-        // Manual increment stok untuk memastikan (karena observer mungkin tidak dipanggil dalam import)
-        $item->refresh(); // Refresh item data
-        $item->increment('stock', $row['jumlah']);
-
-        return $incomingItem;
-    }
-
-    public function rules(): array
-    {
-        return [
-            'id_transaksi' => [
-                'required',
-                'string',
-                'max:255',
-                'unique:incoming_items,transaction_id'
-            ],
-            'nama_barang' => [
-                'required',
-                'string',
-                'max:255',
-                'exists:items,item_name'
-            ],
-            'tanggal_transaksi' => [
-                'required'
-            ],
-            'jumlah' => [
-                'required',
-                'numeric',
-                'min:1',
-                'max:999999'
-            ],
-            'harga_satuan' => [
-                'nullable',
-                'numeric',
-                'min:0',
-                'max:999999999'
-            ],
-            'kategori' => 'nullable|string|max:255',
-        ];
-    }
-
-    public function customValidationMessages(): array
-    {
-        return [
-            'id_transaksi.required' => 'ID Transaksi wajib diisi.',
-            'id_transaksi.unique' => 'ID Transaksi ":input" sudah ada dalam database.',
-            'id_transaksi.max' => 'ID Transaksi maksimal 255 karakter.',
-            'nama_barang.required' => 'Nama barang wajib diisi.',
-            'nama_barang.exists' => 'Nama barang ":input" tidak ditemukan dalam database.',
-            'nama_barang.max' => 'Nama barang maksimal 255 karakter.',
-            'tanggal_transaksi.required' => 'Tanggal transaksi wajib diisi.',
-            'jumlah.required' => 'Jumlah wajib diisi.',
-            'jumlah.numeric' => 'Jumlah harus berupa angka.',
-            'jumlah.min' => 'Jumlah minimal 1.',
-            'jumlah.max' => 'Jumlah maksimal 999,999.',
-            'harga_satuan.numeric' => 'Harga satuan harus berupa angka.',
-            'harga_satuan.min' => 'Harga satuan minimal 0.',
-            'harga_satuan.max' => 'Harga satuan maksimal 999,999,999.',
-            'kategori.max' => 'Kategori maksimal 255 karakter.',
-        ];
     }
 
     public function getValidationErrors()
@@ -128,7 +97,7 @@ class IncomingItemsImport implements
 
     public function chunkSize(): int
     {
-        return 100; // Read in chunks of 100
+        return 25; // Smaller chunks for better memory management
     }
 
     /**

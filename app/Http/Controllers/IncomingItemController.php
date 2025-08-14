@@ -191,6 +191,10 @@ class IncomingItemController extends Controller
             'file.max' => 'Ukuran file maksimal 10MB.',
         ]);
 
+        // Increase memory limit and execution time for import
+        ini_set('memory_limit', '512M');
+        ini_set('max_execution_time', 300); // 5 minutes
+
         try {
             $import = new IncomingItemsImport();
             Excel::import($import, $request->file('file'));
