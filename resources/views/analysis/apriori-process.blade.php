@@ -58,8 +58,8 @@
     <!-- Parameters Control -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-8">
         <h2 class="text-xl font-semibold text-gray-800 mb-4">🔧 Kontrol Parameter</h2>
-        <form method="GET" action="{{ route('analysis.apriori-process') }}" class="grid md:grid-cols-5 gap-4">
-            <div>
+        <form method="GET" action="{{ route('analysis.apriori-process') }}" class="flex flex-col lg:flex-row gap-4">
+            <div class="flex-1">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Transaksi *</label>
                 <select name="transaction_date"
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
@@ -72,37 +72,30 @@
                     </option>
                     @endforeach
                 </select>
-                <div class="text-xs text-gray-500 mt-1">
-                    @if(!empty($availableDates))
-                    Rentang data: {{ \Carbon\Carbon::parse(min($availableDates))->format('d M Y') }} - {{
-                    \Carbon\Carbon::parse(max($availableDates))->format('d M Y') }}
-                    @else
-                    Tidak ada data transaksi tersedia
-                    @endif
-                </div>
             </div>
-            <div>
+            <div class="flex-none w-full lg:w-48">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Minimum Support (%)</label>
                 <input type="number" name="min_support" value="{{ $minSupport }}" min="1" max="100"
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
             </div>
-            <div>
+            <div class="flex-none w-full lg:w-48">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Minimum Confidence (%)</label>
                 <input type="number" name="min_confidence" value="{{ $minConfidence }}" min="1" max="100"
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
             </div>
-            <div class="col-span-2 flex items-end">
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md">
+            <div class="flex flex-col lg:flex-row lg:items-end gap-3">
+                <button type="submit"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md whitespace-nowrap">
                     <i class="fas fa-calculator mr-2"></i>Hitung Apriori
                 </button>
                 @if($hasCalculation && $analysisSaved && $savedRulesCount > 0)
-                <div class="ml-3 text-sm text-green-600 bg-green-50 px-3 py-2 rounded-md border border-green-200">
+                <div class="text-sm text-green-600 bg-green-50 px-3 py-2 rounded-md border border-green-200">
                     <i class="fas fa-check-circle mr-1"></i>
                     {{ $savedRulesCount }} association rule{{ $savedRulesCount > 1 ? 's' : '' }} telah disimpan ke
                     database
                 </div>
                 @elseif($hasCalculation && !$analysisSaved)
-                <div class="ml-3 text-sm text-amber-600 bg-amber-50 px-3 py-2 rounded-md border border-amber-200">
+                <div class="text-sm text-amber-600 bg-amber-50 px-3 py-2 rounded-md border border-amber-200">
                     <i class="fas fa-info-circle mr-1"></i>
                     Analisis selesai, tetapi tidak ada association rules yang dihasilkan
                 </div>
