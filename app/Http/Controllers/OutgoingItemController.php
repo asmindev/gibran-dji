@@ -10,6 +10,7 @@ use App\Exports\OutgoingItemsTemplateExport;
 use App\Imports\OutgoingItemsImport;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Log;
 
 class OutgoingItemController extends Controller
 {
@@ -172,45 +173,102 @@ class OutgoingItemController extends Controller
             $import = new OutgoingItemsImport();
             Excel::import($import, $request->file('file'));
 
-            // Check for stock validation errors
+            // Get import statistics
+            $stats = $import->getImportStatistics();
+            $validationErrors = $import->getValidationErrors();
             $stockErrors = $import->getStockValidationErrors();
+
+            Log::info('Import completed with detailed statistics', [
+                'statistics' => $stats,
+                'validation_errors_count' => count($validationErrors),
+                'stock_errors_count' => count($stockErrors),
+                'validation_errors' => $validationErrors,
+                'stock_errors' => $stockErrors
+            ]);
+
+            // Check for validation errors
+            $hasValidationErrors = !empty($validationErrors);
+
+            // Check for stock validation errors
             $hasStockErrors = !empty($stockErrors);
 
-            if ($hasStockErrors) {
-                $stockErrorDetails = [];
-                foreach ($stockErrors as $error) {
-                    $stockErrorDetails[] = [
-                        'row' => $error['row'],
-                        'error' => $error['message']
-                    ];
+            // If there are any errors, show them
+            if ($hasValidationErrors || $hasStockErrors) {
+                // Group errors by type for display in view
+                $groupedErrors = [];
+                $totalErrorCount = 0;
+
+                if ($hasValidationErrors) {
+                    foreach ($validationErrors as $error) {
+                        // Determine error type based on message content
+                        if (strpos($error['message'], 'tidak ditemukan') !== false) {
+                            $groupedErrors['not_found'][] = [
+                                'row' => $error['row'],
+                                'error' => $error['message']
+                            ];
+                        } else {
+                            $groupedErrors['validation'][] = [
+                                'row' => $error['row'],
+                                'error' => $error['message']
+                            ];
+                        }
+                        $totalErrorCount++;
+                    }
+                }
+
+                if ($hasStockErrors) {
+                    foreach ($stockErrors as $error) {
+                        $groupedErrors['stock'][] = [
+                            'row' => $error['row'],
+                            'error' => $error['message']
+                        ];
+                        $totalErrorCount++;
+                    }
                 }
 
                 if ($request->ajax()) {
                     return response()->json([
                         'success' => false,
-                        'errors' => ['stock' => $stockErrorDetails],
-                        'error_count' => count($stockErrorDetails)
+                        'errors' => $groupedErrors,
+                        'error_count' => $totalErrorCount,
+                        'statistics' => $stats
                     ]);
                 }
 
                 return redirect()->back()
                     ->withInput()
-                    ->with('import_errors', ['stock' => $stockErrorDetails])
-                    ->with('error_count', count($stockErrorDetails));
+                    ->with('import_errors', $groupedErrors)
+                    ->with('error_count', $totalErrorCount)
+                    ->with('import_statistics', $stats);
             }
 
             if ($request->ajax()) {
                 // Set flash session for success message
-                session()->flash('success', 'Data barang keluar berhasil diimport.');
+                $successMessage = "Data barang keluar berhasil diimport. " .
+                    "Berhasil: {$stats['saved_rows']}, " .
+                    "Dilewati: {$stats['skipped_rows']}, " .
+                    "Error: " . ($stats['validation_errors'] + $stats['stock_errors']);
+
+                session()->flash('success', $successMessage);
 
                 return response()->json([
                     'success' => true,
-                    'redirect_url' => route('outgoing_items.index')
+                    'redirect_url' => route('outgoing_items.index'),
+                    'message' => $successMessage,
+                    'statistics' => $stats
                 ]);
             }
 
+            $successMessage = "Data barang keluar berhasil diimport. " .
+                "Berhasil disimpan: {$stats['saved_rows']} dari {$stats['processed_rows']} baris yang diproses.";
+
+            if ($stats['skipped_rows'] > 0) {
+                $successMessage .= " {$stats['skipped_rows']} baris dilewati karena kosong atau error.";
+            }
+
             return redirect()->route('outgoing_items.index')
-                ->with('success', 'Data barang keluar berhasil diimport.');
+                ->with('success', $successMessage)
+                ->with(['import_statistics' => $stats]);
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
             $failures = $e->failures();
             $errorDetails = [];

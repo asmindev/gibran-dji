@@ -58,6 +58,12 @@ class AnalysisController extends Controller
                 $sampleTransactions = array_values($sampleTransactions);
             }
 
+            Log::info('Transactions filtering result', [
+                'selected_date' => $selectedDate,
+                'total_transactions' => count($allTransactions),
+                'filtered_transactions' => count($sampleTransactions)
+            ]);
+
             // If no transactions found for selected date, show message
             if (empty($sampleTransactions)) {
                 $algorithmSteps = $this->getEmptyAlgorithmSteps($minSupport, $minConfidence);
@@ -414,18 +420,24 @@ class AnalysisController extends Controller
      */
     private function getTransactionDataFromDatabase(): array
     {
-        // Group outgoing items by transaction_id to form actual transactions
+        // Group outgoing items by combination of transaction_id AND date to form actual transactions
         $outgoingItems = OutgoingItem::with('item')
             ->orderBy('outgoing_date')
             ->orderBy('transaction_id')
             ->get();
 
+        Log::info('Total outgoing items retrieved from database', ['count' => $outgoingItems->count()]);
+
         $transactions = [];
 
-        // Group by transaction_id to form unique transactions
-        $groupedTransactions = $outgoingItems->groupBy('transaction_id');
+        // Group by combination of transaction_id and date to handle repeated transaction IDs across dates
+        $groupedTransactions = $outgoingItems->groupBy(function ($item) {
+            return $item->transaction_id . '_' . Carbon::parse($item->outgoing_date)->format('Y-m-d');
+        });
 
-        foreach ($groupedTransactions as $transactionId => $items) {
+        Log::info('Grouped transactions count', ['count' => $groupedTransactions->count()]);
+
+        foreach ($groupedTransactions as $groupKey => $items) {
             // Get the first item to extract common transaction data
             $firstItem = $items->first();
 
@@ -436,7 +448,7 @@ class AnalysisController extends Controller
             // Only include transactions with at least one item
             if (count($itemNames) > 0) {
                 $transactions[] = [
-                    'id' => $transactionId,
+                    'id' => $firstItem->transaction_id . '_' . Carbon::parse($firstItem->outgoing_date)->format('Y-m-d'),
                     'date' => Carbon::parse($firstItem->outgoing_date)->format('Y-m-d'),
                     'customer' => $firstItem->customer ?? 'Unknown',
                     'items' => $itemNames,
@@ -444,6 +456,8 @@ class AnalysisController extends Controller
                 ];
             }
         }
+
+        Log::info('Final transactions count', ['count' => count($transactions)]);
 
         return $transactions;
     }

@@ -13,6 +13,7 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 use Illuminate\Support\Collection;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class OutgoingItemsImport implements
     ToCollection,
@@ -25,29 +26,74 @@ class OutgoingItemsImport implements
     private $validationErrors = [];
     private $stockValidationErrors = [];
     private $processedRows = 0;
+    private $savedRows = 0;
+    private $skippedRows = 0;
+
+    public function __construct()
+    {
+        // Reset counters for each new import
+        $this->validationErrors = [];
+        $this->stockValidationErrors = [];
+        $this->processedRows = 0;
+        $this->savedRows = 0;
+        $this->skippedRows = 0;
+    }
 
     /**
      * @param Collection $collection
      */
     public function collection(Collection $collection)
     {
+        $originalCount = $collection->count();
+        Log::info('Starting OutgoingItems import', [
+            'total_rows_in_file' => $originalCount,
+            'memory_start' => memory_get_usage(true) / 1024 / 1024 . ' MB'
+        ]);
+
         DB::beginTransaction();
 
         try {
             foreach ($collection as $index => $row) {
+                // Calculate actual row number in Excel/CSV file (+2 for header and 0-based index)
+                $actualRowNumber = $index + 2;
                 $this->processedRows++;
+
+                Log::debug('Processing row', [
+                    'actual_row_number' => $actualRowNumber,
+                    'collection_index' => $index,
+                    'row_data' => $row,
+                    'processed_so_far' => $this->processedRows
+                ]);
 
                 // Skip empty rows
                 if (empty($row['nama_barang'])) {
+                    $this->skippedRows++;
+                    Log::warning('Skipping empty row - nama_barang is empty', [
+                        'actual_row_number' => $actualRowNumber,
+                        'row_data' => $row
+                    ]);
                     continue;
                 }
 
                 // Validate required fields
                 if (empty($row['id_transaksi']) || empty($row['nama_barang']) || empty($row['jumlah'])) {
                     $this->validationErrors[] = [
-                        'row' => $index + 2, // +2 because of header and 0-based index
-                        'message' => 'Data tidak lengkap pada baris ' . ($index + 2)
+                        'row' => $actualRowNumber,
+                        'message' => 'Data tidak lengkap pada baris ' . $actualRowNumber . ': ' .
+                            (empty($row['id_transaksi']) ? 'id_transaksi kosong ' : '') .
+                            (empty($row['nama_barang']) ? 'nama_barang kosong ' : '') .
+                            (empty($row['jumlah']) ? 'jumlah kosong' : '')
                     ];
+                    $this->skippedRows++;
+                    Log::warning('Validation error: incomplete data', [
+                        'actual_row_number' => $actualRowNumber,
+                        'missing_fields' => [
+                            'id_transaksi' => empty($row['id_transaksi']),
+                            'nama_barang' => empty($row['nama_barang']),
+                            'jumlah' => empty($row['jumlah'])
+                        ],
+                        'data' => $row
+                    ]);
                     continue;
                 }
 
@@ -56,9 +102,14 @@ class OutgoingItemsImport implements
 
                 if (!$item) {
                     $this->validationErrors[] = [
-                        'row' => $index + 2,
+                        'row' => $actualRowNumber,
                         'message' => "Barang '{$row['nama_barang']}' tidak ditemukan"
                     ];
+                    $this->skippedRows++;
+                    Log::warning('Item not found', [
+                        'actual_row_number' => $actualRowNumber,
+                        'item_name' => $row['nama_barang']
+                    ]);
                     continue;
                 }
 
@@ -66,7 +117,7 @@ class OutgoingItemsImport implements
                 $requestedQuantity = (int)$row['jumlah'];
                 // if ($item->stock < $requestedQuantity) {
                 //     $this->stockValidationErrors[] = [
-                //         'row' => $index + 2,
+                //         'row' => $actualRowNumber,
                 //         'item' => $row['nama_barang'],
                 //         'requested' => $requestedQuantity,
                 //         'available' => $item->stock,
@@ -88,6 +139,14 @@ class OutgoingItemsImport implements
                     'notes' => 'Import dari file Excel - ID Transaksi: ' . ($row['id_transaksi'] ?? 'N/A'),
                 ]);
 
+                $this->savedRows++;
+                Log::debug('Successfully saved outgoing item', [
+                    'actual_row_number' => $actualRowNumber,
+                    'transaction_id' => $row['id_transaksi'],
+                    'item_name' => $row['nama_barang'],
+                    'quantity' => $requestedQuantity
+                ]);
+
                 // Update stock
                 $item->decrement('stock', $requestedQuantity);
 
@@ -98,8 +157,38 @@ class OutgoingItemsImport implements
             }
 
             DB::commit();
+
+            Log::info('OutgoingItems import completed successfully', [
+                'file_summary' => [
+                    'total_rows_in_file' => $originalCount,
+                    'rows_after_filtering_empty' => $originalCount - $this->skippedRows,
+                ],
+                'processing_summary' => [
+                    'processed_rows' => $this->processedRows,
+                    'saved_rows' => $this->savedRows,
+                    'skipped_rows' => $this->skippedRows,
+                ],
+                'error_summary' => [
+                    'validation_errors' => count($this->validationErrors),
+                    'stock_errors' => count($this->stockValidationErrors),
+                    'total_errors' => count($this->validationErrors) + count($this->stockValidationErrors)
+                ],
+                'calculation' => [
+                    'expected_saved' => $originalCount - count($this->validationErrors) - count($this->stockValidationErrors),
+                    'actual_saved' => $this->savedRows,
+                    'difference' => ($originalCount - count($this->validationErrors) - count($this->stockValidationErrors)) - $this->savedRows
+                ],
+                'memory_end' => memory_get_usage(true) / 1024 / 1024 . ' MB'
+            ]);
         } catch (\Exception $e) {
             DB::rollback();
+            Log::error('OutgoingItems import failed', [
+                'error' => $e->getMessage(),
+                'processed_rows' => $this->processedRows,
+                'saved_rows' => $this->savedRows,
+                'line' => $e->getLine(),
+                'file' => $e->getFile()
+            ]);
             throw $e;
         }
     }
@@ -112,6 +201,17 @@ class OutgoingItemsImport implements
     public function getStockValidationErrors()
     {
         return $this->stockValidationErrors;
+    }
+
+    public function getImportStatistics()
+    {
+        return [
+            'processed_rows' => $this->processedRows,
+            'saved_rows' => $this->savedRows,
+            'skipped_rows' => $this->skippedRows,
+            'validation_errors' => count($this->validationErrors),
+            'stock_errors' => count($this->stockValidationErrors)
+        ];
     }
 
     public function chunkSize(): int
@@ -229,14 +329,44 @@ class OutgoingItemsImport implements
         $dateString = strtolower(trim($dateString));
         $months = [
             // Indonesian months
-            'januari', 'februari', 'maret', 'april', 'mei', 'juni',
-            'juli', 'agustus', 'september', 'oktober', 'november', 'desember',
+            'januari',
+            'februari',
+            'maret',
+            'april',
+            'mei',
+            'juni',
+            'juli',
+            'agustus',
+            'september',
+            'oktober',
+            'november',
+            'desember',
             // English months
-            'january', 'february', 'march', 'april', 'may', 'june',
-            'july', 'august', 'september', 'october', 'november', 'december',
+            'january',
+            'february',
+            'march',
+            'april',
+            'may',
+            'june',
+            'july',
+            'august',
+            'september',
+            'october',
+            'november',
+            'december',
             // Short English months
-            'jan', 'feb', 'mar', 'apr', 'may', 'jun',
-            'jul', 'aug', 'sep', 'oct', 'nov', 'dec'
+            'jan',
+            'feb',
+            'mar',
+            'apr',
+            'may',
+            'jun',
+            'jul',
+            'aug',
+            'sep',
+            'oct',
+            'nov',
+            'dec'
         ];
 
         foreach ($months as $month) {
@@ -254,21 +384,44 @@ class OutgoingItemsImport implements
     private function parseIndonesianDate($dateString): Carbon
     {
         $dateString = strtolower(trim($dateString));
-        
+
         // Mapping bulan Indonesia dan Inggris ke nomor bulan
         $monthMapping = [
             // Indonesian months
-            'januari' => 1, 'februari' => 2, 'maret' => 3,
-            'mei' => 5, 'juni' => 6, 'juli' => 7, 'agustus' => 8,
-            'oktober' => 10, 'november' => 11, 'desember' => 12,
-            // English months  
-            'january' => 1, 'february' => 2, 'march' => 3, 'april' => 4,
-            'may' => 5, 'june' => 6, 'july' => 7, 'august' => 8,
-            'september' => 9, 'october' => 10, 'december' => 12,
+            'januari' => 1,
+            'februari' => 2,
+            'maret' => 3,
+            'mei' => 5,
+            'juni' => 6,
+            'juli' => 7,
+            'agustus' => 8,
+            'oktober' => 10,
+            'november' => 11,
+            'desember' => 12,
+            // English months
+            'january' => 1,
+            'february' => 2,
+            'march' => 3,
+            'april' => 4,
+            'may' => 5,
+            'june' => 6,
+            'july' => 7,
+            'august' => 8,
+            'september' => 9,
+            'october' => 10,
+            'december' => 12,
             // Short English months
-            'jan' => 1, 'feb' => 2, 'mar' => 3, 'apr' => 4,
-            'jun' => 6, 'jul' => 7, 'aug' => 8,
-            'sep' => 9, 'oct' => 10, 'nov' => 11, 'dec' => 12
+            'jan' => 1,
+            'feb' => 2,
+            'mar' => 3,
+            'apr' => 4,
+            'jun' => 6,
+            'jul' => 7,
+            'aug' => 8,
+            'sep' => 9,
+            'oct' => 10,
+            'nov' => 11,
+            'dec' => 12
         ];
 
         $day = null;
@@ -280,7 +433,7 @@ class OutgoingItemsImport implements
             $day = (int)$matches[1];
             $monthName = $matches[2];
             $year = (int)$matches[3];
-            
+
             // Cari nomor bulan
             foreach ($monthMapping as $monthKey => $monthNumber) {
                 if (strpos($monthName, $monthKey) !== false || $monthName === $monthKey) {
@@ -294,7 +447,7 @@ class OutgoingItemsImport implements
             $day = (int)$matches[1];
             $monthName = $matches[2];
             $year = (int)$matches[3];
-            
+
             // Cari nomor bulan
             foreach ($monthMapping as $monthKey => $monthNumber) {
                 if (strpos($monthName, $monthKey) !== false || $monthName === $monthKey) {
@@ -308,7 +461,7 @@ class OutgoingItemsImport implements
             $monthName = $matches[1];
             $day = (int)$matches[2];
             $year = (int)$matches[3];
-            
+
             // Cari nomor bulan
             foreach ($monthMapping as $monthKey => $monthNumber) {
                 if (strpos($monthName, $monthKey) !== false || $monthName === $monthKey) {
@@ -317,7 +470,7 @@ class OutgoingItemsImport implements
                 }
             }
         }
-        
+
         // Validasi dan buat Carbon instance
         if ($month && $day >= 1 && $day <= 31 && $year >= 1900 && $year <= 2100) {
             try {
@@ -326,10 +479,11 @@ class OutgoingItemsImport implements
                 return Carbon::today();
             }
         }
-        
+
         // Fallback jika parsing gagal
         return Carbon::today();
-    }    /**
+    }
+    /**
      * Parse Excel serial number to Carbon date
      */
     private function parseExcelSerial($serial): Carbon

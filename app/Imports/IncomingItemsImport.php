@@ -211,14 +211,44 @@ class IncomingItemsImport implements
         $dateString = strtolower(trim($dateString));
         $months = [
             // Indonesian months
-            'januari', 'februari', 'maret', 'april', 'mei', 'juni',
-            'juli', 'agustus', 'september', 'oktober', 'november', 'desember',
+            'januari',
+            'februari',
+            'maret',
+            'april',
+            'mei',
+            'juni',
+            'juli',
+            'agustus',
+            'september',
+            'oktober',
+            'november',
+            'desember',
             // English months
-            'january', 'february', 'march', 'april', 'may', 'june',
-            'july', 'august', 'september', 'october', 'november', 'december',
+            'january',
+            'february',
+            'march',
+            'april',
+            'may',
+            'june',
+            'july',
+            'august',
+            'september',
+            'october',
+            'november',
+            'december',
             // Short English months
-            'jan', 'feb', 'mar', 'apr', 'may', 'jun',
-            'jul', 'aug', 'sep', 'oct', 'nov', 'dec'
+            'jan',
+            'feb',
+            'mar',
+            'apr',
+            'may',
+            'jun',
+            'jul',
+            'aug',
+            'sep',
+            'oct',
+            'nov',
+            'dec'
         ];
 
         foreach ($months as $month) {
@@ -236,21 +266,44 @@ class IncomingItemsImport implements
     private function parseIndonesianDate($dateString): Carbon
     {
         $dateString = strtolower(trim($dateString));
-        
+
         // Mapping bulan Indonesia dan Inggris ke nomor bulan
         $monthMapping = [
             // Indonesian months
-            'januari' => 1, 'februari' => 2, 'maret' => 3,
-            'mei' => 5, 'juni' => 6, 'juli' => 7, 'agustus' => 8,
-            'oktober' => 10, 'november' => 11, 'desember' => 12,
+            'januari' => 1,
+            'februari' => 2,
+            'maret' => 3,
+            'mei' => 5,
+            'juni' => 6,
+            'juli' => 7,
+            'agustus' => 8,
+            'oktober' => 10,
+            'november' => 11,
+            'desember' => 12,
             // English months
-            'january' => 1, 'february' => 2, 'march' => 3, 'april' => 4,
-            'may' => 5, 'june' => 6, 'july' => 7, 'august' => 8,
-            'september' => 9, 'october' => 10, 'december' => 12,
+            'january' => 1,
+            'february' => 2,
+            'march' => 3,
+            'april' => 4,
+            'may' => 5,
+            'june' => 6,
+            'july' => 7,
+            'august' => 8,
+            'september' => 9,
+            'october' => 10,
+            'december' => 12,
             // Short English months
-            'jan' => 1, 'feb' => 2, 'mar' => 3, 'apr' => 4,
-            'jun' => 6, 'jul' => 7, 'aug' => 8,
-            'sep' => 9, 'oct' => 10, 'nov' => 11, 'dec' => 12
+            'jan' => 1,
+            'feb' => 2,
+            'mar' => 3,
+            'apr' => 4,
+            'jun' => 6,
+            'jul' => 7,
+            'aug' => 8,
+            'sep' => 9,
+            'oct' => 10,
+            'nov' => 11,
+            'dec' => 12
         ];
 
         $day = null;
@@ -262,7 +315,7 @@ class IncomingItemsImport implements
             $day = (int)$matches[1];
             $monthName = $matches[2];
             $year = (int)$matches[3];
-            
+
             // Cari nomor bulan
             foreach ($monthMapping as $indonesianMonth => $monthNumber) {
                 if (strpos($monthName, $indonesianMonth) !== false || $monthName === $indonesianMonth) {
@@ -276,7 +329,7 @@ class IncomingItemsImport implements
             $day = (int)$matches[1];
             $monthName = $matches[2];
             $year = (int)$matches[3];
-            
+
             // Cari nomor bulan
             foreach ($monthMapping as $indonesianMonth => $monthNumber) {
                 if (strpos($monthName, $indonesianMonth) !== false || $monthName === $indonesianMonth) {
@@ -290,7 +343,7 @@ class IncomingItemsImport implements
             $monthName = $matches[1];
             $day = (int)$matches[2];
             $year = (int)$matches[3];
-            
+
             // Cari nomor bulan
             foreach ($monthMapping as $indonesianMonth => $monthNumber) {
                 if (strpos($monthName, $indonesianMonth) !== false || $monthName === $indonesianMonth) {
@@ -299,7 +352,7 @@ class IncomingItemsImport implements
                 }
             }
         }
-        
+
         // Validasi dan buat Carbon instance
         if ($month && $day >= 1 && $day <= 31 && $year >= 1900 && $year <= 2100) {
             try {
@@ -308,7 +361,7 @@ class IncomingItemsImport implements
                 return Carbon::today();
             }
         }
-        
+
         // Fallback jika parsing gagal
         return Carbon::today();
     }
