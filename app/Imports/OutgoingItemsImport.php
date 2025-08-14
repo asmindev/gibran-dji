@@ -227,22 +227,19 @@ class OutgoingItemsImport implements
     private function isIndonesianDateFormat($dateString): bool
     {
         $dateString = strtolower(trim($dateString));
-        $indonesianMonths = [
-            'januari',
-            'februari',
-            'maret',
-            'april',
-            'mei',
-            'juni',
-            'juli',
-            'agustus',
-            'september',
-            'oktober',
-            'november',
-            'desember'
+        $months = [
+            // Indonesian months
+            'januari', 'februari', 'maret', 'april', 'mei', 'juni',
+            'juli', 'agustus', 'september', 'oktober', 'november', 'desember',
+            // English months
+            'january', 'february', 'march', 'april', 'may', 'june',
+            'july', 'august', 'september', 'october', 'november', 'december',
+            // Short English months
+            'jan', 'feb', 'mar', 'apr', 'may', 'jun',
+            'jul', 'aug', 'sep', 'oct', 'nov', 'dec'
         ];
 
-        foreach ($indonesianMonths as $month) {
+        foreach ($months as $month) {
             if (strpos($dateString, $month) !== false) {
                 return true;
             }
@@ -258,54 +255,63 @@ class OutgoingItemsImport implements
     {
         $dateString = strtolower(trim($dateString));
         
-        // Mapping bulan Indonesia ke nomor bulan
+        // Mapping bulan Indonesia dan Inggris ke nomor bulan
         $monthMapping = [
-            'januari' => 1, 'februari' => 2, 'maret' => 3, 'april' => 4,
+            // Indonesian months
+            'januari' => 1, 'februari' => 2, 'maret' => 3,
             'mei' => 5, 'juni' => 6, 'juli' => 7, 'agustus' => 8,
-            'september' => 9, 'oktober' => 10, 'november' => 11, 'desember' => 12
+            'oktober' => 10, 'november' => 11, 'desember' => 12,
+            // English months  
+            'january' => 1, 'february' => 2, 'march' => 3, 'april' => 4,
+            'may' => 5, 'june' => 6, 'july' => 7, 'august' => 8,
+            'september' => 9, 'october' => 10, 'december' => 12,
+            // Short English months
+            'jan' => 1, 'feb' => 2, 'mar' => 3, 'apr' => 4,
+            'jun' => 6, 'jul' => 7, 'aug' => 8,
+            'sep' => 9, 'oct' => 10, 'nov' => 11, 'dec' => 12
         ];
 
         $day = null;
         $month = null;
         $year = null;
 
-        // Pattern 1: "3 maret 2025"
+        // Pattern 1: "3 maret 2025" atau "1 july 2025"
         if (preg_match('/(\d{1,2})\s+(\w+)\s+(\d{4})/', $dateString, $matches)) {
             $day = (int)$matches[1];
             $monthName = $matches[2];
             $year = (int)$matches[3];
             
             // Cari nomor bulan
-            foreach ($monthMapping as $indonesianMonth => $monthNumber) {
-                if (strpos($monthName, $indonesianMonth) !== false || $monthName === $indonesianMonth) {
+            foreach ($monthMapping as $monthKey => $monthNumber) {
+                if (strpos($monthName, $monthKey) !== false || $monthName === $monthKey) {
                     $month = $monthNumber;
                     break;
                 }
             }
         }
-        // Pattern 2: "3-maret-2025"
+        // Pattern 2: "3-maret-2025" atau "1-july-2025"
         elseif (preg_match('/(\d{1,2})-(\w+)-(\d{4})/', $dateString, $matches)) {
             $day = (int)$matches[1];
             $monthName = $matches[2];
             $year = (int)$matches[3];
             
             // Cari nomor bulan
-            foreach ($monthMapping as $indonesianMonth => $monthNumber) {
-                if (strpos($monthName, $indonesianMonth) !== false || $monthName === $indonesianMonth) {
+            foreach ($monthMapping as $monthKey => $monthNumber) {
+                if (strpos($monthName, $monthKey) !== false || $monthName === $monthKey) {
                     $month = $monthNumber;
                     break;
                 }
             }
         }
-        // Pattern 3: "maret 3, 2025" atau "maret 3 2025"
+        // Pattern 3: "maret 3, 2025" atau "july 1, 2025"
         elseif (preg_match('/(\w+)\s+(\d{1,2}),?\s+(\d{4})/', $dateString, $matches)) {
             $monthName = $matches[1];
             $day = (int)$matches[2];
             $year = (int)$matches[3];
             
             // Cari nomor bulan
-            foreach ($monthMapping as $indonesianMonth => $monthNumber) {
-                if (strpos($monthName, $indonesianMonth) !== false || $monthName === $indonesianMonth) {
+            foreach ($monthMapping as $monthKey => $monthNumber) {
+                if (strpos($monthName, $monthKey) !== false || $monthName === $monthKey) {
                     $month = $monthNumber;
                     break;
                 }
