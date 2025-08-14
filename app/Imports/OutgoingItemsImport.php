@@ -84,7 +84,7 @@ class OutgoingItemsImport implements
                     'item_id' => $item->id,
                     'quantity' => $requestedQuantity,
                     'unit_cost' => $row['harga_satuan'] ?? 0,
-                    'outgoing_date' => $outgoingDate,
+                    'outgoing_date' => $outgoingDate->format('Y-m-d'), // Save as YYYY-MM-DD for database
                     'notes' => 'Import dari file Excel - ID Transaksi: ' . ($row['id_transaksi'] ?? 'N/A'),
                 ]);
 
@@ -191,6 +191,11 @@ class OutgoingItemsImport implements
                 return $this->parseExcelSerial($dateString);
             }
 
+            // Format Indonesia: "3 maret 2025", "15 januari 2024", etc.
+            if ($this->isIndonesianDateFormat($dateString)) {
+                return $this->parseIndonesianDate($dateString);
+            }
+
             // Format DD/MM/YYYY or D/M/YYYY
             if (strpos($dateString, '/') !== false) {
                 $dateParts = explode('/', $dateString);
@@ -217,6 +222,108 @@ class OutgoingItemsImport implements
     }
 
     /**
+     * Check if date string is in Indonesian format
+     */
+    private function isIndonesianDateFormat($dateString): bool
+    {
+        $dateString = strtolower(trim($dateString));
+        $indonesianMonths = [
+            'januari',
+            'februari',
+            'maret',
+            'april',
+            'mei',
+            'juni',
+            'juli',
+            'agustus',
+            'september',
+            'oktober',
+            'november',
+            'desember'
+        ];
+
+        foreach ($indonesianMonths as $month) {
+            if (strpos($dateString, $month) !== false) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Parse Indonesian date format like "3 maret 2025"
+     */
+    private function parseIndonesianDate($dateString): Carbon
+    {
+        $dateString = strtolower(trim($dateString));
+        
+        // Mapping bulan Indonesia ke nomor bulan
+        $monthMapping = [
+            'januari' => 1, 'februari' => 2, 'maret' => 3, 'april' => 4,
+            'mei' => 5, 'juni' => 6, 'juli' => 7, 'agustus' => 8,
+            'september' => 9, 'oktober' => 10, 'november' => 11, 'desember' => 12
+        ];
+
+        $day = null;
+        $month = null;
+        $year = null;
+
+        // Pattern 1: "3 maret 2025"
+        if (preg_match('/(\d{1,2})\s+(\w+)\s+(\d{4})/', $dateString, $matches)) {
+            $day = (int)$matches[1];
+            $monthName = $matches[2];
+            $year = (int)$matches[3];
+            
+            // Cari nomor bulan
+            foreach ($monthMapping as $indonesianMonth => $monthNumber) {
+                if (strpos($monthName, $indonesianMonth) !== false || $monthName === $indonesianMonth) {
+                    $month = $monthNumber;
+                    break;
+                }
+            }
+        }
+        // Pattern 2: "3-maret-2025"
+        elseif (preg_match('/(\d{1,2})-(\w+)-(\d{4})/', $dateString, $matches)) {
+            $day = (int)$matches[1];
+            $monthName = $matches[2];
+            $year = (int)$matches[3];
+            
+            // Cari nomor bulan
+            foreach ($monthMapping as $indonesianMonth => $monthNumber) {
+                if (strpos($monthName, $indonesianMonth) !== false || $monthName === $indonesianMonth) {
+                    $month = $monthNumber;
+                    break;
+                }
+            }
+        }
+        // Pattern 3: "maret 3, 2025" atau "maret 3 2025"
+        elseif (preg_match('/(\w+)\s+(\d{1,2}),?\s+(\d{4})/', $dateString, $matches)) {
+            $monthName = $matches[1];
+            $day = (int)$matches[2];
+            $year = (int)$matches[3];
+            
+            // Cari nomor bulan
+            foreach ($monthMapping as $indonesianMonth => $monthNumber) {
+                if (strpos($monthName, $indonesianMonth) !== false || $monthName === $indonesianMonth) {
+                    $month = $monthNumber;
+                    break;
+                }
+            }
+        }
+        
+        // Validasi dan buat Carbon instance
+        if ($month && $day >= 1 && $day <= 31 && $year >= 1900 && $year <= 2100) {
+            try {
+                return Carbon::create($year, $month, $day);
+            } catch (\Exception $e) {
+                return Carbon::today();
+            }
+        }
+        
+        // Fallback jika parsing gagal
+        return Carbon::today();
+    }    /**
      * Parse Excel serial number to Carbon date
      */
     private function parseExcelSerial($serial): Carbon
