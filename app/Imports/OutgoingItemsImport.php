@@ -64,16 +64,16 @@ class OutgoingItemsImport implements
 
                 // Check stock availability
                 $requestedQuantity = (int)$row['jumlah'];
-                if ($item->stock < $requestedQuantity) {
-                    $this->stockValidationErrors[] = [
-                        'row' => $index + 2,
-                        'item' => $row['nama_barang'],
-                        'requested' => $requestedQuantity,
-                        'available' => $item->stock,
-                        'message' => "Stok {$row['nama_barang']} tidak mencukupi. Diminta: {$requestedQuantity}, Tersedia: {$item->stock}"
-                    ];
-                    continue;
-                }
+                // if ($item->stock < $requestedQuantity) {
+                //     $this->stockValidationErrors[] = [
+                //         'row' => $index + 2,
+                //         'item' => $row['nama_barang'],
+                //         'requested' => $requestedQuantity,
+                //         'available' => $item->stock,
+                //         'message' => "Stok {$row['nama_barang']} tidak mencukupi. Diminta: {$requestedQuantity}, Tersedia: {$item->stock}"
+                //     ];
+                //     continue;
+                // }
 
                 // Parse date
                 $outgoingDate = $this->parseDate($row['tanggal_transaksi'] ?? null);
