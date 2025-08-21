@@ -61,17 +61,17 @@
         <form method="GET" action="{{ route('analysis.apriori-process') }}" class="flex flex-col lg:flex-row gap-4">
             <div class="flex-1">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Transaksi *</label>
-                <select name="transaction_date"
+                <input type="date" name="transaction_date" value="{{ $selectedDate !== 'all' ? $selectedDate : '' }}"
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
                     required>
-                    <option value="" {{ $selectedDate==='' ? 'selected' : '' }}>-- Pilih Tanggal --</option>
-                    <option value="all" {{ $selectedDate==='all' ? 'selected' : '' }}>Semua Tanggal</option>
-                    @foreach($availableDates as $date)
-                    <option value="{{ $date }}" {{ $selectedDate===$date ? 'selected' : '' }}>
-                        {{ \Carbon\Carbon::parse($date)->format('d M Y') }}
-                    </option>
-                    @endforeach
-                </select>
+                <div class="text-xs text-gray-500 mt-1">
+                    @if(!empty($availableDates))
+                    Rentang data: {{ \Carbon\Carbon::parse(min($availableDates))->format('d M Y') }} - {{
+                    \Carbon\Carbon::parse(max($availableDates))->format('d M Y') }}
+                    @else
+                    Tidak ada data transaksi tersedia
+                    @endif
+                </div>
             </div>
             <div class="flex-none w-full lg:w-48">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Minimum Support (%)</label>
@@ -989,7 +989,11 @@ document.addEventListener('keydown', function(e) {
 
 // Date input enhancement
 document.addEventListener('DOMContentLoaded', function() {
-    // Removed auto-submit functionality - user must click button to calculate
+    // Initialize hidden input if "all dates" is already checked
+    const allDatesCheckbox = document.getElementById('allDatesCheckbox');
+    if (allDatesCheckbox && allDatesCheckbox.checked) {
+        toggleDateInput(allDatesCheckbox);
+    }
     console.log('Apriori analysis page loaded');
 });
 </script>

@@ -1,21 +1,21 @@
 {
   "model_type": "monthly",
   "version": "3.0",
-  "training_date": "2025-08-13 11:30:06",
+  "training_date": "2025-08-21 19:24:47",
   "performance_metrics": {
-    "mae": 63.869521284271286,
-    "mse": 5188.123156988932,
-    "rmse": 72.02862734350094,
-    "r2": 0.6750483956163307,
-    "mape": 0.2918634492775638,
-    "cv_mae_mean": 117.99203637566136,
-    "cv_mae_std": 7.390118056680975,
-    "cv_r2_mean": -0.5423771337037915,
-    "cv_r2_std": 0.4708922055197848
+    "mae": 25.945986855158733,
+    "mse": 932.0876123767642,
+    "rmse": 30.530109930636744,
+    "r2": 0.8826820804017792,
+    "mape": 0.10202302827845884,
+    "cv_mae_mean": 86.57953042328045,
+    "cv_mae_std": 18.874150357274328,
+    "cv_r2_mean": -2.145693085809524,
+    "cv_r2_std": 1.1773511996745976
   },
   "config": {
     "MODEL_VERSION": "3.0",
-    "TRAINING_DATE": "2025-08-13 11:30:06",
+    "TRAINING_DATE": "2025-08-21 19:24:47",
     "MIN_SAMPLES_DAILY": 5,
     "MIN_SAMPLES_MONTHLY": 3,
     "RANDOM_STATE": 42,
@@ -36,10 +36,10 @@
     "8"
   ],
   "product_mapping": {
-    "2": "Kaos Kaki Avo",
-    "5": "Piala",
-    "4": "Tali Sepatu Kipzkapz",
     "7": "Bola Basket",
+    "2": "Kaos Kaki Avo",
+    "4": "Tali Sepatu Kipzkapz",
+    "5": "Piala",
     "8": "Jersey Basket",
     "1": "Sepatu Bola Ortus",
     "3": "Jersey Mills",

@@ -11,7 +11,8 @@ class StockPrediction extends Model
         'prediction',
         'actual',
         'product',
-        'month'
+        'month',
+        'item_id',
     ];
 
     protected $casts = [
@@ -72,5 +73,11 @@ class StockPrediction extends Model
     public function scopeWithoutActual($query)
     {
         return $query->whereNull('actual');
+    }
+
+    // Relationship to the Item model
+    public function item()
+    {
+        return $this->belongsTo(Item::class);
     }
 }

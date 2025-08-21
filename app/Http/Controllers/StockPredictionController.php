@@ -95,24 +95,26 @@ class StockPredictionController extends Controller
     private function makeDailyPrediction($item)
     {
         try {
-            // Get last 3 days of outgoing items for this product
-            // get today's date
-            $today = Carbon::now()->format('Y-m-d');
-            $yesterday = Carbon::yesterday()->format('Y-m-d');
-            // $twoDaysAgo = Carbon::now()->subDays(2)->format('Y-m-d');
-            $threeDaysAgo = Carbon::now()->subDays(3)->format('Y-m-d');
+            // Get last 3 days of transactions for this product (latest 3 days with data)
+            $lastThreeDays = OutgoingItem::where('item_id', $item->id)
+                ->select('outgoing_date', 'quantity')
+                ->orderBy('outgoing_date', 'desc')
+                ->limit(100) // Get recent records to work with
+                ->get()
+                ->groupBy(function ($item) {
+                    return $item->outgoing_date->format('Y-m-d');
+                })
+                ->take(3) // Take only the 3 most recent days with data
+                ->map(function ($dayItems) {
+                    return $dayItems->sum('quantity');
+                });
 
             Log::info('Daily prediction inputs', [
                 'item_id' => $item->id,
-                'item_name' => $item->item_name,
-                'today' => $today,
-                'yesterday' => $yesterday,
-                'three_days_ago' => $threeDaysAgo
+                'item_name' => $item->name,
+                'last_three_days_data' => $lastThreeDays->toArray(),
+                'available_days' => $lastThreeDays->keys()->toArray()
             ]);
-
-            $lastThreeDays = OutgoingItem::where('item_id', $item->id)
-                ->whereBetween('outgoing_date', [$threeDaysAgo, $yesterday])
-                ->get();
 
 
             if ($lastThreeDays->count() < 3) {
@@ -123,52 +125,30 @@ class StockPredictionController extends Controller
                 ]);
                 return [
                     'success' => false,
-                    'message' => 'Data penjualan harian tidak cukup untuk prediksi.'
+                    'message' => 'Data penjualan harian tidak cukup untuk prediksi (minimal 3 hari data transaksi).'
                 ];
             }
-            Log::info('Daily prediction inputs', [
-                'item_id' => $item->id,
-                'item_name' => $item->item_name,
-                'last_three_days' => $lastThreeDays->pluck('quantity')->toArray()
-            ]);
 
-            $dailyTotals = [];
+            // Convert collection to array and get values in reverse chronological order
+            $dailyTotals = $lastThreeDays->values()->toArray();
 
-            foreach ($lastThreeDays as $item) {
-                $dateKey = $item->outgoing_date->format('Y-m-d');
-                if (!isset($dailyTotals[$dateKey])) {
-                    $dailyTotals[$dateKey] = 0;
-                }
-                $dailyTotals[$dateKey] += $item->quantity;
-            }
+            // Data is already sorted in descending order (most recent first)
+            // So we use direct indexing for lag values
+            $lag1 = $dailyTotals[0] ?? 0; // Most recent day
+            $lag2 = $dailyTotals[1] ?? 0; // 2nd most recent day
+            $lag3 = $dailyTotals[2] ?? 0; // 3rd most recent day
 
-            // dd($dailyTotals); // Debugging line to check daily totals
-
-            // Sort by date descending to get proper lag order
-            krsort($dailyTotals);
-            $lags = array_values($dailyTotals);
-
-            // Ensure we have exactly 3 lag values
-            $lag1 = $lags[0] ?? 0; // Yesterday
-            $lag2 = $lags[1] ?? 0; // 2 days ago
-            $lag3 = $lags[2] ?? 0; // 3 days ago
             Log::info('Daily prediction lags', [
-                'Item' => $item,
+                'item_id' => $item->id,
+                'item_name' => $item->name,
                 'lag1' => $lag1,
                 'lag2' => $lag2,
-                'lag3' => $lag3
-            ]);
-
-            Log::info('Daily prediction inputs', [
-                'item_id' => $item->item_id,
-                'item_name' => $item->item_name,
-                'lag1' => $lag1,
-                'lag2' => $lag2,
-                'lag3' => $lag3
+                'lag3' => $lag3,
+                'available_dates' => $lastThreeDays->keys()->toArray()
             ]);
 
             // Call Python prediction script using item ID
-            $pythonResult = $this->callPythonPredict($item->item_id, 'hari', [$lag1, $lag2, $lag3]);
+            $pythonResult = $this->callPythonPredict($item->id, 'hari', [$lag1, $lag2, $lag3]);
 
             // Handle both old integer format and new dictionary format
             if (is_array($pythonResult)) {
@@ -190,7 +170,7 @@ class StockPredictionController extends Controller
                     'lag2' => $lag2,
                     'lag3' => $lag3
                 ],
-                'confidence' => $this->calculateConfidence($lags),
+                'confidence' => $this->calculateConfidence([$lag1, $lag2, $lag3]),
                 'period_start' => now()->format('Y-m-d'),
                 'period_end' => now()->format('Y-m-d')
             ];
@@ -746,7 +726,7 @@ class StockPredictionController extends Controller
 
         // Check if prediction for this item and month already exists
         $existingPrediction = StockPrediction::where('item_id', $item->id)
-            ->where('prediction_month', $predictionMonth->format('Y-m-d'))
+            ->where('month', $predictionMonth->format('Y-m-d'))
             ->where('prediction_type', $predictionPeriod)
             ->first();
 
@@ -759,6 +739,9 @@ class StockPredictionController extends Controller
             'confidence' => $result['confidence'] ?? null,
             'execution_time_ms' => $result['execution_time_ms'] ?? null,
             'model_prediction_time_ms' => $result['model_prediction_time_ms'] ?? null,
+            'prediction' => $result['prediction'] ?? null,
+            'product' => $item->name,
+            'month' => $predictionMonth->format('Y-m-d'),
             'predicted_at' => now(),
         ];
 
@@ -773,6 +756,10 @@ class StockPredictionController extends Controller
             return $existingPrediction;
         } else {
             // Create new prediction
+            // json prediction
+
+
+            Log::info('Creating new stock prediction', $predictionData);
             $stockPrediction = StockPrediction::create($predictionData);
             Log::info('Created new stock prediction', [
                 'prediction_id' => $stockPrediction->id,

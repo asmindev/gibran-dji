@@ -17,6 +17,8 @@ return new class extends Migration
             $table->integer('actual')->nullable(); // Actual terjual (diisi kemudian)
             $table->string('product'); // Nama produk
             $table->date('month'); // Bulan prediksi (format: YYYY-MM-01)
+            $table->foreignId('item_id')->constrained()->onDelete('cascade'); // Foreign key ke tabel items
+            $table->enum('prediction_type', ['monthly', 'daily']); // Tipe prediksi (bulanan atau harian)
             $table->timestamps();
 
             // Index untuk query yang sering digunakan

@@ -193,7 +193,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
                 <div class="bg-blue-50 rounded-lg p-4">
                     <h4 class="font-semibold text-blue-900 mb-2">📦 Produk</h4>
-                    <p class="text-blue-800">${prediction.name || 'Tidak diketahui'}</p>
+                    <p class="text-blue-800">${prediction.product.name || 'Tidak diketahui'}</p>
                 </div>
 
                 <div class="bg-green-50 rounded-lg p-4">

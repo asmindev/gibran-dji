@@ -121,6 +121,9 @@
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No
                         </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Transaction ID
+                        </th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama
                             Barang
                         </th>
@@ -140,12 +143,15 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             {{ ($incomingItems->currentPage() - 1) * $incomingItems->perPage() + $index + 1 }}
                         </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ $incoming->transaction_id }}
+                        </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div>
                                 <div class="text-sm font-medium text-gray-900">{{ $incoming->item->item_name }}</div>
-                                <div class="text-sm text-gray-500">ID: {{ $incoming->item->id }}</div>
                             </div>
                         </td>
+
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             {{ $incoming->incoming_date->format('d/m/Y') }}
                         </td>
