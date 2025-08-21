@@ -26,8 +26,8 @@
                 <!-- Item Image -->
                 <div class="lg:col-span-1">
                     <div class="bg-gray-50 rounded-lg p-6 text-center">
-                        @if($item->image)
-                        <img src="{{ Storage::url($item->image) }}" alt="{{ $item->name }}"
+                        @if($item->image_path)
+                        <img src="{{ Storage::url($item->image_path) }}" alt="{{ $item->name }}"
                             class="w-full max-w-sm mx-auto rounded-lg shadow-md">
                         @else
                         <div class="w-full max-w-sm mx-auto bg-gray-200 rounded-lg flex items-center justify-center"

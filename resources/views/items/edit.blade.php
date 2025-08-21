@@ -162,50 +162,52 @@
                             @endif
 
                             <div class="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-indigo-400 transition-colors duration-200"
-                                id="image-upload-area">
-                                <div class="space-y-4">
-                                    <div class="flex justify-center">
-                                        <div class="bg-gray-100 p-4 rounded-full">
-                                            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                                            </svg>
+                                id="drop-zone">
+                                <!-- Default upload area -->
+                                <div id="upload-area">
+                                    <div class="space-y-4">
+                                        <div class="flex justify-center">
+                                            <div class="bg-gray-100 p-4 rounded-full">
+                                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                                </svg>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div>
-                                        <label for="image" class="cursor-pointer">
-                                            <span
-                                                class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2 rounded-full text-sm font-medium hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 inline-block">
-                                                {{ $item->image_path ? 'Ganti Gambar' : 'Pilih File' }}
-                                            </span>
-                                            <input id="image" name="image" type="file" class="hidden" accept="image/*">
-                                        </label>
-                                        <p class="mt-2 text-sm text-gray-500">atau drag and drop file di sini</p>
-                                    </div>
-                                    <p class="text-xs text-gray-400">PNG, JPG, GIF hingga 2MB</p>
-                                </div>
-                            </div>
-
-                            <!-- Image Preview -->
-                            <div id="image-preview" class="mt-4 hidden">
-                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                                    <div class="flex items-center space-x-3">
-                                        <img id="preview-image" class="w-12 h-12 rounded-lg object-cover" src=""
-                                            alt="Preview">
                                         <div>
-                                            <p id="preview-name" class="text-sm font-medium text-gray-900"></p>
-                                            <p id="preview-size" class="text-xs text-gray-500"></p>
+                                            <label for="image" class="cursor-pointer">
+                                                <span
+                                                    class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2 rounded-full text-sm font-medium hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 inline-block">
+                                                    {{ $item->image_path ? 'Ganti Gambar' : 'Pilih File' }}
+                                                </span>
+                                                <input id="image" name="image" type="file" class="hidden"
+                                                    accept="image/*" onchange="handleImageSelect(this)">
+                                            </label>
+                                            <p class="mt-2 text-sm text-gray-500">atau drag and drop file di sini</p>
                                         </div>
+                                        <p class="text-xs text-gray-400">PNG, JPG, GIF hingga 2MB</p>
                                     </div>
-                                    <button type="button" id="remove-image"
-                                        class="text-red-600 hover:text-red-700 transition-colors">
-                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd"
-                                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                    </button>
+                                </div>
+
+                                <!-- Image preview area -->
+                                <div id="preview-area" class="hidden">
+                                    <div class="relative inline-block">
+                                        <img id="image-preview" src="" alt="Preview"
+                                            class="max-w-xs max-h-48 rounded-lg shadow-md">
+                                        <button type="button" onclick="removeImage()"
+                                            class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="mt-3">
+                                        <p id="file-name" class="text-sm text-gray-600"></p>
+                                        <p id="file-size" class="text-xs text-gray-500"></p>
+                                    </div>
                                 </div>
                             </div>
 
@@ -382,106 +384,168 @@
 
 <!-- Interactive JavaScript -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    // Profit calculation
-    const purchaseInput = document.getElementById('purchase_price');
-    const sellingInput = document.getElementById('selling_price');
-    const profitAmount = document.getElementById('profit-amount');
-    const profitPercentage = document.getElementById('profit-percentage');
+    // Image upload handling
+    function handleImageSelect(input) {
+        const file = input.files[0];
+        if (!file) return;
 
-    function calculateProfit() {
-        const purchase = parseFloat(purchaseInput.value) || 0;
-        const selling = parseFloat(sellingInput.value) || 0;
-        const profit = selling - purchase;
-        const percentage = purchase > 0 ? ((profit / purchase) * 100) : 0;
+        console.log('File selected:', file.name, file.size, file.type);
 
-        profitAmount.textContent = 'Rp ' + profit.toLocaleString('id-ID');
-        profitPercentage.textContent = percentage.toFixed(1) + '%';
-
-        // Color coding
-        if (profit > 0) {
-            profitAmount.className = 'text-lg font-bold text-green-600';
-        } else if (profit < 0) {
-            profitAmount.className = 'text-lg font-bold text-red-600';
-        } else {
-            profitAmount.className = 'text-lg font-bold text-gray-600';
+        // Validate file type
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+        if (!allowedTypes.includes(file.type)) {
+            alert('Tipe file tidak diizinkan. Gunakan JPG, PNG, atau GIF.');
+            input.value = '';
+            return;
         }
+
+        // Validate file size (2MB = 2 * 1024 * 1024 bytes)
+        const maxSize = 2 * 1024 * 1024;
+        if (file.size > maxSize) {
+            alert('Ukuran file terlalu besar. Maksimal 2MB.');
+            input.value = '';
+            return;
+        }
+
+        // Show preview
+        showImagePreview(file);
     }
 
-    purchaseInput.addEventListener('input', calculateProfit);
-    sellingInput.addEventListener('input', calculateProfit);
+    function showImagePreview(file) {
+        const reader = new FileReader();
 
-    // Image upload handling
-    const imageInput = document.getElementById('image');
-    const imagePreview = document.getElementById('image-preview');
-    const previewImage = document.getElementById('preview-image');
-    const previewName = document.getElementById('preview-name');
-    const previewSize = document.getElementById('preview-size');
-    const removeButton = document.getElementById('remove-image');
-    const uploadArea = document.getElementById('image-upload-area');
+        reader.onload = function(e) {
+            document.getElementById('upload-area').classList.add('hidden');
+            document.getElementById('preview-area').classList.remove('hidden');
+            document.getElementById('image-preview').src = e.target.result;
+            document.getElementById('file-name').textContent = file.name;
+            document.getElementById('file-size').textContent = formatFileSize(file.size);
+        };
 
-    imageInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                previewImage.src = e.target.result;
-                previewName.textContent = file.name;
-                previewSize.textContent = (file.size / 1024 / 1024).toFixed(2) + ' MB';
-                imagePreview.classList.remove('hidden');
-            };
-            reader.readAsDataURL(file);
-        }
-    });
+        reader.readAsDataURL(file);
+    }
 
-    removeButton.addEventListener('click', function() {
-        imageInput.value = '';
-        imagePreview.classList.add('hidden');
-    });
+    function removeImage() {
+        document.getElementById('image').value = '';
+        document.getElementById('upload-area').classList.remove('hidden');
+        document.getElementById('preview-area').classList.add('hidden');
+        document.getElementById('image-preview').src = '';
+        console.log('Image removed');
+    }
 
-    // Drag and drop functionality
-    uploadArea.addEventListener('dragover', function(e) {
-        e.preventDefault();
-        uploadArea.classList.add('border-indigo-400', 'bg-indigo-50');
-    });
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
 
-    uploadArea.addEventListener('dragleave', function(e) {
-        e.preventDefault();
-        uploadArea.classList.remove('border-indigo-400', 'bg-indigo-50');
-    });
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-    uploadArea.addEventListener('drop', function(e) {
-        e.preventDefault();
-        uploadArea.classList.remove('border-indigo-400', 'bg-indigo-50');
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
 
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
-            imageInput.files = files;
-            imageInput.dispatchEvent(new Event('change'));
-        }
-    });
+    document.addEventListener('DOMContentLoaded', function() {
+        // Profit calculation
+        const purchaseInput = document.getElementById('purchase_price');
+        const sellingInput = document.getElementById('selling_price');
+        const profitAmount = document.getElementById('profit-amount');
+        const profitPercentage = document.getElementById('profit-percentage');
 
-    // Form validation enhancement
-    const form = document.querySelector('form');
-    form.addEventListener('submit', function(e) {
-        const requiredFields = form.querySelectorAll('[required]');
-        let isValid = true;
+        function calculateProfit() {
+            if (!purchaseInput || !sellingInput) return;
 
-        requiredFields.forEach(field => {
-            if (!field.value.trim()) {
-                isValid = false;
-                field.classList.add('border-red-500');
-                field.addEventListener('input', function() {
-                    this.classList.remove('border-red-500');
-                });
+            const purchase = parseFloat(purchaseInput.value) || 0;
+            const selling = parseFloat(sellingInput.value) || 0;
+            const profit = selling - purchase;
+            const percentage = purchase > 0 ? ((profit / purchase) * 100) : 0;
+
+            if (profitAmount) {
+                profitAmount.textContent = 'Rp ' + profit.toLocaleString('id-ID');
             }
+            if (profitPercentage) {
+                profitPercentage.textContent = percentage.toFixed(1) + '%';
+            }
+
+            // Color coding
+            if (profitAmount) {
+                if (profit > 0) {
+                    profitAmount.className = 'text-lg font-bold text-green-600';
+                } else if (profit < 0) {
+                    profitAmount.className = 'text-lg font-bold text-red-600';
+                } else {
+                    profitAmount.className = 'text-lg font-bold text-gray-600';
+                }
+            }
+        }
+
+        if (purchaseInput && sellingInput) {
+            purchaseInput.addEventListener('input', calculateProfit);
+            sellingInput.addEventListener('input', calculateProfit);
+        }
+
+        // Drag and drop functionality
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('image');
+
+        // Prevent default drag behaviors
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
         });
 
-        if (!isValid) {
+        // Highlight drop zone when item is dragged over it
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => {
+                dropZone.classList.add('border-blue-400', 'bg-blue-50');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => {
+                dropZone.classList.remove('border-blue-400', 'bg-blue-50');
+            }, false);
+        });
+
+        // Handle dropped files
+        dropZone.addEventListener('drop', handleDrop, false);
+
+        function preventDefaults(e) {
             e.preventDefault();
-            alert('Mohon lengkapi semua field yang wajib diisi');
+            e.stopPropagation();
+        }
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+
+            if (files.length > 0) {
+                fileInput.files = files;
+                handleImageSelect(fileInput);
+            }
+        }
+
+        // Form validation enhancement
+        const form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const requiredFields = form.querySelectorAll('[required]');
+                let isValid = true;
+
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        isValid = false;
+                        field.classList.add('border-red-500');
+                        field.addEventListener('input', function() {
+                            this.classList.remove('border-red-500');
+                        });
+                    }
+                });
+
+                if (!isValid) {
+                    e.preventDefault();
+                    alert('Mohon lengkapi semua field yang wajib diisi');
+                }
+            });
         }
     });
-});
 </script>
 @endsection
