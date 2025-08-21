@@ -290,6 +290,14 @@ function readAndPreviewFile(file) {
                 const workbook = XLSX.read(e.target.result, {type: 'binary'});
                 const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                 data = XLSX.utils.sheet_to_json(firstSheet, {header: 1, defval: ''});
+
+                // Clean Excel data - remove completely empty rows
+                data = data.filter((row, index) => {
+                    if (index === 0) return true; // Always keep header
+                    return Array.isArray(row) && row.some(cell =>
+                        cell !== null && cell !== undefined && String(cell).trim() !== ''
+                    );
+                });
             } else {
                 throw new Error('Format file tidak didukung');
             }
@@ -299,12 +307,17 @@ function readAndPreviewFile(file) {
                 throw new Error('Data file tidak dapat dibaca sebagai array');
             }
 
-            // Clean up data - ensure all rows are arrays
-            data = data.map(row => {
+            // Clean up data - ensure all rows are arrays and filter empty rows
+            data = data.map((row, index) => {
                 if (!Array.isArray(row)) {
                     return [];
                 }
                 return row.map(cell => cell !== null && cell !== undefined ? String(cell) : '');
+            }).filter((row, index) => {
+                // Always keep header (index 0)
+                if (index === 0) return true;
+                // Keep rows that have at least one non-empty cell
+                return row.some(cell => cell.trim() !== '');
             });
 
             displayPreview(data);
@@ -330,13 +343,22 @@ function parseCSV(text) {
     const lines = text.split('\n');
     const result = [];
 
-    for (let line of lines) {
-        if (line.trim()) {
-            // Simple CSV parsing - handle quoted fields
-            const fields = line.split(',').map(field => {
-                const trimmed = field.trim().replace(/^["']|["']$/g, '');
-                return trimmed || ''; // Ensure we return empty string if undefined
-            });
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        // Skip completely empty lines, but keep lines with only commas
+        if (line.trim() === '') {
+            continue;
+        }
+
+        // Simple CSV parsing - handle quoted fields
+        const fields = line.split(',').map(field => {
+            const trimmed = field.trim().replace(/^["']|["']$/g, '');
+            return trimmed || ''; // Ensure we return empty string if undefined
+        });
+
+        // Only add non-empty rows (at least one field has content)
+        const hasContent = fields.some(field => field.trim() !== '');
+        if (hasContent || result.length === 0) { // Always include header row
             result.push(fields);
         }
     }
@@ -452,9 +474,19 @@ function displayPreview(data) {
 
     contentDiv.innerHTML = tableHTML;
 
-    // Show stats
+    // Show stats with better information
     const totalRows = data.length - 1; // Exclude header
-    statsDiv.innerHTML = `Total ${totalRows} baris data ditemukan (menampilkan 5 baris pertama)`;
+    const actualDataRows = data.slice(1).filter(row =>
+        Array.isArray(row) && row.some(cell => cell && String(cell).trim() !== '')
+    ).length;
+
+    let statsText = `Total ${data.length} baris dalam file (1 header + ${totalRows} baris data)`;
+    if (actualDataRows !== totalRows) {
+        statsText += ` | ${actualDataRows} baris berisi data, ${totalRows - actualDataRows} baris kosong`;
+    }
+    statsText += ` | Menampilkan maksimal 5 baris pertama`;
+
+    statsDiv.innerHTML = statsText;
 
     // Validate and show errors
     const errors = validateAllData(data, headerMapping);
@@ -583,16 +615,31 @@ function validateAllData(data, headerMapping = {}) {
         errors.push(`Header berikut wajib ada: ${missingHeaders.join(', ')}`);
     }
 
-    // Validate data rows
+    // Debug info - add total rows information
+    console.log(`Total rows in data: ${data.length} (including header)`);
+    console.log(`Data rows to validate: ${data.length - 1}`);
+
+    // Validate data rows - group errors by row
+    let actualRowNumber = 1; // Start from 1 for actual Excel/CSV row numbering (after header)
+
     for (let i = 1; i < data.length; i++) {
         const row = data[i] || [];
+        const rowErrors = [];
+
+        actualRowNumber++; // This represents the actual row number in Excel/CSV (header is row 1, data starts from row 2)
+
+        // Skip completely empty rows in validation
+        const hasAnyContent = row.some(cell => cell && String(cell).trim() !== '');
+        if (!hasAnyContent) {
+            continue;
+        }
 
         // ID Transaksi validation
         const idTransaksiIndex = headerMapping["ID TRANSAKSI"];
         if (idTransaksiIndex !== undefined) {
             const idTransaksi = row[idTransaksiIndex] ? String(row[idTransaksiIndex]).trim() : '';
             if (!idTransaksi) {
-                errors.push(`Baris ${i}: ID Transaksi tidak boleh kosong`);
+                rowErrors.push('ID Transaksi kosong');
             }
         }
 
@@ -601,7 +648,7 @@ function validateAllData(data, headerMapping = {}) {
         if (namaBarangIndex !== undefined) {
             const namaBarang = row[namaBarangIndex] ? String(row[namaBarangIndex]).trim() : '';
             if (!namaBarang) {
-                errors.push(`Baris ${i}: Nama barang tidak boleh kosong`);
+                rowErrors.push('Nama barang kosong');
             }
         }
 
@@ -616,7 +663,7 @@ function validateAllData(data, headerMapping = {}) {
             }
 
             if (!tanggal) {
-                errors.push(`Baris ${i}: Tanggal transaksi tidak boleh kosong`);
+                rowErrors.push('Tanggal kosong');
             }
         }
 
@@ -625,10 +672,15 @@ function validateAllData(data, headerMapping = {}) {
         if (jumlahIndex !== undefined) {
             const jumlah = row[jumlahIndex] ? String(row[jumlahIndex]).trim() : '';
             if (!jumlah) {
-                errors.push(`Baris ${i}: Jumlah tidak boleh kosong`);
+                rowErrors.push('Jumlah kosong');
             } else if (isNaN(jumlah) || parseFloat(jumlah) <= 0) {
-                errors.push(`Baris ${i}: Jumlah harus berupa angka positif`);
+                rowErrors.push('Jumlah harus berupa angka positif');
             }
+        }
+
+        // Add grouped row errors with correct row numbering
+        if (rowErrors.length > 0) {
+            errors.push(`Baris ${actualRowNumber}: ${rowErrors.join(', ')}`);
         }
     }
 
@@ -703,25 +755,59 @@ function submitImport() {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         }
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        return response.json();
+    })
     .then(data => {
         hideLoading();
 
-        if (data.success) {
+        if (data && data.success) {
             // Redirect to index (flash message already set in session)
-            window.location.href = data.redirect_url;
+            window.location.href = data.redirect_url || '/outgoing_items';
         } else {
-            // Show errors
-            showImportError(data.errors, data.error_count);
+            // Show errors - handle various response formats
+            let errors = {};
+            let errorCount = 0;
+
+            if (data && data.errors) {
+                errors = data.errors;
+                errorCount = data.error_count || 0;
+            } else if (data && data.message) {
+                // Handle simple error message format
+                errors = {
+                    general: data.message
+                };
+                errorCount = 1;
+            } else {
+                // Handle unexpected response format
+                errors = {
+                    general: 'Terjadi kesalahan saat memproses import. Response tidak valid.'
+                };
+                errorCount = 1;
+            }
+
+            showImportError(errors, errorCount);
         }
     })
     .catch(error => {
         hideLoading();
         console.error('Error:', error);
-        showImportError([{
-            type: 'general',
-            message: 'Terjadi kesalahan saat memproses import. Silakan coba lagi.'
-        }], 1);
+
+        let errorMessage = 'Terjadi kesalahan saat memproses import.';
+        if (error.message.includes('HTTP')) {
+            errorMessage = `Server error: ${error.message}`;
+        } else if (error.message.includes('JSON')) {
+            errorMessage = 'Server mengembalikan response yang tidak valid.';
+        } else {
+            errorMessage = `Error: ${error.message}`;
+        }
+
+        showImportError({
+            general: errorMessage
+        }, 1);
     });
 }
 
@@ -729,51 +815,139 @@ function showImportError(errors, errorCount) {
     const errorSection = document.getElementById('import-error-section');
     const errorContent = document.getElementById('import-error-content');
 
-    let errorHTML = `<p class="font-medium mb-2">Ditemukan ${errorCount} kesalahan:</p>`;
+    // Handle case where errors is undefined or not an object
+    if (!errors || typeof errors !== 'object') {
+        errors = {};
+    }
 
-        if (errors.not_found && errors.not_found.length > 0) {
-            errorHTML += '<div class="mb-3">';
-            errorHTML += '<h4 class="font-medium text-red-800">Nama Barang Tidak Ditemukan:</h4>';
-            errorHTML += '<ul class="mt-1 list-disc list-inside text-sm">';
-            errors.not_found.forEach(error => {
-                errorHTML += `<li>Baris ${error.row}: ${error.error}</li>`;
-            });
-            errorHTML += '</ul></div>';
-        }    if (errors.stock && errors.stock.length > 0) {
-        errorHTML += '<div class="mb-3">';
-        errorHTML += '<h4 class="font-medium text-red-800">Stok Tidak Mencukupi:</h4>';
-        errorHTML += '<ul class="mt-1 list-disc list-inside text-sm">';
+    // Handle case where errorCount is undefined
+    if (!errorCount || isNaN(errorCount)) {
+        errorCount = 'beberapa';
+    }
+
+    let errorHTML = `<p class="font-medium mb-3 text-red-800">Ditemukan ${errorCount} kesalahan:</p>`;
+
+    if (errors.not_found && errors.not_found.length > 0) {
+        errorHTML += '<div class="mb-4 bg-red-100 rounded-lg p-3 border border-red-200">';
+        errorHTML += '<h4 class="font-medium text-red-900 mb-2 flex items-center">';
+        errorHTML += '<svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">';
+        errorHTML += '<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>';
+        errorHTML += '</svg>Nama Barang Tidak Ditemukan</h4>';
+        errorHTML += '<ul class="text-sm text-red-800 space-y-1 ml-6">';
+
+        // Remove duplicates and sort errors by row number before displaying
+        const uniqueNotFoundErrors = [];
+        const seen = new Set();
+
+        errors.not_found.forEach(error => {
+            const key = `${error.row}-${error.error}`;
+            if (!seen.has(key)) {
+                seen.add(key);
+                uniqueNotFoundErrors.push(error);
+            }
+        });
+
+        const sortedNotFoundErrors = uniqueNotFoundErrors.sort((a, b) => {
+            const rowA = parseInt(a.row) || 0;
+            const rowB = parseInt(b.row) || 0;
+            return rowA - rowB;
+        });
+
+        sortedNotFoundErrors.forEach(error => {
+            errorHTML += `<li class="flex items-start"><span class="inline-block w-2 h-2 bg-red-400 rounded-full mt-1.5 mr-2 flex-shrink-0"></span>Baris ${error.row}: ${error.error}</li>`;
+        });
+        errorHTML += '</ul></div>';
+    }
+
+    if (errors.stock && errors.stock.length > 0) {
+        errorHTML += '<div class="mb-4 bg-orange-100 rounded-lg p-3 border border-orange-200">';
+        errorHTML += '<h4 class="font-medium text-orange-900 mb-2 flex items-center">';
+        errorHTML += '<svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">';
+        errorHTML += '<path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>';
+        errorHTML += '</svg>Stok Tidak Mencukupi</h4>';
+        errorHTML += '<ul class="text-sm text-orange-800 space-y-1 ml-6">';
+
+        // Remove duplicates and sort errors by row number before displaying
+        const uniqueStockErrors = [];
+        const seen = new Set();
+
         errors.stock.forEach(error => {
-            errorHTML += `<li>Baris ${error.row}: ${error.error}</li>`;
+            const key = `${error.row}-${error.error}`;
+            if (!seen.has(key)) {
+                seen.add(key);
+                uniqueStockErrors.push(error);
+            }
+        });
+
+        const sortedStockErrors = uniqueStockErrors.sort((a, b) => {
+            const rowA = parseInt(a.row) || 0;
+            const rowB = parseInt(b.row) || 0;
+            return rowA - rowB;
+        });
+
+        sortedStockErrors.forEach(error => {
+            errorHTML += `<li class="flex items-start"><span class="inline-block w-2 h-2 bg-orange-400 rounded-full mt-1.5 mr-2 flex-shrink-0"></span>Baris ${error.row}: ${error.error}</li>`;
         });
         errorHTML += '</ul></div>';
     }
 
     if (errors.validation && errors.validation.length > 0) {
-        errorHTML += '<div class="mb-3">';
-        errorHTML += '<h4 class="font-medium text-red-800">Error Validasi:</h4>';
-        errorHTML += '<ul class="mt-1 list-disc list-inside text-sm">';
+        errorHTML += '<div class="mb-4 bg-red-100 rounded-lg p-3 border border-red-200">';
+        errorHTML += '<h4 class="font-medium text-red-900 mb-2 flex items-center">';
+        errorHTML += '<svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">';
+        errorHTML += '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>';
+        errorHTML += '</svg>Error Validasi Data</h4>';
+        errorHTML += '<ul class="text-sm text-red-800 space-y-1 ml-6">';
+
+        // Remove duplicates and sort errors by row number before displaying
+        const uniqueValidationErrors = [];
+        const seen = new Set();
+
         errors.validation.forEach(error => {
-            errorHTML += `<li>Baris ${error.row}: ${error.error}</li>`;
+            const key = `${error.row}-${error.error}`;
+            if (!seen.has(key)) {
+                seen.add(key);
+                uniqueValidationErrors.push(error);
+            }
+        });
+
+        const sortedValidationErrors = uniqueValidationErrors.sort((a, b) => {
+            const rowA = parseInt(a.row) || 0;
+            const rowB = parseInt(b.row) || 0;
+            return rowA - rowB;
+        });
+
+        sortedValidationErrors.forEach(error => {
+            errorHTML += `<li class="flex items-start"><span class="inline-block w-2 h-2 bg-red-400 rounded-full mt-1.5 mr-2 flex-shrink-0"></span>Baris ${error.row}: ${error.error}</li>`;
         });
         errorHTML += '</ul></div>';
     }
 
     if (errors.general) {
-        errorHTML += `<div class="text-sm">${errors.general}</div>`;
+        errorHTML += `<div class="mb-4 bg-gray-100 rounded-lg p-3 border border-gray-200">`;
+        errorHTML += `<div class="text-sm text-gray-800">${errors.general}</div>`;
+        errorHTML += `</div>`;
     }
 
-    errorHTML += '<div class="mt-3 p-2 bg-blue-50 border border-blue-200 rounded">';
-    errorHTML += '<p class="text-xs text-blue-700">';
-    errorHTML += '<strong>Tips:</strong> ';
+    // Tips section
+    errorHTML += '<div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">';
+    errorHTML += '<p class="text-sm text-blue-800 font-medium flex items-center mb-2">';
+    errorHTML += '<svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">';
+    errorHTML += '<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>';
+    errorHTML += '</svg>Tips Perbaikan:</p>';
+
+    errorHTML += '<ul class="text-sm text-blue-700 space-y-1 ml-6">';
     if (errors.not_found && errors.not_found.length > 0) {
-        errorHTML += 'Pastikan nama barang sudah terdaftar di master data. ';
+        errorHTML += '<li>• Pastikan nama barang sudah terdaftar di master data</li>';
     }
     if (errors.stock && errors.stock.length > 0) {
-        errorHTML += 'Periksa stok tersedia sebelum import. ';
+        errorHTML += '<li>• Periksa ketersediaan stok sebelum melakukan import</li>';
     }
-    errorHTML += 'Download template untuk format yang benar.';
-    errorHTML += '</p></div>';
+    if (errors.validation && errors.validation.length > 0) {
+        errorHTML += '<li>• Pastikan format data sesuai dengan template yang disediakan</li>';
+    }
+    errorHTML += '<li>• Download template untuk memastikan format yang benar</li>';
+    errorHTML += '</ul></div>';
 
     errorContent.innerHTML = errorHTML;
     errorSection.classList.remove('hidden');
