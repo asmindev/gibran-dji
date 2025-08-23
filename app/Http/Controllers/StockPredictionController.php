@@ -68,13 +68,13 @@ class StockPredictionController extends Controller
             }
 
             // Save prediction to database
-            $stockPrediction = $this->savePredictionToDatabase($item, $result, $request->prediction_period);
+            // $stockPrediction = $this->savePredictionToDatabase($item, $result, $request->prediction_period);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Prediksi berhasil dibuat!',
                 'results' => $result,
-                'prediction_id' => $stockPrediction->id,
+                // 'prediction_id' => $stockPrediction->id,
                 "product" => [
                     'id' => $item->id,
                     'name' => $item->name,

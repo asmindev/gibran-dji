@@ -17,7 +17,7 @@ class BackfillStockPredictions extends Command
      * @var string
      */
     protected $signature = 'predictions:backfill
-                            {--start-month=5 : Start month (1-12)}
+                            {--start-month=6 : Start month (1-12)}
                             {--start-year=2025 : Start year}
                             {--end-month=8 : End month (1-12)}
                             {--end-year=2025 : End year}
@@ -47,6 +47,21 @@ class BackfillStockPredictions extends Command
 
         if ($dryRun) {
             $this->warn('DRY RUN MODE - No data will be saved');
+        }
+
+        // Auto-detect available data range if using default values
+        $dataRange = $this->getAvailableDataRange();
+        if ($dataRange) {
+            $this->info("Available data range: {$dataRange['min_date']} to {$dataRange['max_date']}");
+
+            // If user is using default start month/year and we have data, suggest better defaults
+            if ($this->option('start-month') == 6 && $this->option('start-year') == 2025) {
+                $minDate = Carbon::parse($dataRange['min_date']);
+                if ($minDate->month != 6 || $minDate->year != 2025) {
+                    $this->warn("Note: You're using default start date (June 2025) but data starts from {$minDate->format('F Y')}");
+                    $this->warn("Consider using: --start-month={$minDate->month} --start-year={$minDate->year}");
+                }
+            }
         }
 
         $startDate = Carbon::create($startYear, $startMonth, 1);
@@ -312,5 +327,23 @@ class BackfillStockPredictions extends Command
 
             $this->line("  {$month}: {$monthTotal} items, Predicted: {$monthPredicted}, Actual: {$monthActual}");
         }
+    }
+
+    /**
+     * Get available data range from outgoing items
+     */
+    private function getAvailableDataRange()
+    {
+        $range = OutgoingItem::selectRaw('MIN(outgoing_date) as min_date, MAX(outgoing_date) as max_date')
+            ->first();
+
+        if ($range && $range->min_date && $range->max_date) {
+            return [
+                'min_date' => $range->min_date,
+                'max_date' => $range->max_date
+            ];
+        }
+
+        return null;
     }
 }
