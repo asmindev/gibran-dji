@@ -677,12 +677,26 @@ class StockPredictor:
                     "qty_sold"
                 ].shift(1)
 
+                # Handle case where there's only one month of data
+                # Fill NaN values with 0 for training purposes
+                initial_nan_count = monthly_demand["prev_month_total"].isna().sum()
+                if initial_nan_count > 0:
+                    self.logger.warning(
+                        f"⚠️ Found {initial_nan_count} records without previous month data"
+                    )
+                    self.logger.warning(
+                        "🔧 Filling missing lag values with 0 for single-month training"
+                    )
+                    monthly_demand["prev_month_total"] = monthly_demand[
+                        "prev_month_total"
+                    ].fillna(0)
+
                 # Select features
                 final_data = monthly_demand[
                     ["id_item", "year_month", "qty_sold", "prev_month_total"]
                 ].copy()
 
-                # Data quality check
+                # Data quality check (should not have NaN after fillna)
                 initial_rows = len(final_data)
                 final_data = final_data.dropna()
                 final_rows = len(final_data)
@@ -1173,10 +1187,40 @@ class StockPredictor:
                     self.logger.info(
                         f"📋 Available product IDs: {', '.join(valid_products[:10])}{'...' if len(valid_products) > 10 else ''}"
                     )
-                    raise ValueError(
-                        f"Product ID '{product_id}' was not found in training data. "
-                        f"Available product IDs: {', '.join(valid_products[:5])}{'...' if len(valid_products) > 5 else ''}"
+
+                    # Instead of raising error, provide fallback prediction
+                    self.logger.info(
+                        "🔄 Generating fallback prediction for unknown product"
                     )
+                    fallback_prediction = self.generate_fallback_prediction(
+                        prediction_type, **kwargs
+                    )
+
+                    # Calculate execution times
+                    end_time = time.time()
+                    total_execution_time_ms = (end_time - start_time) * 1000
+
+                    # Create result dictionary for fallback
+                    result = {
+                        "prediction": fallback_prediction,
+                        "execution_time_ms": round(total_execution_time_ms, 2),
+                        "model_prediction_time_ms": 0,
+                        "product_id": product_id,
+                        "prediction_type": prediction_type,
+                        "input_parameters": kwargs,
+                        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                        "is_fallback": True,
+                        "fallback_reason": "Product not in training data",
+                    }
+
+                    self.logger.info(
+                        f"🎯 FALLBACK PREDICTION RESULT: {fallback_prediction} units"
+                    )
+                    self.logger.info(
+                        f"⚡ Total execution time: {result['execution_time_ms']:.2f}ms"
+                    )
+
+                    return result
             else:
                 self.logger.warning(
                     "⚠️ Model metadata not found, proceeding without product validation"
@@ -1373,6 +1417,64 @@ class StockPredictor:
                 result["batch_summary"] = batch_summary
 
         return results
+
+    def generate_fallback_prediction(self, prediction_type: str, **kwargs) -> int:
+        """
+        Generate fallback prediction for products not in training data
+
+        Args:
+            prediction_type: 'daily' or 'monthly'
+            **kwargs: Prediction parameters
+
+        Returns:
+            int: Fallback prediction value
+        """
+        try:
+            if prediction_type == "daily":
+                # For daily prediction, use simple average of lag values
+                lag1 = kwargs.get("lag1", 0)
+                lag2 = kwargs.get("lag2", 0)
+                lag3 = kwargs.get("lag3", 0)
+
+                lag_values = [lag1, lag2, lag3]
+                non_zero_lags = [lag for lag in lag_values if lag > 0]
+
+                if non_zero_lags:
+                    # Simple moving average with slight upward trend
+                    fallback = round(sum(non_zero_lags) / len(non_zero_lags) * 1.1)
+                else:
+                    # Default conservative prediction
+                    fallback = 5
+
+                self.logger.info(
+                    f"📊 Daily fallback based on lags {lag_values}: {fallback} units"
+                )
+
+            elif prediction_type == "monthly":
+                # For monthly prediction, use previous month with seasonal adjustment
+                prev_month_total = kwargs.get("prev_month_total", 0)
+
+                if prev_month_total > 0:
+                    # Apply seasonal factor (assume current month similar to previous)
+                    seasonal_factor = 1.05  # Slight growth assumption
+                    fallback = round(prev_month_total * seasonal_factor)
+                else:
+                    # Default conservative prediction for new products
+                    fallback = 20
+
+                self.logger.info(
+                    f"📊 Monthly fallback based on prev_month_total {prev_month_total}: {fallback} units"
+                )
+
+            else:
+                raise ValueError(f"Invalid prediction_type: {prediction_type}")
+
+            return max(1, fallback)  # Ensure at least 1 unit prediction
+
+        except Exception as e:
+            self.logger.warning(f"⚠️ Error generating fallback prediction: {e}")
+            # Return minimal safe prediction
+            return 5 if prediction_type == "daily" else 20
 
     def train_all_models(self, data_folder: str = "data"):
         """

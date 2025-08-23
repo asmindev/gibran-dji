@@ -29,7 +29,7 @@ class BackfillStockPredictions extends Command
      *
      * @var string
      */
-    protected $description = 'Backfill stock predictions and actual sales data for historical months';
+    protected $description = 'Backfill stock predictions using ML predictor and actual sales data for historical months';
 
     /**
      * Execute the console command.
@@ -43,11 +43,14 @@ class BackfillStockPredictions extends Command
         $force = $this->option('force');
         $dryRun = $this->option('dry-run');
 
-        $this->info('=== Stock Predictions Backfill ===');
+        $this->info('=== Stock Predictions Backfill (Using ML Predictor) ===');
 
         if ($dryRun) {
             $this->warn('DRY RUN MODE - No data will be saved');
         }
+
+        // Check if Python stock predictor models exist
+        $this->checkPythonPredictor();
 
         // Auto-detect available data range if using default values
         $dataRange = $this->getAvailableDataRange();
@@ -179,7 +182,7 @@ class BackfillStockPredictions extends Command
                             'actual' => $actual,
                             'product' => $item->item_name,
                             'month' => $month->startOfMonth()->format('Y-m-d'),
-                            'prediction_type' => 'monthly', // Since this is for monthly predictions
+                            'prediction_type' => 'monthly', // ML-based monthly predictions
                         ]);
                     }
                 }
@@ -196,7 +199,7 @@ class BackfillStockPredictions extends Command
         $bar->finish();
 
         $this->newLine();
-        $this->line("  Processed: {$processed}, Skipped: {$skipped}, Errors: {$errors}");
+        $this->line("  📊 Results: Processed: {$processed}, Skipped: {$skipped}, Errors: {$errors}");
 
         return [
             'processed' => $processed,
@@ -206,9 +209,127 @@ class BackfillStockPredictions extends Command
     }
 
     /**
-     * Calculate prediction for an item based on historical data
+     * Calculate prediction for an item using Python stock predictor
      */
     private function calculatePrediction($item, Carbon $targetMonth)
+    {
+        try {
+            // Get previous month's total sales for monthly prediction
+            $prevMonth = $targetMonth->copy()->subMonth();
+            $prevMonthTotal = OutgoingItem::where('item_id', $item->id)
+                ->whereYear('outgoing_date', $prevMonth->year)
+                ->whereMonth('outgoing_date', $prevMonth->month)
+                ->sum('quantity');
+
+            // Use the same method as StockPredictionController
+            $pythonResult = $this->callPythonPredict($item->id, 'bulan', [$prevMonthTotal]);
+
+            // Handle both old integer format and new dictionary format
+            if (is_array($pythonResult)) {
+                $prediction = $pythonResult['prediction'];
+                $this->line("  🤖 ML Prediction for {$item->item_name}: {$prediction} units (prev month: {$prevMonthTotal})");
+            } else {
+                $prediction = $pythonResult;
+                $this->line("  🤖 ML Prediction for {$item->item_name}: {$prediction} units (prev month: {$prevMonthTotal})");
+            }
+
+            return max(0, (int) $prediction);
+        } catch (\Exception $e) {
+            $this->warn("  ❌ Error calling Python predictor for item {$item->item_name}: " . $e->getMessage());
+            return $this->getFallbackPrediction($item, $targetMonth);
+        }
+    }
+
+    /**
+     * Call Python predictor using the same method as StockPredictionController
+     */
+    private function callPythonPredict($itemId, $type, $parameters)
+    {
+        $basePath = base_path();
+        $operatingSystem = PHP_OS_FAMILY;
+
+        // Define paths based on operating system
+        if ($operatingSystem === 'Windows') {
+            $scriptPath = $basePath . '\\scripts\\stock_predictor.py';
+            $venvActivate = $basePath . '\\scripts\\.venv\\Scripts\\activate.bat';
+            $pythonPath = $basePath . '\\scripts\\.venv\\Scripts\\python.exe';
+        } else {
+            $scriptPath = $basePath . '/scripts/stock_predictor.py';
+            $venvActivate = $basePath . '/scripts/.venv/bin/activate';
+            $pythonPath = $basePath . '/scripts/.venv/bin/python';
+        }
+
+        // Map type from Indonesian to English
+        $predictionType = ($type === 'hari') ? 'daily' : 'monthly';
+
+        // Build command arguments for stock_predictor.py interface using item ID
+        $escapedItemId = escapeshellarg((string) $itemId);
+        $escapedType = escapeshellarg($predictionType);
+        $escapedParams = array_map('escapeshellarg', $parameters);
+
+        // Build command with virtual environment activation
+        if (file_exists($pythonPath)) {
+            // Virtual environment exists, use it
+            if ($operatingSystem === 'Windows') {
+                // Windows command with venv activation
+                $command = "cd /d \"{$basePath}\\scripts\" && \".venv\\Scripts\\activate.bat\" && python stock_predictor.py predict {$escapedType} {$escapedItemId} " . implode(' ', $escapedParams) . " 2>&1";
+            } else {
+                // Linux/Unix command with venv activation
+                $command = "cd \"{$basePath}/scripts\" && source .venv/bin/activate && python stock_predictor.py predict {$escapedType} {$escapedItemId} " . implode(' ', $escapedParams) . " 2>&1";
+            }
+        } else {
+            // Fallback to system python if venv doesn't exist
+            $this->warn("Virtual environment not found, using system Python");
+            $pythonCmd = $operatingSystem === 'Windows' ? 'python' : 'python3';
+            if ($operatingSystem === 'Windows') {
+                $command = "cd /d \"{$basePath}\\scripts\" && {$pythonCmd} stock_predictor.py predict {$escapedType} {$escapedItemId} " . implode(' ', $escapedParams) . " 2>&1";
+            } else {
+                $command = "cd \"{$basePath}/scripts\" && {$pythonCmd} stock_predictor.py predict {$escapedType} {$escapedItemId} " . implode(' ', $escapedParams) . " 2>&1";
+            }
+        }
+
+        // Execute command
+        $output = [];
+        $returnCode = 0;
+        exec($command, $output, $returnCode);
+
+        $outputString = implode("\n", $output);
+
+        if ($returnCode !== 0) {
+            throw new \Exception('Python script failed: ' . $outputString);
+        }
+
+        // Extract prediction result from output
+        $predictionResult = null;
+        $predictionDetails = null;
+
+        foreach ($output as $line) {
+            if (strpos($line, 'PREDICTION_RESULT:') === 0) {
+                $predictionResult = (int) substr($line, strlen('PREDICTION_RESULT:'));
+            } elseif (strpos($line, 'PREDICTION_FULL:') === 0) {
+                $jsonString = substr($line, strlen('PREDICTION_FULL:'));
+                $predictionDetails = json_decode($jsonString, true);
+            }
+        }
+
+        if ($predictionResult === null) {
+            throw new \Exception('Could not extract prediction result from Python output');
+        }
+
+        // Return enhanced data if available, otherwise just the prediction value
+        if ($predictionDetails !== null) {
+            // Add the basic prediction for backward compatibility
+            $predictionDetails['prediction_value'] = $predictionResult;
+            return $predictionDetails;
+        }
+
+        return $predictionResult;
+    }
+
+    /**
+     * Fallback prediction method when Python predictor fails
+     */
+    private function getFallbackPrediction($item, Carbon $targetMonth)
     {
         // Get previous 3 months data for better prediction
         $predictions = [];
@@ -358,5 +479,227 @@ class BackfillStockPredictions extends Command
         }
 
         return null;
+    }
+
+    /**
+     * Check if Python stock predictor is ready and train if necessary
+     */
+    private function checkPythonPredictor()
+    {
+        $this->info('🔍 Checking Python stock predictor...');
+
+        $basePath = base_path();
+        $scriptsPath = $basePath . '/scripts';
+        $stockPredictorScript = $scriptsPath . '/stock_predictor.py';
+        $monthlyModelPath = $scriptsPath . '/models/monthly_model.pkl';
+
+        // Check if stock_predictor.py exists
+        if (!file_exists($stockPredictorScript)) {
+            $this->error("❌ Python stock predictor script not found: {$stockPredictorScript}");
+            return false;
+        }
+
+        // Check if monthly model exists
+        if (!file_exists($monthlyModelPath)) {
+            $this->warn("⚠️ Monthly model not found. Training new model...");
+
+            // First, export data to CSV
+            $this->info("📤 Exporting outgoing data to CSV...");
+            $exportResult = $this->exportOutgoingDataToCsv();
+
+            if (!$exportResult['success']) {
+                $this->error("❌ Data export failed: " . $exportResult['message']);
+                return false;
+            }
+
+            $this->info("✅ Data export completed: {$exportResult['total_files']} files, {$exportResult['total_records']} records");
+
+            if ($this->trainPythonModel()) {
+                $this->info("✅ Model training completed successfully!");
+            } else {
+                $this->error("❌ Model training failed. Will use fallback predictions.");
+                return false;
+            }
+        } else {
+            $this->info("✅ Monthly model found: {$monthlyModelPath}");
+        }
+
+        return true;
+    }
+
+    /**
+     * Train the Python stock prediction model
+     */
+    private function trainPythonModel()
+    {
+        $this->info('🚀 Training Python stock prediction model...');
+
+        $basePath = base_path();
+        $operatingSystem = PHP_OS_FAMILY;
+
+        // Define paths based on operating system
+        if ($operatingSystem === 'Windows') {
+            $venvActivate = $basePath . '\\scripts\\.venv\\Scripts\\activate.bat';
+            $pythonPath = $basePath . '\\scripts\\.venv\\Scripts\\python.exe';
+        } else {
+            $venvActivate = $basePath . '/scripts/.venv/bin/activate';
+            $pythonPath = $basePath . '/scripts/.venv/bin/python';
+        }
+
+        // Build training command with virtual environment
+        if (file_exists($pythonPath)) {
+            // Virtual environment exists, use it
+            if ($operatingSystem === 'Windows') {
+                $trainCommand = "cd /d \"{$basePath}\\scripts\" && \".venv\\Scripts\\activate.bat\" && python stock_predictor.py train 2>&1";
+            } else {
+                $trainCommand = "cd \"{$basePath}/scripts\" && source .venv/bin/activate && python stock_predictor.py train 2>&1";
+            }
+        } else {
+            // Fallback to system python if venv doesn't exist
+            $this->warn("Virtual environment not found, using system Python");
+            $pythonCmd = $operatingSystem === 'Windows' ? 'python' : 'python3';
+            if ($operatingSystem === 'Windows') {
+                $trainCommand = "cd /d \"{$basePath}\\scripts\" && {$pythonCmd} stock_predictor.py train 2>&1";
+            } else {
+                $trainCommand = "cd \"{$basePath}/scripts\" && {$pythonCmd} stock_predictor.py train 2>&1";
+            }
+        }
+
+        $this->line("Executing training command...");
+
+        // Execute training command
+        $output = shell_exec($trainCommand);
+
+        if ($output === null) {
+            $this->error("Failed to execute training command");
+            return false;
+        }
+
+        // Show training output
+        $this->line("Training output:");
+        $this->line($output);
+
+        // Check if training was successful
+        if (
+            strpos($output, 'TRAINING_COMPLETED') !== false ||
+            strpos($output, 'All models trained successfully') !== false ||
+            strpos($output, 'training completed successfully') !== false
+        ) {
+            return true;
+        }
+
+        if (strpos($output, 'TRAINING_FAILED') !== false) {
+            $this->error("Training failed as indicated by output");
+            return false;
+        }
+
+        // Check if model file was created
+        $monthlyModelPath = $basePath . '/scripts/models/monthly_model.pkl';
+        if (file_exists($monthlyModelPath)) {
+            $this->info("Model file created successfully");
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Export outgoing data to CSV files for Python training
+     */
+    private function exportOutgoingDataToCsv()
+    {
+        try {
+            $this->line('Starting CSV export of outgoing data');
+
+            // Get all outgoing items with item details
+            $outgoingData = OutgoingItem::with(['item'])
+                ->orderBy('outgoing_date', 'asc')
+                ->get();
+
+            if ($outgoingData->isEmpty()) {
+                return [
+                    'success' => false,
+                    'message' => 'Tidak ada data outgoing untuk di-export'
+                ];
+            }
+
+            // Group data by month for CSV files
+            $monthlyData = [];
+            foreach ($outgoingData as $outgoing) {
+                // Cast the date field to a string and then parse it
+                $dateValue = (string) $outgoing->outgoing_date;
+                $carbonDate = Carbon::parse($dateValue);
+
+                $monthKey = $carbonDate->format('Y-m'); // e.g., "2024-01"
+                $monthName = $carbonDate->locale('id')->format('F'); // Indonesian month name
+
+                if (!isset($monthlyData[$monthKey])) {
+                    $monthlyData[$monthKey] = [
+                        'month_name' => $monthName,
+                        'year' => $carbonDate->year,
+                        'data' => []
+                    ];
+                }
+
+                $monthlyData[$monthKey]['data'][] = [
+                    'no' => count($monthlyData[$monthKey]['data']) + 1,
+                    'id_trx' => $outgoing->id,
+                    'tgl' => $carbonDate->format('d F Y'), // e.g., "15 Januari 2024"
+                    'id_item' => $outgoing->item->id, // Item ID
+                    'nama_barang' => $outgoing->item->item_name, // Item name
+                    'kategori' => 'Barang Keluar',
+                    'jumlah' => $outgoing->quantity
+                ];
+            }
+
+            // Create scripts/data directory if it doesn't exist
+            $dataPath = base_path('scripts/data');
+            if (!file_exists($dataPath)) {
+                mkdir($dataPath, 0755, true);
+            }
+
+            // Clear existing CSV files
+            $existingFiles = glob($dataPath . '/*.csv');
+            foreach ($existingFiles as $file) {
+                unlink($file);
+            }
+
+            // Generate CSV files for each month
+            $generatedFiles = [];
+            foreach ($monthlyData as $monthKey => $monthInfo) {
+                $filename = ucfirst($monthInfo['month_name']) . '.csv';
+                $filepath = $dataPath . '/' . $filename;
+
+                $file = fopen($filepath, 'w');
+
+                // Write CSV header
+                fputcsv($file, ['no', 'id_trx', 'tgl', 'id_item', 'nama_barang', 'kategori', 'jumlah'], ',', '"', '\\');
+
+                // Write data rows
+                foreach ($monthInfo['data'] as $row) {
+                    fputcsv($file, $row, ',', '"', '\\');
+                }
+
+                fclose($file);
+                $generatedFiles[] = $filename;
+
+                $this->line("Generated CSV file: {$filename} with " . count($monthInfo['data']) . " records");
+            }
+
+            return [
+                'success' => true,
+                'message' => 'Data berhasil di-export ke CSV',
+                'files_generated' => $generatedFiles,
+                'total_files' => count($generatedFiles),
+                'total_records' => $outgoingData->count(),
+                'data_path' => $dataPath
+            ];
+        } catch (\Exception $e) {
+            $this->error('CSV export error: ' . $e->getMessage());
+            return [
+                'success' => false,
+                'message' => 'Error saat export CSV: ' . $e->getMessage()
+            ];
+        }
     }
 }
