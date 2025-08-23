@@ -54,6 +54,19 @@ class BackfillStockPredictions extends Command
         if ($dataRange) {
             $this->info("Available data range: {$dataRange['min_date']} to {$dataRange['max_date']}");
 
+            $maxDate = Carbon::parse($dataRange['max_date']);
+            $currentDate = Carbon::now();
+
+            // Auto-adjust end month to be just the next month after last data
+            if ($this->option('end-month') == 8 && $this->option('end-year') == 2025) {
+                // Set end date to be exactly 1 month after the last data
+                $suggestedEndDate = $maxDate->copy()->addMonth();
+
+                $this->info("Auto-adjusting end date to: {$suggestedEndDate->format('F Y')} (1 month after last data)");
+                $endMonth = $suggestedEndDate->month;
+                $endYear = $suggestedEndDate->year;
+            }
+
             // If user is using default start month/year and we have data, suggest better defaults
             if ($this->option('start-month') == 6 && $this->option('start-year') == 2025) {
                 $minDate = Carbon::parse($dataRange['min_date']);
