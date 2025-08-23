@@ -58,7 +58,14 @@ class BackfillStockPredictions extends Command
             $this->info("Available data range: {$dataRange['min_date']} to {$dataRange['max_date']}");
 
             $maxDate = Carbon::parse($dataRange['max_date']);
-            $currentDate = Carbon::now();
+            $minDate = Carbon::parse($dataRange['min_date']);
+
+            // Auto-adjust start month to be from the earliest data if using defaults
+            if ($this->option('start-month') == 6 && $this->option('start-year') == 2025) {
+                $this->info("Auto-adjusting start date to: {$minDate->format('F Y')} (earliest available data)");
+                $startMonth = $minDate->month;
+                $startYear = $minDate->year;
+            }
 
             // Auto-adjust end month to be just the next month after last data
             if ($this->option('end-month') == 8 && $this->option('end-year') == 2025) {
@@ -68,15 +75,6 @@ class BackfillStockPredictions extends Command
                 $this->info("Auto-adjusting end date to: {$suggestedEndDate->format('F Y')} (1 month after last data)");
                 $endMonth = $suggestedEndDate->month;
                 $endYear = $suggestedEndDate->year;
-            }
-
-            // If user is using default start month/year and we have data, suggest better defaults
-            if ($this->option('start-month') == 6 && $this->option('start-year') == 2025) {
-                $minDate = Carbon::parse($dataRange['min_date']);
-                if ($minDate->month != 6 || $minDate->year != 2025) {
-                    $this->warn("Note: You're using default start date (June 2025) but data starts from {$minDate->format('F Y')}");
-                    $this->warn("Consider using: --start-month={$minDate->month} --start-year={$minDate->year}");
-                }
             }
         }
 
@@ -94,6 +92,21 @@ class BackfillStockPredictions extends Command
         }
 
         $this->info("Found {$items->count()} items to process");
+
+        // Clear all existing stock predictions before processing
+        if (!$dryRun) {
+            $existingCount = StockPrediction::count();
+            if ($existingCount > 0) {
+                $this->warn("🗑️  Clearing {$existingCount} existing stock predictions from database...");
+                StockPrediction::truncate();
+                $this->info("✅ Database cleared successfully");
+            } else {
+                $this->info("ℹ️  No existing predictions found to clear");
+            }
+        } else {
+            $existingCount = StockPrediction::count();
+            $this->warn("🗑️  [DRY RUN] Would clear {$existingCount} existing stock predictions from database");
+        }
 
         $currentDate = $startDate->copy();
         $totalProcessed = 0;
@@ -491,7 +504,7 @@ class BackfillStockPredictions extends Command
         $basePath = base_path();
         $scriptsPath = $basePath . '/scripts';
         $stockPredictorScript = $scriptsPath . '/stock_predictor.py';
-        $monthlyModelPath = $scriptsPath . '/models/monthly_model.pkl';
+        $monthlyModelPath = $scriptsPath . '/model/rf_stock_predictor_monthly.pkl';
 
         // Check if stock_predictor.py exists
         if (!file_exists($stockPredictorScript)) {
