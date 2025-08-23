@@ -1,23 +1,23 @@
 {
   "model_type": "monthly",
   "version": "3.0",
-  "training_date": "2025-08-21 19:24:47",
+  "training_date": "2025-08-23 12:24:59",
   "performance_metrics": {
-    "mae": 25.945986855158733,
-    "mse": 932.0876123767642,
-    "rmse": 30.530109930636744,
-    "r2": 0.8826820804017792,
-    "mape": 0.10202302827845884,
-    "cv_mae_mean": 86.57953042328045,
-    "cv_mae_std": 18.874150357274328,
-    "cv_r2_mean": -2.145693085809524,
-    "cv_r2_std": 1.1773511996745976
+    "mae": 504.39540476190473,
+    "mse": 675056.0423492709,
+    "rmse": 821.6179418374886,
+    "r2": 0.9091848907572462,
+    "mape": 0.47396210489657153,
+    "cv_mae_mean": 1448.0041666666668,
+    "cv_mae_std": 731.8721094686254,
+    "cv_r2_mean": -8.030616551086377,
+    "cv_r2_std": 7.843266080665168
   },
   "config": {
     "MODEL_VERSION": "3.0",
-    "TRAINING_DATE": "2025-08-21 19:24:47",
+    "TRAINING_DATE": "2025-08-23 12:24:59",
     "MIN_SAMPLES_DAILY": 5,
-    "MIN_SAMPLES_MONTHLY": 3,
+    "MIN_SAMPLES_MONTHLY": 1,
     "RANDOM_STATE": 42,
     "CV_SPLITS": 3,
     "N_ESTIMATORS_DAILY": 300,
@@ -27,22 +27,22 @@
   },
   "valid_products": [
     "1",
+    "10",
+    "11",
     "2",
     "3",
     "4",
     "5",
-    "6",
-    "7",
-    "8"
+    "9"
   ],
   "product_mapping": {
-    "7": "Bola Basket",
-    "2": "Kaos Kaki Avo",
     "4": "Tali Sepatu Kipzkapz",
-    "5": "Piala",
-    "8": "Jersey Basket",
-    "1": "Sepatu Bola Ortus",
+    "11": "Sepatu Lari Mills",
+    "2": "Kaos Kaki Avo",
     "3": "Jersey Mills",
-    "6": "Sepatu Futsal"
+    "1": "Sepatu Bola Ortus",
+    "9": "Sepatu Futsal Ls Reborn",
+    "10": "Bola",
+    "5": "Piala"
   }
 }

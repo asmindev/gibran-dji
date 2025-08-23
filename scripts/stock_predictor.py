@@ -84,7 +84,7 @@ class StockPredictor:
             "MODEL_VERSION": "3.0",
             "TRAINING_DATE": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "MIN_SAMPLES_DAILY": 5,
-            "MIN_SAMPLES_MONTHLY": 3,
+            "MIN_SAMPLES_MONTHLY": 1,  # Changed from 2 to 1 to allow single valid month per product
             "RANDOM_STATE": 42,
             "CV_SPLITS": 3,
             "N_ESTIMATORS_DAILY": 300,
@@ -876,42 +876,50 @@ class StockPredictor:
         # Create model pipeline
         model = Pipeline([("preprocessor", preprocessor), ("regressor", rf_model)])
 
-        # Time series cross-validation
+        # Time series cross-validation (skip if not enough samples)
         self.logger.info("Melakukan Time Series Cross Validation...")
-        tscv = TimeSeriesSplit(n_splits=self.config["CV_SPLITS"])
-
-        cv_scores = {"mae": [], "mse": [], "r2": [], "mape": []}
-
-        self.logger.info(
-            f"🔄 Performing {self.config['CV_SPLITS']}-fold time series cross-validation..."
-        )
-
-        for fold, (train_idx, val_idx) in enumerate(tscv.split(X)):
-            self.logger.info(f"Training fold {fold + 1}/{self.config['CV_SPLITS']}...")
-
-            X_train, X_val = X.iloc[train_idx], X.iloc[val_idx]
-            y_train, y_val = y.iloc[train_idx], y.iloc[val_idx]
-
-            # Train model
-            model.fit(X_train, y_train)
-
-            # Make predictions
-            y_pred = model.predict(X_val)
-
-            # Calculate metrics
-            mae = mean_absolute_error(y_val, y_pred)
-            mse = mean_squared_error(y_val, y_pred)
-            r2 = r2_score(y_val, y_pred)
-            mape = mean_absolute_percentage_error(y_val, y_pred)
-
-            cv_scores["mae"].append(mae)
-            cv_scores["mse"].append(mse)
-            cv_scores["r2"].append(r2)
-            cv_scores["mape"].append(mape)
+        
+        # Check if we have enough samples for CV
+        min_cv_samples = self.config["CV_SPLITS"] + 1  # Need at least n_splits + 1 samples
+        if len(X) >= min_cv_samples:
+            tscv = TimeSeriesSplit(n_splits=self.config["CV_SPLITS"])
+            cv_scores = {"mae": [], "mse": [], "r2": [], "mape": []}
 
             self.logger.info(
-                f"  Fold {fold + 1}: MAE={mae:.2f}, R²={r2:.3f}, MAPE={mape:.1%}"
+                f"🔄 Performing {self.config['CV_SPLITS']}-fold time series cross-validation..."
             )
+
+            for fold, (train_idx, val_idx) in enumerate(tscv.split(X)):
+                self.logger.info(f"Training fold {fold + 1}/{self.config['CV_SPLITS']}...")
+
+                X_train, X_val = X.iloc[train_idx], X.iloc[val_idx]
+                y_train, y_val = y.iloc[train_idx], y.iloc[val_idx]
+
+                # Train model
+                model.fit(X_train, y_train)
+
+                # Make predictions
+                y_pred = model.predict(X_val)
+
+                # Calculate metrics
+                mae = mean_absolute_error(y_val, y_pred)
+                mse = mean_squared_error(y_val, y_pred)
+                r2 = r2_score(y_val, y_pred)
+                mape = mean_absolute_percentage_error(y_val, y_pred)
+
+                cv_scores["mae"].append(mae)
+                cv_scores["mse"].append(mse)
+                cv_scores["r2"].append(r2)
+                cv_scores["mape"].append(mape)
+
+                self.logger.info(
+                    f"  Fold {fold + 1}: MAE={mae:.2f}, R²={r2:.3f}, MAPE={mape:.1%}"
+                )
+        else:
+            self.logger.warning(
+                f"⚠️ Skipping Cross Validation: Only {len(X)} samples available, need at least {min_cv_samples} for {self.config['CV_SPLITS']}-fold CV"
+            )
+            cv_scores = {"mae": [], "mse": [], "r2": [], "mape": []}
 
         # Train final model on all data
         self.logger.info("🎯 Training final model on complete dataset...")
