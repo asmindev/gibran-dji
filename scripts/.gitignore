@@ -1,2 +1,3 @@
+# Ignore data and model directories
 /data
 /model
