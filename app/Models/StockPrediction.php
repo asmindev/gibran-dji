@@ -13,6 +13,7 @@ class StockPrediction extends Model
         'product',
         'month',
         'item_id',
+        'prediction_type',
     ];
 
     protected $casts = [

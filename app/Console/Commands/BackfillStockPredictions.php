@@ -118,9 +118,10 @@ class BackfillStockPredictions extends Command
         foreach ($items as $item) {
             try {
                 // Check if prediction already exists
-                $existingPrediction = StockPrediction::where('product', $item->item_name)
+                $existingPrediction = StockPrediction::where('item_id', $item->id)
                     ->whereYear('month', $month->year)
                     ->whereMonth('month', $month->month)
+                    ->where('prediction_type', 'monthly')
                     ->first();
 
                 if ($existingPrediction && !$force) {
@@ -145,10 +146,12 @@ class BackfillStockPredictions extends Command
                     } else {
                         // Create new
                         StockPrediction::create([
+                            'item_id' => $item->id,
                             'prediction' => $prediction,
                             'actual' => $actual,
                             'product' => $item->item_name,
-                            'month' => $month->startOfMonth()->format('Y-m-d')
+                            'month' => $month->startOfMonth()->format('Y-m-d'),
+                            'prediction_type' => 'monthly', // Since this is for monthly predictions
                         ]);
                     }
                 }
