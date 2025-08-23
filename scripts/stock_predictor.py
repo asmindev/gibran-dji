@@ -878,9 +878,11 @@ class StockPredictor:
 
         # Time series cross-validation (skip if not enough samples)
         self.logger.info("Melakukan Time Series Cross Validation...")
-        
+
         # Check if we have enough samples for CV
-        min_cv_samples = self.config["CV_SPLITS"] + 1  # Need at least n_splits + 1 samples
+        min_cv_samples = (
+            self.config["CV_SPLITS"] + 1
+        )  # Need at least n_splits + 1 samples
         if len(X) >= min_cv_samples:
             tscv = TimeSeriesSplit(n_splits=self.config["CV_SPLITS"])
             cv_scores = {"mae": [], "mse": [], "r2": [], "mape": []}
@@ -890,7 +892,9 @@ class StockPredictor:
             )
 
             for fold, (train_idx, val_idx) in enumerate(tscv.split(X)):
-                self.logger.info(f"Training fold {fold + 1}/{self.config['CV_SPLITS']}...")
+                self.logger.info(
+                    f"Training fold {fold + 1}/{self.config['CV_SPLITS']}..."
+                )
 
                 X_train, X_val = X.iloc[train_idx], X.iloc[val_idx]
                 y_train, y_val = y.iloc[train_idx], y.iloc[val_idx]
