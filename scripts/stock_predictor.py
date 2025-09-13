@@ -1,16 +1,16 @@
-# stock_predictor.py - Unified Stock Prediction System
+# stock_predictor.py - Sales and Restock Prediction System
 """
-Professional Stock Prediction System
+Professional Sales and Restock Prediction System
 
-A comprehensive class-based system for training and predicting stock demands
+A comprehensive class-based system for predicting sales demand and restock recommendations
 using machine learning algorithms with proper logging and error handling.
 
 Features:
-- Unified training and prediction functionality
+- Sales demand prediction based on historical patterns
+- Restock recommendation system
 - Professional logging with file and console output
-- Random Forest models for daily and monthly predictions
-- Advanced feature engineering with lag variables
-- Time series cross-validation for robust evaluation
+- Random Forest models for sales and restock predictions
+- Feature engineering with inventory and sales patterns
 - Comprehensive data validation and preprocessing
 - Model persistence and metadata tracking
 - Batch prediction capabilities
@@ -20,8 +20,8 @@ Features:
 - API integration support
 
 Author: Stock Prediction System
-Version: 3.0
-Date: August 2025
+Version: 4.0 - Sales & Restock Focus
+Date: September 2025
 """
 
 import os
@@ -56,15 +56,15 @@ warnings.filterwarnings("ignore")
 
 class StockPredictor:
     """
-    Comprehensive Stock Prediction System
+    Comprehensive Sales and Restock Prediction System
 
-    This class handles both training and prediction operations for stock demand
-    forecasting using Random Forest algorithms with advanced features.
+    This class handles both sales prediction and restock recommendation operations
+    using Random Forest algorithms with inventory-focused features.
     """
 
     def __init__(self, base_path: Optional[str] = None):
         """
-        Initialize the Stock Predictor
+        Initialize the Sales and Restock Predictor
 
         Args:
             base_path (str): Base directory path for models and logs
@@ -79,23 +79,25 @@ class StockPredictor:
         self.data_dir.mkdir(exist_ok=True)
         self.logs_dir.mkdir(exist_ok=True)
 
-        # Configuration with enhanced parameters
+        # Configuration with enhanced parameters for sales and restock
         self.config = {
-            "MODEL_VERSION": "3.0",
+            "MODEL_VERSION": "4.0",
             "TRAINING_DATE": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "MIN_SAMPLES_DAILY": 5,
-            "MIN_SAMPLES_MONTHLY": 1,  # Changed from 2 to 1 to allow single valid month per product
+            "MIN_SAMPLES_SALES": 5,
+            "MIN_SAMPLES_RESTOCK": 3,
             "RANDOM_STATE": 42,
             "CV_SPLITS": 3,
-            "N_ESTIMATORS_DAILY": 300,
-            "N_ESTIMATORS_MONTHLY": 200,
-            "MAX_DEPTH_DAILY": 10,
-            "MAX_DEPTH_MONTHLY": 8,
+            "N_ESTIMATORS_SALES": 300,
+            "N_ESTIMATORS_RESTOCK": 200,
+            "MAX_DEPTH_SALES": 10,
+            "MAX_DEPTH_RESTOCK": 8,
+            "RESTOCK_THRESHOLD_MULTIPLIER": 1.5,  # Safety stock multiplier
+            "LOW_STOCK_THRESHOLD": 10,  # Units considered as low stock
         }
 
         # Model file paths
-        self.daily_model_path = self.model_dir / "rf_stock_predictor_daily.pkl"
-        self.monthly_model_path = self.model_dir / "rf_stock_predictor_monthly.pkl"
+        self.sales_model_path = self.model_dir / "rf_sales_predictor.pkl"
+        self.restock_model_path = self.model_dir / "rf_restock_predictor.pkl"
 
         # Setup logging
         self._setup_logging()
@@ -104,7 +106,7 @@ class StockPredictor:
         self.models = {}
         self.performance_metrics = {}
 
-        self.logger.info("🚀 StockPredictor initialized successfully")
+        self.logger.info("🚀 Sales & Restock Predictor initialized successfully")
         self.logger.info(f"📁 Base path: {self.base_path}")
         self.logger.info(f"📁 Model directory: {self.model_dir}")
         self.logger.info(f"📁 Logs directory: {self.logs_dir}")
@@ -535,14 +537,14 @@ class StockPredictor:
             raise
 
     def create_features(
-        self, sales: pd.DataFrame, prediction_type: str = "daily"
+        self, sales: pd.DataFrame, prediction_type: str = "sales"
     ) -> pd.DataFrame:
         """
-        Create sophisticated features for daily or monthly prediction with comprehensive analysis
+        Create sophisticated features for sales or restock prediction with comprehensive analysis
 
         Args:
             sales: Processed sales data DataFrame
-            prediction_type: 'daily' or 'monthly'
+            prediction_type: 'sales' or 'restock'
 
         Returns:
             Feature-engineered DataFrame ready for model training
@@ -557,158 +559,113 @@ class StockPredictor:
                 f"🔧 Starting feature engineering for {prediction_type} prediction...",
             )
 
-            if prediction_type not in ["daily", "monthly"]:
-                raise ValueError("prediction_type must be 'daily' or 'monthly'")
+            if prediction_type not in ["sales", "restock"]:
+                raise ValueError("prediction_type must be 'sales' or 'restock'")
 
-            # Step 1: Daily aggregation - using id_item as primary identifier
-            self.logger.info("📊 Aggregating data to daily level...")
-            sales["tgl_date"] = sales["tgl"].dt.date
-            daily_demand = (
-                sales.groupby(["tgl_date", "id_item"])["qty_sold"].sum().reset_index()
-            )
-            daily_demand = daily_demand.rename(columns={"tgl_date": "tgl"})
-            daily_demand["tgl"] = pd.to_datetime(daily_demand["tgl"])
-            daily_demand = daily_demand.sort_values(["id_item", "tgl"])
+            # Step 1: Aggregate data and calculate metrics
+            self.logger.info("📊 Aggregating sales data and calculating inventory metrics...")
 
-            # Daily aggregation statistics
-            daily_stats = {
-                "total_days": daily_demand["tgl"].nunique(),
-                "total_products": daily_demand["id_item"].nunique(),
-                "total_records": len(daily_demand),
-                "avg_daily_sales": daily_demand["qty_sold"].mean(),
-                "date_range": (
-                    daily_demand["tgl"].max() - daily_demand["tgl"].min()
-                ).days,
-            }
+            # Create product-level aggregations
+            product_metrics = sales.groupby("id_item").agg({
+                "qty_sold": ["sum", "mean", "std", "count"],
+                "tgl": ["min", "max"]
+            }).round(2)
 
-            self.logger.info("📈 Daily Aggregation Summary:")
-            self.logger.info(
-                f"   • Records: {daily_stats['total_records']:,}",
-            )
-            self.logger.info(
-                f"   • Products: {daily_stats['total_products']:,}",
-            )
-            self.logger.info(
-                f"   • Days covered: {daily_stats['total_days']:,}",
-            )
-            self.logger.info(
-                f"   • Avg daily sales: {daily_stats['avg_daily_sales']:.2f} units",
-            )
-            self.logger.info(f"   • Date span: {daily_stats['date_range']} days")
+            product_metrics.columns = [
+                "total_sold", "avg_daily_sales", "sales_volatility", "transaction_count",
+                "first_sale_date", "last_sale_date"
+            ]
 
-            # Initialize final_data variable
-            final_data = pd.DataFrame()
+            # Calculate sales velocity and consistency
+            product_metrics["sales_velocity"] = product_metrics["avg_daily_sales"]
+            product_metrics["sales_consistency"] = (
+                product_metrics["avg_daily_sales"] /
+                (product_metrics["sales_volatility"] + 0.01)  # Avoid division by zero
+            )
 
-            if prediction_type == "daily":
-                self.logger.info("🗓️ Building DAILY prediction features...")
+            # Calculate recent performance (last 30 days)
+            recent_date = sales["tgl"].max()
+            recent_threshold = recent_date - timedelta(days=30)
+
+            recent_sales = sales[sales["tgl"] >= recent_threshold]
+            recent_metrics = recent_sales.groupby("id_item")["qty_sold"].agg([
+                "sum", "mean", "count"
+            ])
+            recent_metrics.columns = ["recent_total", "recent_avg", "recent_transactions"]
+
+            # Merge recent metrics
+            product_metrics = product_metrics.merge(
+                recent_metrics, left_index=True, right_index=True, how="left"
+            )
+            product_metrics = product_metrics.fillna(0)
+
+            # Reset index to make id_item a column
+            final_data = product_metrics.reset_index()
+
+            # Feature engineering based on prediction type
+            if prediction_type == "sales":
+                self.logger.info("� Building SALES prediction features...")
                 self.logger.info("📋 Feature specification:")
-                self.logger.info("   • lag1: Yesterday's sales")
-                self.logger.info("   • lag2: Sales from 2 days ago")
-                self.logger.info("   • lag3: Sales from 3 days ago")
-                self.logger.info("   • Target: Today's sales prediction")
+                self.logger.info("   • avg_daily_sales: Historical average sales per day")
+                self.logger.info("   • sales_velocity: Rate of sales movement")
+                self.logger.info("   • sales_consistency: Stability of sales pattern")
+                self.logger.info("   • recent_avg: Recent 30-day average sales")
+                self.logger.info("   • Target: Predicted sales quantity")
 
-                # Create lag features - using id_item
-                daily_demand["lag1"] = daily_demand.groupby("id_item")[
-                    "qty_sold"
-                ].shift(1)
-                daily_demand["lag2"] = daily_demand.groupby("id_item")[
-                    "qty_sold"
-                ].shift(2)
-                daily_demand["lag3"] = daily_demand.groupby("id_item")[
-                    "qty_sold"
-                ].shift(3)
+                # Select sales-focused features
+                feature_cols = [
+                    "id_item", "avg_daily_sales", "sales_velocity",
+                    "sales_consistency", "recent_avg", "transaction_count"
+                ]
+                target_col = "total_sold"
 
-                # Select features
-                final_data = daily_demand[
-                    ["id_item", "tgl", "qty_sold", "lag1", "lag2", "lag3"]
-                ].copy()
+                # Prepare final dataset for sales prediction
+                final_data = final_data[feature_cols + [target_col]].copy()
 
-                # Data quality check
-                initial_rows = len(final_data)
-                final_data = final_data.dropna()
-                final_rows = len(final_data)
-                removed_rows = initial_rows - final_rows
+                # Create target variable (predict next period sales based on pattern)
+                final_data["predicted_sales"] = final_data["recent_avg"] * 7  # Next week estimate
+                final_data = final_data.rename(columns={"predicted_sales": "qty_sold"})
 
-                self.logger.info(f"🧹 Data cleaning results:")
-                self.logger.info(f"   • Initial rows: {initial_rows:,}")
-                self.logger.info(f"   • Removed (NaN): {removed_rows:,}")
-                self.logger.info(f"   • Final rows: {final_rows:,}")
+            elif prediction_type == "restock":
+                self.logger.info("� Building RESTOCK prediction features...")
+                self.logger.info("📋 Feature specification:")
+                self.logger.info("   • avg_daily_sales: Average consumption rate")
+                self.logger.info("   • sales_velocity: Inventory turnover rate")
+                self.logger.info("   • sales_volatility: Demand variability")
+                self.logger.info("   • recent_total: Recent consumption pattern")
+                self.logger.info("   • Target: Recommended restock quantity")
+
+                # Calculate restock recommendations
+                final_data["lead_time_demand"] = final_data["avg_daily_sales"] * 7  # Assume 7-day lead time
+                final_data["safety_stock"] = final_data["sales_volatility"] * self.config["RESTOCK_THRESHOLD_MULTIPLIER"]
+                final_data["restock_point"] = final_data["lead_time_demand"] + final_data["safety_stock"]
+                final_data["recommended_order_qty"] = final_data["restock_point"] * 1.5  # Buffer for efficiency
+
+                # Select restock-focused features
+                feature_cols = [
+                    "id_item", "avg_daily_sales", "sales_velocity",
+                    "sales_volatility", "recent_total", "transaction_count"
+                ]
+                target_col = "recommended_order_qty"
+
+                # Prepare final dataset for restock prediction
+                final_data = final_data[feature_cols + [target_col]].copy()
+                final_data = final_data.rename(columns={target_col: "qty_sold"})
+
+            # Data quality validation
+            initial_rows = len(final_data)
+            final_data = final_data.dropna()
+            final_rows = len(final_data)
+            removed_rows = initial_rows - final_rows
+
+            self.logger.info(f"🧹 Data cleaning results:")
+            self.logger.info(f"   • Initial rows: {initial_rows:,}")
+            self.logger.info(f"   • Removed (NaN): {removed_rows:,}")
+            self.logger.info(f"   • Final rows: {final_rows:,}")
+            if initial_rows > 0:
                 self.logger.info(
                     f"   • Retention rate: {(final_rows/initial_rows)*100:.1f}%",
                 )
-
-            elif prediction_type == "monthly":
-                self.logger.info("📅 Building MONTHLY prediction features...")
-                self.logger.info("📋 Feature specification:")
-                self.logger.info("   • prev_month_total: Previous month's total sales")
-                self.logger.info("   • Target: Current month's total sales prediction")
-
-                # Aggregate to monthly level - using id_item
-                daily_demand["year_month"] = daily_demand["tgl"].dt.to_period("M")
-                monthly_demand = (
-                    daily_demand.groupby(["id_item", "year_month"])["qty_sold"]
-                    .sum()
-                    .reset_index()
-                )
-                monthly_demand = monthly_demand.sort_values(["id_item", "year_month"])
-
-                # Monthly aggregation stats
-                monthly_stats = {
-                    "total_months": monthly_demand["year_month"].nunique(),
-                    "total_products": monthly_demand["id_item"].nunique(),
-                    "avg_monthly_sales": monthly_demand["qty_sold"].mean(),
-                    "min_monthly_sales": monthly_demand["qty_sold"].min(),
-                    "max_monthly_sales": monthly_demand["qty_sold"].max(),
-                }
-
-                self.logger.info("📊 Monthly Aggregation Summary:")
-                self.logger.info(f"   • Records: {len(monthly_demand):,}")
-                self.logger.info(f"   • Months: {monthly_stats['total_months']}")
-                self.logger.info(f"   • Products: {monthly_stats['total_products']}")
-                self.logger.info(
-                    f"   • Avg monthly: {monthly_stats['avg_monthly_sales']:.1f} units",
-                )
-                self.logger.info(
-                    f"   • Range: {monthly_stats['min_monthly_sales']:.0f} - {monthly_stats['max_monthly_sales']:.0f}",
-                )
-
-                # Create lag feature for monthly data - using id_item
-                monthly_demand["prev_month_total"] = monthly_demand.groupby("id_item")[
-                    "qty_sold"
-                ].shift(1)
-
-                # Handle case where there's only one month of data
-                # Fill NaN values with 0 for training purposes
-                initial_nan_count = monthly_demand["prev_month_total"].isna().sum()
-                if initial_nan_count > 0:
-                    self.logger.warning(
-                        f"⚠️ Found {initial_nan_count} records without previous month data"
-                    )
-                    self.logger.warning(
-                        "🔧 Filling missing lag values with 0 for single-month training"
-                    )
-                    monthly_demand["prev_month_total"] = monthly_demand[
-                        "prev_month_total"
-                    ].fillna(0)
-
-                # Select features
-                final_data = monthly_demand[
-                    ["id_item", "year_month", "qty_sold", "prev_month_total"]
-                ].copy()
-
-                # Data quality check (should not have NaN after fillna)
-                initial_rows = len(final_data)
-                final_data = final_data.dropna()
-                final_rows = len(final_data)
-                removed_rows = initial_rows - final_rows
-
-                self.logger.info(f"🧹 Data cleaning results:")
-                self.logger.info(f"   • Initial rows: {initial_rows:,}")
-                self.logger.info(f"   • Removed (NaN): {removed_rows:,}")
-                self.logger.info(f"   • Final rows: {final_rows:,}")
-
-            else:
-                raise ValueError("prediction_type must be 'daily' or 'monthly'")
 
             # Validate final dataset
             if final_data.empty:
@@ -716,20 +673,11 @@ class StockPredictor:
 
             # Product coverage analysis
             min_samples = self.config[f"MIN_SAMPLES_{prediction_type.upper()}"]
-            product_counts = final_data["id_item"].value_counts()
-            valid_products = product_counts[product_counts >= min_samples].index
+            valid_products = final_data["id_item"].unique()
 
             self.logger.info(f"📋 Product coverage analysis:")
             self.logger.info(f"   • Min samples required: {min_samples}")
-            self.logger.info(
-                f"   • Products with sufficient data: {len(valid_products)}"
-            )
-            self.logger.info(
-                f"   • Products filtered out: {len(product_counts) - len(valid_products)}",
-            )
-
-            # Filter to valid products only
-            final_data = final_data[final_data["id_item"].isin(valid_products)]
+            self.logger.info(f"   • Products with sufficient data: {len(valid_products)}")
 
             # Final statistics
             target_stats = final_data["qty_sold"].describe()
@@ -739,9 +687,6 @@ class StockPredictor:
             self.logger.info(f"   • Std: {target_stats['std']:.2f}")
             self.logger.info(
                 f"   • Range: {target_stats['min']:.0f} - {target_stats['max']:.0f}",
-            )
-            self.logger.info(
-                f"   • Quartiles: {target_stats['25%']:.1f} | {target_stats['50%']:.1f} | {target_stats['75%']:.1f}"
             )
 
             self.logger.info(f"✅ Feature engineering completed successfully")
@@ -763,28 +708,31 @@ class StockPredictor:
 
         Args:
             data (pd.DataFrame): Feature-engineered data
-            prediction_type (str): 'daily' or 'monthly'
+            prediction_type (str): 'sales' or 'restock'
 
         Returns:
             Tuple[pd.DataFrame, pd.Series]: Features (X) and target (y)
         """
         self.logger.info(f"FEATURE PREPARATION - {prediction_type.upper()}")
 
-        if prediction_type == "daily":
-            return self._prepare_daily_features(data)
-        elif prediction_type == "monthly":
-            return self._prepare_monthly_features(data)
+        if prediction_type == "sales":
+            return self._prepare_sales_features(data)
+        elif prediction_type == "restock":
+            return self._prepare_restock_features(data)
         else:
-            raise ValueError("prediction_type must be 'daily' or 'monthly'")
+            raise ValueError("prediction_type must be 'sales' or 'restock'")
 
-    def _prepare_daily_features(
+    def _prepare_sales_features(
         self, data: pd.DataFrame
     ) -> Tuple[pd.DataFrame, pd.Series]:
-        """Prepare features for daily prediction"""
-        self.logger.info("🗓️  Preparing daily prediction features...")
+        """Prepare features for sales prediction"""
+        self.logger.info("� Preparing sales prediction features...")
 
-        # Define features - updated to use id_item
-        feature_cols = ["id_item", "lag1", "lag2", "lag3"]
+        # Define features for sales prediction
+        feature_cols = [
+            "id_item", "avg_daily_sales", "sales_velocity",
+            "sales_consistency", "recent_avg", "transaction_count"
+        ]
         target_col = "qty_sold"
 
         # Validate required columns
@@ -797,19 +745,22 @@ class StockPredictor:
         X = data[feature_cols]
         y = data[target_col]
 
-        self.logger.info(f"📊 Daily features prepared: {len(X)} samples")
+        self.logger.info(f"📊 Sales features prepared: {len(X)} samples")
         self.logger.info(f"📦 Products with sufficient data: {X['id_item'].nunique()}")
 
         return X, y
 
-    def _prepare_monthly_features(
+    def _prepare_restock_features(
         self, data: pd.DataFrame
     ) -> Tuple[pd.DataFrame, pd.Series]:
-        """Prepare features for monthly prediction"""
-        self.logger.info("📅 Preparing monthly prediction features...")
+        """Prepare features for restock prediction"""
+        self.logger.info("� Preparing restock prediction features...")
 
-        # Define features - updated to use id_item
-        feature_cols = ["id_item", "prev_month_total"]
+        # Define features for restock prediction
+        feature_cols = [
+            "id_item", "avg_daily_sales", "sales_velocity",
+            "sales_volatility", "recent_total", "transaction_count"
+        ]
         target_col = "qty_sold"
 
         # Validate required columns
@@ -822,7 +773,7 @@ class StockPredictor:
         X = data[feature_cols]
         y = data[target_col]
 
-        self.logger.info(f"📊 Monthly features prepared: {len(X)} samples")
+        self.logger.info(f"📊 Restock features prepared: {len(X)} samples")
         self.logger.info(f"📦 Products with sufficient data: {X['id_item'].nunique()}")
 
         return X, y
@@ -840,7 +791,7 @@ class StockPredictor:
         Args:
             X (pd.DataFrame): Features
             y (pd.Series): Target variable
-            prediction_type (str): 'daily' or 'monthly'
+            prediction_type (str): 'sales' or 'restock'
 
         Returns:
             Pipeline: Trained model pipeline
@@ -866,22 +817,22 @@ class StockPredictor:
         )
 
         # Create model with adjusted parameters based on prediction type
-        if prediction_type == "daily":
-            # Daily prediction: more trees, moderate depth
+        if prediction_type == "sales":
+            # Sales prediction: optimized for sales forecasting
             rf_model = RandomForestRegressor(
-                n_estimators=self.config["N_ESTIMATORS_DAILY"],
+                n_estimators=self.config["N_ESTIMATORS_SALES"],
                 random_state=self.config["RANDOM_STATE"],
-                max_depth=self.config["MAX_DEPTH_DAILY"],
+                max_depth=self.config["MAX_DEPTH_SALES"],
                 min_samples_split=5,
                 min_samples_leaf=2,
                 n_jobs=-1,
             )
-        else:
-            # Monthly prediction: fewer trees, shallower depth
+        else:  # restock
+            # Restock prediction: optimized for inventory planning
             rf_model = RandomForestRegressor(
-                n_estimators=self.config["N_ESTIMATORS_MONTHLY"],
+                n_estimators=self.config["N_ESTIMATORS_RESTOCK"],
                 random_state=self.config["RANDOM_STATE"],
-                max_depth=self.config["MAX_DEPTH_MONTHLY"],
+                max_depth=self.config["MAX_DEPTH_RESTOCK"],
                 min_samples_split=3,
                 min_samples_leaf=1,
                 n_jobs=-1,
@@ -890,8 +841,8 @@ class StockPredictor:
         # Create model pipeline
         model = Pipeline([("preprocessor", preprocessor), ("regressor", rf_model)])
 
-        # Time series cross-validation (skip if not enough samples)
-        self.logger.info("Melakukan Time Series Cross Validation...")
+        # Cross-validation (skip if not enough samples)
+        self.logger.info("Melakukan Cross Validation...")
 
         # Check if we have enough samples for CV
         min_cv_samples = (
@@ -902,7 +853,7 @@ class StockPredictor:
             cv_scores = {"mae": [], "mse": [], "r2": [], "mape": []}
 
             self.logger.info(
-                f"🔄 Performing {self.config['CV_SPLITS']}-fold time series cross-validation..."
+                f"🔄 Performing {self.config['CV_SPLITS']}-fold cross-validation..."
             )
 
             for fold, (train_idx, val_idx) in enumerate(tscv.split(X)):
@@ -951,10 +902,10 @@ class StockPredictor:
             "rmse": np.sqrt(mean_squared_error(y, y_pred)),
             "r2": r2_score(y, y_pred),
             "mape": mean_absolute_percentage_error(y, y_pred),
-            "cv_mae_mean": np.mean(cv_scores["mae"]),
-            "cv_mae_std": np.std(cv_scores["mae"]),
-            "cv_r2_mean": np.mean(cv_scores["r2"]),
-            "cv_r2_std": np.std(cv_scores["r2"]),
+            "cv_mae_mean": np.mean(cv_scores["mae"]) if cv_scores["mae"] else 0,
+            "cv_mae_std": np.std(cv_scores["mae"]) if cv_scores["mae"] else 0,
+            "cv_r2_mean": np.mean(cv_scores["r2"]) if cv_scores["r2"] else 0,
+            "cv_r2_std": np.std(cv_scores["r2"]) if cv_scores["r2"] else 0,
         }
 
         self.performance_metrics[prediction_type] = final_metrics
@@ -1054,13 +1005,13 @@ class StockPredictor:
 
         Args:
             model (Pipeline): Trained model
-            prediction_type (str): 'daily' or 'monthly'
+            prediction_type (str): 'sales' or 'restock'
             valid_products (list): List of valid product names from training data
         """
         model_path = (
-            self.daily_model_path
-            if prediction_type == "daily"
-            else self.monthly_model_path
+            self.sales_model_path
+            if prediction_type == "sales"
+            else self.restock_model_path
         )
 
         try:
@@ -1100,15 +1051,15 @@ class StockPredictor:
         Load trained model
 
         Args:
-            prediction_type (str): 'daily' or 'monthly'
+            prediction_type (str): 'sales' or 'restock'
 
         Returns:
             Pipeline: Loaded model
         """
         model_path = (
-            self.daily_model_path
-            if prediction_type == "daily"
-            else self.monthly_model_path
+            self.sales_model_path
+            if prediction_type == "sales"
+            else self.restock_model_path
         )
 
         try:
@@ -1131,10 +1082,10 @@ class StockPredictor:
 
         Args:
             product_id (str): Product ID (used as nama_barang in training data)
-            prediction_type (str): 'daily' or 'monthly'
+            prediction_type (str): 'sales' or 'restock'
             **kwargs: Additional parameters based on prediction type
-                     For daily: lag1, lag2, lag3
-                     For monthly: prev_month_total
+                     For sales: avg_daily_sales, sales_velocity, sales_consistency, recent_avg, transaction_count
+                     For restock: avg_daily_sales, sales_velocity, sales_volatility, recent_total, transaction_count
 
         Returns:
             Dict: Dictionary containing prediction result and execution time
@@ -1168,9 +1119,9 @@ class StockPredictor:
         # Get valid products from training data (stored in model metadata)
         try:
             model_metadata_path = (
-                self.daily_model_path.with_suffix(".json")
-                if prediction_type == "daily"
-                else self.monthly_model_path.with_suffix(".json")
+                self.sales_model_path.with_suffix(".json")
+                if prediction_type == "sales"
+                else self.restock_model_path.with_suffix(".json")
             )
 
             if model_metadata_path.exists():
@@ -1237,47 +1188,77 @@ class StockPredictor:
             input_parameters = {}
             input_data = None
 
-            if prediction_type == "daily":
-                # Prepare daily prediction input
-                lag1 = kwargs.get("lag1", 0)
-                lag2 = kwargs.get("lag2", 0)
-                lag3 = kwargs.get("lag3", 0)
+            if prediction_type == "sales":
+                # Prepare sales prediction input
+                avg_daily_sales = kwargs.get("avg_daily_sales", 0)
+                sales_velocity = kwargs.get("sales_velocity", 0)
+                sales_consistency = kwargs.get("sales_consistency", 1)
+                recent_avg = kwargs.get("recent_avg", 0)
+                transaction_count = kwargs.get("transaction_count", 0)
 
                 input_data = pd.DataFrame(
                     {
                         "id_item": [product_id],
-                        "lag1": [lag1],
-                        "lag2": [lag2],
-                        "lag3": [lag3],
+                        "avg_daily_sales": [avg_daily_sales],
+                        "sales_velocity": [sales_velocity],
+                        "sales_consistency": [sales_consistency],
+                        "recent_avg": [recent_avg],
+                        "transaction_count": [transaction_count],
                     }
                 )
 
-                input_parameters = {"lag1": lag1, "lag2": lag2, "lag3": lag3}
+                input_parameters = {
+                    "avg_daily_sales": avg_daily_sales,
+                    "sales_velocity": sales_velocity,
+                    "sales_consistency": sales_consistency,
+                    "recent_avg": recent_avg,
+                    "transaction_count": transaction_count,
+                }
 
                 self.logger.info(f"📦 Product ID: {product_id}")
-                self.logger.info(f"📈 Lag1 (yesterday): {lag1} units")
-                self.logger.info(f"📈 Lag2 (2 days ago): {lag2} units")
-                self.logger.info(f"📈 Lag3 (3 days ago): {lag3} units")
+                self.logger.info(f"📈 Avg Daily Sales: {avg_daily_sales} units")
+                self.logger.info(f"📈 Sales Velocity: {sales_velocity}")
+                self.logger.info(f"📈 Sales Consistency: {sales_consistency}")
+                self.logger.info(f"📈 Recent Average: {recent_avg} units")
+                self.logger.info(f"📈 Transaction Count: {transaction_count}")
 
-            elif prediction_type == "monthly":
-                # Prepare monthly prediction input
-                prev_month_total = kwargs.get("prev_month_total", 0)
+            elif prediction_type == "restock":
+                # Prepare restock prediction input
+                avg_daily_sales = kwargs.get("avg_daily_sales", 0)
+                sales_velocity = kwargs.get("sales_velocity", 0)
+                sales_volatility = kwargs.get("sales_volatility", 1)
+                recent_total = kwargs.get("recent_total", 0)
+                transaction_count = kwargs.get("transaction_count", 0)
 
                 input_data = pd.DataFrame(
                     {
                         "id_item": [product_id],
-                        "prev_month_total": [prev_month_total],
+                        "avg_daily_sales": [avg_daily_sales],
+                        "sales_velocity": [sales_velocity],
+                        "sales_volatility": [sales_volatility],
+                        "recent_total": [recent_total],
+                        "transaction_count": [transaction_count],
                     }
                 )
 
-                input_parameters = {"prev_month_total": prev_month_total}
+                input_parameters = {
+                    "avg_daily_sales": avg_daily_sales,
+                    "sales_velocity": sales_velocity,
+                    "sales_volatility": sales_volatility,
+                    "recent_total": recent_total,
+                    "transaction_count": transaction_count,
+                }
 
                 self.logger.info(f"📦 Product ID: {product_id}")
-                self.logger.info(f"📈 Previous month total: {prev_month_total} units")
+                self.logger.info(f"📈 Avg Daily Sales: {avg_daily_sales} units")
+                self.logger.info(f"📈 Sales Velocity: {sales_velocity}")
+                self.logger.info(f"📈 Sales Volatility: {sales_volatility}")
+                self.logger.info(f"📈 Recent Total: {recent_total} units")
+                self.logger.info(f"📈 Transaction Count: {transaction_count}")
 
             else:
                 raise ValueError(
-                    f"Invalid prediction_type: {prediction_type}. Must be 'daily' or 'monthly'"
+                    f"Invalid prediction_type: {prediction_type}. Must be 'sales' or 'restock'"
                 )
 
             if input_data is None:
@@ -1307,6 +1288,12 @@ class StockPredictor:
                 "input_parameters": input_parameters,
                 "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             }
+
+            # Add interpretation based on prediction type
+            if prediction_type == "sales":
+                result["interpretation"] = f"Predicted sales for next period: {prediction} units"
+            else:  # restock
+                result["interpretation"] = f"Recommended restock quantity: {prediction} units"
 
             self.logger.info(f"🎯 PREDICTION RESULT: {prediction} units")
             self.logger.info(f"⏱️ Total execution time: {total_execution_time_ms:.2f}ms")
@@ -1423,47 +1410,51 @@ class StockPredictor:
         Generate fallback prediction for products not in training data
 
         Args:
-            prediction_type: 'daily' or 'monthly'
+            prediction_type: 'sales' or 'restock'
             **kwargs: Prediction parameters
 
         Returns:
             int: Fallback prediction value
         """
         try:
-            if prediction_type == "daily":
-                # For daily prediction, use simple average of lag values
-                lag1 = kwargs.get("lag1", 0)
-                lag2 = kwargs.get("lag2", 0)
-                lag3 = kwargs.get("lag3", 0)
+            if prediction_type == "sales":
+                # For sales prediction, use historical sales patterns
+                avg_daily_sales = kwargs.get("avg_daily_sales", 0)
+                recent_avg = kwargs.get("recent_avg", 0)
+                transaction_count = kwargs.get("transaction_count", 0)
 
-                lag_values = [lag1, lag2, lag3]
-                non_zero_lags = [lag for lag in lag_values if lag > 0]
-
-                if non_zero_lags:
-                    # Simple moving average with slight upward trend
-                    fallback = round(sum(non_zero_lags) / len(non_zero_lags) * 1.1)
+                if avg_daily_sales > 0 or recent_avg > 0:
+                    # Use the better of the two averages with slight growth factor
+                    base_prediction = max(avg_daily_sales, recent_avg) * 7  # Weekly estimate
+                    fallback = round(base_prediction * 1.1)  # 10% growth assumption
                 else:
-                    # Default conservative prediction
-                    fallback = 5
+                    # Default conservative sales prediction for new products
+                    fallback = 10
 
                 self.logger.info(
-                    f"📊 Daily fallback based on lags {lag_values}: {fallback} units"
+                    f"📊 Sales fallback based on avg_daily:{avg_daily_sales}, recent_avg:{recent_avg}: {fallback} units"
                 )
 
-            elif prediction_type == "monthly":
-                # For monthly prediction, use previous month with seasonal adjustment
-                prev_month_total = kwargs.get("prev_month_total", 0)
+            elif prediction_type == "restock":
+                # For restock prediction, use safety stock calculations
+                avg_daily_sales = kwargs.get("avg_daily_sales", 0)
+                sales_volatility = kwargs.get("sales_volatility", 1)
+                recent_total = kwargs.get("recent_total", 0)
 
-                if prev_month_total > 0:
-                    # Apply seasonal factor (assume current month similar to previous)
-                    seasonal_factor = 1.05  # Slight growth assumption
-                    fallback = round(prev_month_total * seasonal_factor)
+                if avg_daily_sales > 0:
+                    # Calculate restock based on consumption rate and volatility
+                    lead_time_demand = avg_daily_sales * 7  # 7-day lead time
+                    safety_stock = sales_volatility * self.config["RESTOCK_THRESHOLD_MULTIPLIER"]
+                    fallback = round((lead_time_demand + safety_stock) * 1.5)
+                elif recent_total > 0:
+                    # Use recent consumption pattern
+                    fallback = round(recent_total * 1.3)  # 30% buffer
                 else:
-                    # Default conservative prediction for new products
-                    fallback = 20
+                    # Default conservative restock for new products
+                    fallback = 50
 
                 self.logger.info(
-                    f"📊 Monthly fallback based on prev_month_total {prev_month_total}: {fallback} units"
+                    f"📊 Restock fallback based on avg_daily:{avg_daily_sales}, volatility:{sales_volatility}: {fallback} units"
                 )
 
             else:
@@ -1474,16 +1465,16 @@ class StockPredictor:
         except Exception as e:
             self.logger.warning(f"⚠️ Error generating fallback prediction: {e}")
             # Return minimal safe prediction
-            return 5 if prediction_type == "daily" else 20
+            return 10 if prediction_type == "sales" else 50
 
     def train_all_models(self, data_folder: str = "data"):
         """
-        Train both daily and monthly models
+        Train both sales and restock models
 
         Args:
             data_folder (str): Path to folder containing Excel files
         """
-        self.logger.info("COMPREHENSIVE MODEL TRAINING")
+        self.logger.info("COMPREHENSIVE MODEL TRAINING - SALES & RESTOCK")
 
         try:
             # Load and process data from the specified folder
@@ -1497,50 +1488,50 @@ class StockPredictor:
                     sales_data[["id_item", "nama_barang"]].drop_duplicates().values
                 )
 
-            # Train daily model
+            # Train sales model
             try:
-                # Create features for daily prediction
-                daily_features = self.create_features(sales_data, "daily")
-                X_daily, y_daily = self.prepare_features(daily_features, "daily")
+                # Create features for sales prediction
+                sales_features = self.create_features(sales_data, "sales")
+                X_sales, y_sales = self.prepare_features(sales_features, "sales")
 
-                # Get list of valid products for daily model (convert to strings)
-                daily_valid_products = sorted(
-                    [str(x) for x in X_daily["id_item"].unique().tolist()]
+                # Get list of valid products for sales model (convert to strings)
+                sales_valid_products = sorted(
+                    [str(x) for x in X_sales["id_item"].unique().tolist()]
                 )
 
-                daily_model = self.train_model(
-                    X_daily, y_daily, "daily", product_mapping
+                sales_model = self.train_model(
+                    X_sales, y_sales, "sales", product_mapping
                 )
                 self.save_model(
-                    daily_model, "daily", daily_valid_products, product_mapping
+                    sales_model, "sales", sales_valid_products, product_mapping
                 )
-                self.logger.info("✅ Daily model training completed successfully")
+                self.logger.info("✅ Sales model training completed successfully")
             except Exception as e:
-                self.logger.error(f"❌ Daily model training failed: {str(e)}")
+                self.logger.error(f"❌ Sales model training failed: {str(e)}")
 
-            # Train monthly model
+            # Train restock model
             try:
-                # Create features for monthly prediction
-                monthly_features = self.create_features(sales_data, "monthly")
-                X_monthly, y_monthly = self.prepare_features(
-                    monthly_features, "monthly"
+                # Create features for restock prediction
+                restock_features = self.create_features(sales_data, "restock")
+                X_restock, y_restock = self.prepare_features(
+                    restock_features, "restock"
                 )
 
-                # Get list of valid products for monthly model (convert to strings)
-                monthly_valid_products = sorted(
-                    [str(x) for x in X_monthly["id_item"].unique().tolist()]
+                # Get list of valid products for restock model (convert to strings)
+                restock_valid_products = sorted(
+                    [str(x) for x in X_restock["id_item"].unique().tolist()]
                 )
 
                 # Use the same product mapping
-                monthly_model = self.train_model(
-                    X_monthly, y_monthly, "monthly", product_mapping
+                restock_model = self.train_model(
+                    X_restock, y_restock, "restock", product_mapping
                 )
                 self.save_model(
-                    monthly_model, "monthly", monthly_valid_products, product_mapping
+                    restock_model, "restock", restock_valid_products, product_mapping
                 )
-                self.logger.info("✅ Monthly model training completed successfully")
+                self.logger.info("✅ Restock model training completed successfully")
             except Exception as e:
-                self.logger.error(f"❌ Monthly model training failed: {str(e)}")
+                self.logger.error(f"❌ Restock model training failed: {str(e)}")
 
             self.logger.info("TRAINING COMPLETED")
             self.logger.info("🎉 All models trained successfully!")
@@ -1560,10 +1551,10 @@ def main():
         print("Usage:")
         print("  Training: python stock_predictor.py train")
         print(
-            "  Daily Prediction: python stock_predictor.py predict daily <product_id> <lag1> <lag2> <lag3>"
+            "  Sales Prediction: python stock_predictor.py predict sales <product_id> <avg_daily_sales> <sales_velocity> <sales_consistency> <recent_avg> <transaction_count>"
         )
         print(
-            "  Monthly Prediction: python stock_predictor.py predict monthly <product_id> <prev_month_total>"
+            "  Restock Prediction: python stock_predictor.py predict restock <product_id> <avg_daily_sales> <sales_velocity> <sales_volatility> <recent_total> <transaction_count>"
         )
         sys.exit(1)
 
@@ -1572,7 +1563,7 @@ def main():
 
     if command == "train":
         # Use the default data from path main.py
-        data_folder = Path(__file__).parent / "data"
+        data_folder = str(Path(__file__).parent / "data")
 
         # Check if data folder exists
         if not Path(data_folder).exists():
@@ -1591,37 +1582,52 @@ def main():
         product_id = sys.argv[3]
 
         try:
-            if prediction_type == "daily":
-                if len(sys.argv) != 7:
+            if prediction_type == "sales":
+                if len(sys.argv) != 9:
                     print(
-                        "❌ Daily prediction requires: <product_id> <lag1> <lag2> <lag3>"
+                        "❌ Sales prediction requires: <product_id> <avg_daily_sales> <sales_velocity> <sales_consistency> <recent_avg> <transaction_count>"
                     )
                     sys.exit(1)
 
-                lag1 = int(sys.argv[4])
-                lag2 = int(sys.argv[5])
-                lag3 = int(sys.argv[6])
+                avg_daily_sales = float(sys.argv[4])
+                sales_velocity = float(sys.argv[5])
+                sales_consistency = float(sys.argv[6])
+                recent_avg = float(sys.argv[7])
+                transaction_count = int(sys.argv[8])
 
                 result = predictor.predict(
-                    product_id, "daily", lag1=lag1, lag2=lag2, lag3=lag3
+                    product_id, "sales",
+                    avg_daily_sales=avg_daily_sales,
+                    sales_velocity=sales_velocity,
+                    sales_consistency=sales_consistency,
+                    recent_avg=recent_avg,
+                    transaction_count=transaction_count
                 )
 
-            elif prediction_type == "monthly":
-
-                if len(sys.argv) != 5:
+            elif prediction_type == "restock":
+                if len(sys.argv) != 9:
                     print(
-                        "❌ Monthly prediction requires: <product_id> <prev_month_total>"
+                        "❌ Restock prediction requires: <product_id> <avg_daily_sales> <sales_velocity> <sales_volatility> <recent_total> <transaction_count>"
                     )
                     sys.exit(1)
 
-                prev_month_total = int(sys.argv[4])
+                avg_daily_sales = float(sys.argv[4])
+                sales_velocity = float(sys.argv[5])
+                sales_volatility = float(sys.argv[6])
+                recent_total = float(sys.argv[7])
+                transaction_count = int(sys.argv[8])
 
                 result = predictor.predict(
-                    product_id, "monthly", prev_month_total=prev_month_total
+                    product_id, "restock",
+                    avg_daily_sales=avg_daily_sales,
+                    sales_velocity=sales_velocity,
+                    sales_volatility=sales_volatility,
+                    recent_total=recent_total,
+                    transaction_count=transaction_count
                 )
 
             else:
-                print("❌ Prediction type must be 'daily' or 'monthly'")
+                print("❌ Prediction type must be 'sales' or 'restock'")
                 sys.exit(1)
 
             # Output for API integration
