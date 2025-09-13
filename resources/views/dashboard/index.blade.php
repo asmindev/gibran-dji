@@ -82,60 +82,6 @@
 
     <!-- Charts Section -->
     <div class="grid grid-cols-1 gap-y-6">
-        <!-- Apriori Analysis Chart -->
-        <div class="bg-white shadow rounded-lg">
-            <div class="p-6 border-b border-gray-200">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-900">Analisis Apriori</h3>
-                        <p class="text-sm text-gray-600 mt-1">Association rules dengan confidence dan support tertinggi
-                        </p>
-                    </div>
-                    @if($availableMonths->count() > 0)
-                    <div class="flex items-center space-x-2">
-                        <label for="monthFilter" class="text-sm font-medium text-gray-700">Bulan:</label>
-                        <select id="monthFilter" name="month"
-                            class="text-sm border border-gray-300 rounded-md px-3 py-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            onchange="filterByMonth()">
-                            @foreach($availableMonths as $month)
-                            <option value="{{ $month['value'] }}" {{ $selectedMonth===$month['value'] ? 'selected' : ''
-                                }}>
-                                {{ $month['label'] }}
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    @endif
-                </div>
-            </div>
-            <div class="p-6">
-                @if($aprioriData->count() > 0)
-                <div class="relative h-64">
-                    <canvas id="aprioriAnalysisChart"></canvas>
-                </div>
-                <div class="mt-4 text-center">
-                    <p class="text-xs text-gray-500">
-                        Menampilkan data untuk {{ \Carbon\Carbon::parse($selectedMonth . '-01')->format('F Y') }}
-                    </p>
-                </div>
-                @else
-                <div class="text-center py-8">
-                    @if($availableMonths->count() > 0)
-                    <p class="text-gray-500 mb-2">Tidak ada data analisis Apriori untuk {{
-                        \Carbon\Carbon::parse($selectedMonth . '-01')->format('F Y') }}</p>
-                    <p class="text-xs text-gray-400 mb-4">Coba pilih bulan lain atau buat analisis baru</p>
-                    @else
-                    <p class="text-gray-500 mb-2">Belum ada data analisis Apriori</p>
-                    @endif
-                    <a href="{{ route('analysis.apriori-process') }}"
-                        class="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                        Mulai analisis Apriori
-                    </a>
-                </div>
-                @endif
-            </div>
-        </div>
-
         <!-- Stock Predictions Chart -->
         <div class="bg-white shadow rounded-lg">
             <div class="p-6 border-b border-gray-200">
@@ -281,76 +227,6 @@
         }
     };
 
-    // Apriori Analysis Chart
-    @if($aprioriData->count() > 0)
-    const aprioriAnalysisCtx = document.getElementById('aprioriAnalysisChart');
-    if (aprioriAnalysisCtx) {
-        const aprioriAnalysisChart = new Chart(aprioriAnalysisCtx.getContext('2d'), {
-            type: 'bar',
-            data: {
-                labels: {!! json_encode($aprioriData->pluck('label')) !!},
-                datasets: [
-                    {
-                        label: 'Confidence',
-                        data: {!! json_encode($aprioriData->pluck('confidence')) !!},
-                        backgroundColor: '#ef444420',
-                        borderColor: '#ef4444',
-                        borderWidth: 2,
-                        borderRadius: 6,
-                        borderSkipped: false,
-                    },
-                    {
-                        label: 'Support',
-                        data: {!! json_encode($aprioriData->pluck('support')) !!},
-                        backgroundColor: '#3b82f620',
-                        borderColor: '#3b82f6',
-                        borderWidth: 2,
-                        borderRadius: 6,
-                        borderSkipped: false,
-                    }
-                ]
-            },
-            options: {
-                ...commonOptions,
-                plugins: {
-                    ...commonOptions.plugins,
-                    legend: {
-                        display: true,
-                        position: 'top',
-                        labels: {
-                            usePointStyle: true,
-                            padding: 20,
-                            font: {
-                                size: 12
-                            }
-                        }
-                    },
-                    tooltip: {
-                        ...commonOptions.plugins.tooltip,
-                        callbacks: {
-                            label: function(context) {
-                                return context.dataset.label + ': ' + context.parsed.y + '%';
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    ...commonOptions.scales,
-                    y: {
-                        ...commonOptions.scales.y,
-                        max: 100,
-                        ticks: {
-                            ...commonOptions.scales.y.ticks,
-                            callback: function(value) {
-                                return value + '%';
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
-    @endif
 
     // Stock Predictions Chart
     @if(count($predictionLabels) > 0)

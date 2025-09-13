@@ -154,7 +154,7 @@
                     </div> --}}
 
                     <!-- Analysis Section -->
-                    <div class="space-y-1">
+                    {{-- <div class="space-y-1">
                         <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-4 py-2">
                             Analisis
                         </div>
@@ -170,7 +170,7 @@
                             </svg>
                             Proses Apriori
                         </a>
-                    </div>
+                    </div> --}}
 
                     <!-- Prediction Section -->
                     <div class="space-y-1">
@@ -187,9 +187,6 @@
                             </svg>
                             Prediksi Stok
                         </a>
-
-
-
                     </div>
                 </nav>
 
@@ -312,7 +309,7 @@
                         </div>
 
                         <!-- Reports Section -->
-                        <div class="space-y-1">
+                        {{-- <div class="space-y-1">
                             <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-4 py-2">
                                 Reports
                             </div>
@@ -368,10 +365,10 @@
                                 </svg>
                                 Laporan Ringkasan
                             </a>
-                        </div>
+                        </div> --}}
 
                         <!-- Analysis Section -->
-                        <div class="space-y-1">
+                        {{-- <div class="space-y-1">
                             <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-4 py-2">
                                 Analisis
                             </div>
@@ -390,7 +387,7 @@
 
 
 
-                        </div>
+                        </div> --}}
                     </nav>
                 </div>
                 <div class="flex-1" onclick="toggleMobileSidebar()"></div>

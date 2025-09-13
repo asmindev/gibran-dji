@@ -58,21 +58,6 @@ class DashboardController extends Controller
         $monthlyOutgoing = OutgoingItem::whereRaw("DATE_FORMAT(outgoing_date, '%Y-%m') = ?", [$currentMonth])
             ->sum('quantity');
 
-        // Apriori Analysis Data for Chart (filtered by month)
-        $aprioriData = AprioriAnalysis::select('rules', 'confidence', 'support')
-            ->whereRaw("DATE_FORMAT(transaction_date, '%Y-%m') = ?", [$selectedMonth])
-            ->orderBy('confidence', 'desc')
-            ->limit(5) // Ambil 5 data teratas berdasarkan confidence
-            ->get()
-            ->map(function ($item) {
-                // Format label: "Jersey Mills + Sepatu Bola Ortus"
-                $label = implode(' + ', $item->rules);
-                return [
-                    'label' => $label,
-                    'confidence' => $item->confidence,
-                    'support' => $item->support
-                ];
-            });
 
         // Get available months for filter dropdown (use the already computed data)
         $availableMonths = $availableAprioriMonths;
@@ -109,7 +94,6 @@ class DashboardController extends Controller
             'stockByCategory',
             'monthlyIncoming',
             'monthlyOutgoing',
-            'aprioriData',
             'selectedMonth',
             'availableMonths',
             'stockPredictions',
