@@ -12,7 +12,7 @@
                 <button id="generate-model-btn" type="submit"
                     class="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium py-3 px-6 rounded-lg shadow-sm transition duration-200 flex items-center space-x-2">
                     <i class="bi bi-gear-fill"></i>
-                    <span id="generate-btn-text">Generate/Retrain Modell</span>
+                    <span id="generate-btn-text">Train Model</span>
                     <div id="generate-loading-spinner" class="hidden ml-2">
                         <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
                             viewBox="0 0 24 24">
@@ -112,7 +112,7 @@
 
         try {
             console.log('Sending training request...');
-            const response = await axios.post('{{ route("predictions.generate-model") }}', {}, {
+            const response = await axios.post('{{ route("predictions.train-model") }}', {}, {
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     'Content-Type': 'application/json'
@@ -134,7 +134,7 @@
                 // Handle failure to start training
                 window.isTrainingInProgress = false;
                 generateModelBtn.disabled = false;
-                generateBtnText.textContent = 'Generate/Retrain Model';
+                generateBtnText.textContent = 'Train Model';
                 generateLoadingSpinner.classList.add('hidden');
 
                 window.showAlert(response.data.message || 'Gagal memulai training', 'error');
@@ -146,7 +146,7 @@
             // Reset state on error
             window.isTrainingInProgress = false;
             generateModelBtn.disabled = false;
-            generateBtnText.textContent = 'Generate/Retrain Model';
+            generateBtnText.textContent = 'Train Model';
             generateLoadingSpinner.classList.add('hidden');
 
             let errorMessage = 'Terjadi kesalahan saat memulai training';
@@ -188,7 +188,7 @@
                         clearInterval(pollInterval);
                         window.isTrainingInProgress = false; // Reset flag
                         generateBtn.disabled = false;
-                        generateBtnText.textContent = 'Generate/Retrain Model';
+                        generateBtnText.textContent = 'Train Model';
                         generateLoadingSpinner.classList.add('hidden');
 
                         const completedMinutes = Math.floor(elapsedSeconds / 60);
@@ -202,7 +202,7 @@
                         clearInterval(pollInterval);
                         window.isTrainingInProgress = false; // Reset flag
                         generateBtn.disabled = false;
-                        generateBtnText.textContent = 'Generate/Retrain Model';
+                        generateBtnText.textContent = 'Train Model';
                         generateLoadingSpinner.classList.add('hidden');
 
                         const errorMessage = statusResponse.data.error || 'Training gagal';
@@ -220,7 +220,7 @@
                     clearInterval(pollInterval);
                     window.isTrainingInProgress = false; // Reset flag
                     generateBtn.disabled = false;
-                    generateBtnText.textContent = 'Generate/Retrain Model';
+                    generateBtnText.textContent = 'Train Model';
                     generateLoadingSpinner.classList.add('hidden');
                     window.showAlert('Training timeout. Periksa status queue worker.', 'error');
                 }

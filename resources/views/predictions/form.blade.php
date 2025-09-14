@@ -28,16 +28,16 @@
                     </p>
                 </div>
 
-                <!-- Period Selection -->
+                <!-- Prediction Type Selection -->
                 <div>
-                    <label for="prediction_period" class="block text-sm font-medium text-gray-700 mb-2">
+                    <label for="prediction_type" class="block text-sm font-medium text-gray-700 mb-2">
                         <i class="bi bi-calendar-range text-green-600"></i> Tipe Prediksi
                     </label>
-                    <select id="prediction_period" name="prediction_period" required
+                    <select id="prediction_type" name="prediction_type" required
                         class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                         <option value="">Pilih tipe prediksi...</option>
-                        <option value="daily">📅 Prediksi Harian - Prediksi untuk hari ini</option>
-                        <option value="monthly">📊 Prediksi Bulanan - Prediksi untuk bulan ini</option>
+                        <option value="sales">� Prediksi Penjualan - Prediksi jumlah yang akan terjual</option>
+                        <option value="restock">� Prediksi Restock - Prediksi jumlah yang perlu di-restock</option>
                     </select>
                     <div id="prediction-info" class="mt-2 text-sm text-gray-600"></div>
                 </div>
@@ -75,17 +75,17 @@
 <script>
     // ======== PREDICTION FORM HANDLERS ========
     function initializePredictionForm() {
-        // Period selection change handler
-        const periodSelect = document.getElementById('prediction_period');
-        if (periodSelect) {
-            periodSelect.addEventListener('change', function() {
+        // Prediction type selection change handler
+        const typeSelect = document.getElementById('prediction_type');
+        if (typeSelect) {
+            typeSelect.addEventListener('change', function() {
                 const infoDiv = document.getElementById('prediction-info');
-                const period = this.value;
+                const type = this.value;
 
-                if (period === 'daily') {
-                    infoDiv.innerHTML = '<span class="text-blue-600">📅 Akan memprediksi kebutuhan stok untuk hari ini berdasarkan pola penjualan harian</span>';
-                } else if (period === 'monthly') {
-                    infoDiv.innerHTML = '<span class="text-green-600">📊 Akan memprediksi kebutuhan stok untuk bulan ini berdasarkan data historis bulanan</span>';
+                if (type === 'sales') {
+                    infoDiv.innerHTML = '<span class="text-blue-600">� Akan memprediksi berapa banyak produk yang akan terjual berdasarkan pola penjualan historis</span>';
+                } else if (type === 'restock') {
+                    infoDiv.innerHTML = '<span class="text-green-600">� Akan memprediksi berapa banyak produk yang perlu di-restock berdasarkan data penjualan dan ketersediaan stok</span>';
                 } else {
                     infoDiv.innerHTML = '';
                 }

@@ -226,17 +226,36 @@ class StockPredictor:
             # Create features
             sales_features = self.feature_utils.create_sales_features(sales_data)
 
+            # Debug: Log available columns
+            self.logger.info(f"Sales features columns: {list(sales_features.columns)}")
+            self.logger.info(f"Sales features shape: {sales_features.shape}")
+
             # Prepare training data
             feature_cols = [
                 "id_item",
                 "prev_sales_1",
                 "prev_sales_7",
+                "prev_sales_30",
                 "avg_sales_7",
                 "avg_sales_30",
             ]
 
             # Remove rows with NaN in essential features
+            self.logger.info("About to dropna with prev_sales_1...")
             sales_features = sales_features.dropna(subset=["prev_sales_1"])
+            self.logger.info(f"After dropna shape: {sales_features.shape}")
+
+            # Also drop NaN in other feature columns to prevent training errors
+            feature_cols_to_check = [
+                "prev_sales_7",
+                "prev_sales_30",
+                "avg_sales_7",
+                "avg_sales_30",
+            ]
+            sales_features = sales_features.dropna(subset=feature_cols_to_check)
+            self.logger.info(
+                f"After dropping NaN in all features shape: {sales_features.shape}"
+            )
 
             if sales_features.empty:
                 raise ValueError("No valid training data after feature engineering")
@@ -245,21 +264,59 @@ class StockPredictor:
             product_counts = sales_features["id_item"].value_counts()
             valid_products = product_counts[
                 product_counts >= self.config["MIN_SAMPLES"]
-            ].index
+            ].index.tolist()
+
+            self.logger.info(f"Valid products: {valid_products}")
 
             sales_features = sales_features[
                 sales_features["id_item"].isin(valid_products)
             ]
 
-            X = sales_features[feature_cols]
-            y = sales_features["qty_sold"]
+            self.logger.info(f"Filtered sales features shape: {sales_features.shape}")
+            self.logger.info(f"Columns after filtering: {list(sales_features.columns)}")
+
+            # Debug: Check if feature_cols exist in dataframe
+            missing_cols = [
+                col for col in feature_cols if col not in sales_features.columns
+            ]
+            if missing_cols:
+                self.logger.error(f"Missing columns: {missing_cols}")
+                self.logger.error(f"Available columns: {list(sales_features.columns)}")
+                raise ValueError(f"Missing required columns: {missing_cols}")
+
+            try:
+                X = sales_features[feature_cols]
+            except KeyError as e:
+                self.logger.error(f"KeyError when selecting feature columns: {e}")
+                self.logger.error(f"Available columns: {list(sales_features.columns)}")
+                self.logger.error(f"Requested feature_cols: {feature_cols}")
+                raise
+
+            try:
+                y = sales_features["qty_sold"]
+            except KeyError as e:
+                self.logger.error(
+                    f"KeyError when selecting target column 'qty_sold': {e}"
+                )
+                self.logger.error(f"Available columns: {list(sales_features.columns)}")
+                raise
 
             self.logger.info(f"Training samples: {len(X)}")
             self.logger.info(f"Valid products: {len(valid_products)}")
 
             # Create and train model
-            model = self._create_model_pipeline()
+            self.logger.info("About to create model pipeline...")
+            sales_numeric_features = [
+                "prev_sales_1",
+                "prev_sales_7",
+                "prev_sales_30",
+                "avg_sales_7",
+                "avg_sales_30",
+            ]
+            model = self._create_model_pipeline(numeric_features=sales_numeric_features)
+            self.logger.info("About to fit model...")
             model.fit(X, y)
+            self.logger.info("Model fitted successfully!")
 
             # Evaluate model
             y_pred = model.predict(X)
@@ -272,7 +329,7 @@ class StockPredictor:
 
             # Save model
             self.models["sales"] = model
-            self.valid_products["sales"] = list(valid_products.astype(str))
+            self.valid_products["sales"] = [str(p) for p in valid_products]
             self._save_model("sales", model, metrics)
 
             self.logger.info("Sales model training completed successfully")
@@ -284,6 +341,13 @@ class StockPredictor:
     def predict_restock(
         self,
         product_id: str,
+        # Laravel-style parameters
+        avg_daily_sales: float = 0,
+        sales_velocity: float = 0,
+        transaction_count: int = 0,
+        sales_volatility: float = 0,
+        recent_total: float = 0,
+        # Legacy parameters for backward compatibility
         current_sales: int = 0,
         prev_sales_7: int = 0,
         prev_restock_1: int = 0,
@@ -291,6 +355,22 @@ class StockPredictor:
     ) -> Dict:
         """Predict restock quantity for a product"""
         start_time = time.time()
+
+        # Map Laravel parameters to model features if legacy parameters not provided
+        if current_sales == 0 and recent_total > 0:
+            current_sales = int(recent_total)
+        elif current_sales == 0 and avg_daily_sales > 0:
+            current_sales = int(avg_daily_sales)
+
+        if prev_sales_7 == 0 and avg_daily_sales > 0:
+            prev_sales_7 = int(avg_daily_sales * 7)
+
+        if prev_restock_1 == 0 and recent_total > 0:
+            prev_restock_1 = int(recent_total)
+
+        if days_since_restock == 0:
+            # Estimate based on sales volatility (higher volatility = more recent restock needed)
+            days_since_restock = max(1, int(30 - (sales_volatility * 10)))
 
         # Load model if not loaded
         if "restock" not in self.models:
@@ -509,7 +589,15 @@ class StockPredictor:
             self.logger.info(f"Valid products: {len(valid_products)}")
 
             # Create and train model
-            model = self._create_model_pipeline()
+            restock_numeric_features = [
+                "qty_sold",
+                "prev_sales_7",
+                "prev_restock_1",
+                "days_since_restock",
+            ]
+            model = self._create_model_pipeline(
+                numeric_features=restock_numeric_features
+            )
             model.fit(X, y)
 
             # Evaluate model
@@ -532,28 +620,22 @@ class StockPredictor:
             self.logger.error(f"Restock model training failed: {str(e)}")
             raise
 
-    def _create_model_pipeline(self) -> Pipeline:
+    def _create_model_pipeline(self, numeric_features=None) -> Pipeline:
         """Create model pipeline with preprocessing"""
+
+        # Default numeric features if not specified
+        if numeric_features is None:
+            numeric_features = [
+                "prev_sales_1",
+                "prev_sales_7",
+                "avg_sales_7",
+                "avg_sales_30",
+            ]
+
         preprocessor = ColumnTransformer(
             transformers=[
                 ("cat", OneHotEncoder(handle_unknown="ignore"), ["id_item"]),
-                (
-                    "num",
-                    StandardScaler(),
-                    [
-                        col
-                        for col in [
-                            "prev_sales_1",
-                            "prev_sales_7",
-                            "avg_sales_7",
-                            "avg_sales_30",
-                            "qty_sold",
-                            "prev_restock_1",
-                            "days_since_restock",
-                        ]
-                        if True
-                    ],
-                ),
+                ("num", StandardScaler(), numeric_features),
             ],
             remainder="drop",
         )
@@ -623,6 +705,13 @@ class StockPredictor:
     def predict_sales(
         self,
         product_id: str,
+        # Laravel-style parameters
+        avg_daily_sales: float = 0,
+        sales_velocity: float = 0,
+        transaction_count: int = 0,
+        sales_consistency: float = 0,
+        recent_avg: float = 0,
+        # Legacy parameters for backward compatibility
         prev_sales_1: int = 0,
         prev_sales_7: int = 0,
         avg_sales_7: float = 0,
@@ -630,6 +719,22 @@ class StockPredictor:
     ) -> Dict:
         """Predict sales for a product"""
         start_time = time.time()
+
+        # Map Laravel parameters to model features if legacy parameters not provided
+        if prev_sales_1 == 0 and avg_daily_sales > 0:
+            prev_sales_1 = int(recent_avg) if recent_avg > 0 else int(avg_daily_sales)
+
+        if prev_sales_7 == 0 and avg_daily_sales > 0:
+            prev_sales_7 = int(avg_daily_sales * 7)
+
+        # Calculate prev_sales_30 if not provided
+        prev_sales_30 = int(avg_daily_sales * 30) if avg_daily_sales > 0 else 0
+
+        if avg_sales_7 == 0:
+            avg_sales_7 = avg_daily_sales if avg_daily_sales > 0 else recent_avg
+
+        if avg_sales_30 == 0:
+            avg_sales_30 = avg_daily_sales if avg_daily_sales > 0 else recent_avg
 
         # Load model if not loaded
         if "sales" not in self.models:
@@ -660,6 +765,7 @@ class StockPredictor:
                     "id_item": [product_id],
                     "prev_sales_1": [prev_sales_1],
                     "prev_sales_7": [prev_sales_7],
+                    "prev_sales_30": [prev_sales_30],
                     "avg_sales_7": [avg_sales_7],
                     "avg_sales_30": [avg_sales_30],
                 }
@@ -679,4 +785,25 @@ class StockPredictor:
             }
 
         except Exception as e:
-            self.logger
+            self.logger.error(f"Sales prediction error: {str(e)}")
+            fallback = self.model_utils.generate_fallback_prediction(
+                "sales", prev_sales=prev_sales_1, avg_sales=avg_sales_7
+            )
+            return {
+                "prediction": fallback,
+                "product_id": product_id,
+                "prediction_type": "sales",
+                "execution_time_ms": round((time.time() - start_time) * 1000, 2),
+                "is_fallback": True,
+                "error": str(e),
+                "timestamp": datetime.now().isoformat(),
+            }
+
+    def predict(self, product_id: str, prediction_type: str, **kwargs) -> Dict:
+        """Generic predict method that routes to specific prediction methods"""
+        if prediction_type.lower() == "sales":
+            return self.predict_sales(product_id, **kwargs)
+        elif prediction_type.lower() == "restock":
+            return self.predict_restock(product_id, **kwargs)
+        else:
+            raise ValueError(f"Unknown prediction type: {prediction_type}")

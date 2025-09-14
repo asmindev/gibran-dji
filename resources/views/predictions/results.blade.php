@@ -27,8 +27,13 @@
         const resultsContainer = document.getElementById('prediction-results');
         const contentContainer = document.getElementById('prediction-content');
 
-        let confidence = prediction.confidence
-        confidence = parseFloat(confidence).toFixed(2) * 100; // Convert to percentage
+        let confidence = prediction.confidence || 75; // Default confidence if not provided
+        confidence = parseFloat(confidence) * 100; // Convert to percentage if needed
+        if (confidence > 1 && confidence <= 100) {
+            // Already in percentage
+        } else {
+            confidence = confidence * 100; // Convert decimal to percentage
+        }
 
         let confidenceClass = 'text-red-600';
         let confidenceIcon = '⚠️';
@@ -197,9 +202,9 @@
                 </div>
 
                 <div class="bg-green-50 rounded-lg p-4">
-                    <h4 class="font-semibold text-green-900 mb-2">📊 Prediksi Penjualan</h4>
+                    <h4 class="font-semibold text-green-900 mb-2">📊 Prediksi ${prediction.type === 'sales' ? 'Penjualan' : 'Restock'}</h4>
                     <p class="text-2xl font-bold text-green-800">${Math.round(prediction.prediction)}</p>
-                    <p class="text-sm text-green-600">Unit untuk ${prediction.type === 'daily' ? 'hari' : 'bulan'}</p>
+                    <p class="text-sm text-green-600">Unit ${prediction.type === 'sales' ? 'yang akan terjual' : 'yang perlu di-restock'}</p>
                 </div>
 
                 <div class="bg-indigo-50 rounded-lg p-4">
@@ -218,21 +223,21 @@
 
                 <div class="bg-purple-50 rounded-lg p-4">
                     <h4 class="font-semibold text-purple-900 mb-2">${performanceIcon} Waktu Eksekusi</h4>
-                    <p class="text-xl font-bold ${executionClass}">${prediction.model_prediction_time_ms} ms</p>
+                    <p class="text-xl font-bold ${executionClass}">${prediction.execution_time_ms || 'N/A'}</p>
                     <p class="text-sm text-purple-600">${performanceText}</p>
                 </div>
             </div>
 
             ${stockWarning}
 
-            ${prediction.input_parameters ? `
+            ${prediction.input_params ? `
                 <div class="mt-6 bg-gray-50 rounded-lg p-4">
                     <h4 class="font-semibold text-gray-900 mb-3">📋 Detail Parameter Input</h4>
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-                        ${Object.entries(prediction.input_parameters).map(([key, value]) => `
+                        ${Object.entries(prediction.input_params).map(([key, value]) => `
                             <div class="flex justify-between">
-                                <span class="text-gray-600">${key}:</span>
-                                <span class="font-medium text-gray-900">${value}</span>
+                                <span class="text-gray-600">${key.replace(/_/g, ' ')}:</span>
+                                <span class="font-medium text-gray-900">${typeof value === 'number' ? value.toFixed(2) : value}</span>
                             </div>
                         `).join('')}
                     </div>
