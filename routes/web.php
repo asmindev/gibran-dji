@@ -7,7 +7,6 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\IncomingItemController;
 use App\Http\Controllers\OutgoingItemController;
 use App\Http\Controllers\ReportController;
-use App\Http\Controllers\AnalysisController;
 use App\Http\Controllers\StockPredictionController;
 use App\Http\Controllers\AuthController;
 
@@ -51,11 +50,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/update-actual', [StockPredictionController::class, 'updateActualData'])->name('update-actual');
         Route::get('/history', [StockPredictionController::class, 'getPredictionHistory'])->name('history');
         Route::delete('/{prediction}', [StockPredictionController::class, 'destroy'])->name('destroy');
-    });
-
-    // Analysis routes
-    Route::prefix('analysis')->name('analysis.')->group(function () {
-        Route::get('/apriori-process', [AnalysisController::class, 'aprioriProcess'])->name('apriori-process');
     });
 
     // Reports

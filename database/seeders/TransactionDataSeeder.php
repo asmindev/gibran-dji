@@ -25,12 +25,12 @@ class TransactionDataSeeder extends Seeder
             'description' => 'Kategori untuk semua peralatan dan perlengkapan olahraga'
         ]);
 
-        // 2. Buat 8 Item Olahraga dengan minimum_stock
+        // 2. Buat 20 Item Olahraga dengan minimum_stock
         $items = [
             [
                 'item_name' => 'Sepatu Bola Ortus',
                 'category_id' => $sportsCategory->id,
-                'stock' => 500, // Stock yang lebih besar untuk simulasi penjualan tinggi
+                'stock' => 0, // Initial stock 0, akan di-restock
                 'minimum_stock' => 20,
                 'purchase_price' => 180000,
                 'selling_price' => 250000,
@@ -39,7 +39,7 @@ class TransactionDataSeeder extends Seeder
             [
                 'item_name' => 'Kaos Kaki Avo',
                 'category_id' => $sportsCategory->id,
-                'stock' => 800,
+                'stock' => 0,
                 'minimum_stock' => 50,
                 'purchase_price' => 15000,
                 'selling_price' => 25000,
@@ -48,7 +48,7 @@ class TransactionDataSeeder extends Seeder
             [
                 'item_name' => 'Jersey Mills',
                 'category_id' => $sportsCategory->id,
-                'stock' => 300,
+                'stock' => 0,
                 'minimum_stock' => 15,
                 'purchase_price' => 80000,
                 'selling_price' => 120000,
@@ -57,7 +57,7 @@ class TransactionDataSeeder extends Seeder
             [
                 'item_name' => 'Tali Sepatu Kipzkapz',
                 'category_id' => $sportsCategory->id,
-                'stock' => 1000,
+                'stock' => 0,
                 'minimum_stock' => 100,
                 'purchase_price' => 8000,
                 'selling_price' => 15000,
@@ -66,7 +66,7 @@ class TransactionDataSeeder extends Seeder
             [
                 'item_name' => 'Piala',
                 'category_id' => $sportsCategory->id,
-                'stock' => 200,
+                'stock' => 0,
                 'minimum_stock' => 5,
                 'purchase_price' => 45000,
                 'selling_price' => 75000,
@@ -75,7 +75,7 @@ class TransactionDataSeeder extends Seeder
             [
                 'item_name' => 'Sepatu Futsal',
                 'category_id' => $sportsCategory->id,
-                'stock' => 400,
+                'stock' => 0,
                 'minimum_stock' => 25,
                 'purchase_price' => 150000,
                 'selling_price' => 220000,
@@ -84,7 +84,7 @@ class TransactionDataSeeder extends Seeder
             [
                 'item_name' => 'Bola Basket',
                 'category_id' => $sportsCategory->id,
-                'stock' => 300,
+                'stock' => 0,
                 'minimum_stock' => 10,
                 'purchase_price' => 120000,
                 'selling_price' => 180000,
@@ -93,11 +93,119 @@ class TransactionDataSeeder extends Seeder
             [
                 'item_name' => 'Jersey Basket',
                 'category_id' => $sportsCategory->id,
-                'stock' => 250,
+                'stock' => 0,
                 'minimum_stock' => 12,
                 'purchase_price' => 70000,
                 'selling_price' => 110000,
                 'description' => 'Jersey basket untuk latihan dan pertandingan'
+            ],
+            [
+                'item_name' => 'Bola Sepak',
+                'category_id' => $sportsCategory->id,
+                'stock' => 0,
+                'minimum_stock' => 15,
+                'purchase_price' => 100000,
+                'selling_price' => 150000,
+                'description' => 'Bola sepak standar FIFA'
+            ],
+            [
+                'item_name' => 'Raket Badminton',
+                'category_id' => $sportsCategory->id,
+                'stock' => 0,
+                'minimum_stock' => 8,
+                'purchase_price' => 200000,
+                'selling_price' => 300000,
+                'description' => 'Raket badminton profesional'
+            ],
+            [
+                'item_name' => 'Shuttlecock',
+                'category_id' => $sportsCategory->id,
+                'stock' => 0,
+                'minimum_stock' => 100,
+                'purchase_price' => 2000,
+                'selling_price' => 3500,
+                'description' => 'Shuttlecock bulu angsa'
+            ],
+            [
+                'item_name' => 'Raket Tenis',
+                'category_id' => $sportsCategory->id,
+                'stock' => 0,
+                'minimum_stock' => 6,
+                'purchase_price' => 250000,
+                'selling_price' => 380000,
+                'description' => 'Raket tenis carbon fiber'
+            ],
+            [
+                'item_name' => 'Bola Tenis',
+                'category_id' => $sportsCategory->id,
+                'stock' => 0,
+                'minimum_stock' => 30,
+                'purchase_price' => 8000,
+                'selling_price' => 12000,
+                'description' => 'Bola tenis ITF approved'
+            ],
+            [
+                'item_name' => 'Sepatu Lari Nike',
+                'category_id' => $sportsCategory->id,
+                'stock' => 0,
+                'minimum_stock' => 18,
+                'purchase_price' => 300000,
+                'selling_price' => 450000,
+                'description' => 'Sepatu lari Nike Air Max'
+            ],
+            [
+                'item_name' => 'Celana Training',
+                'category_id' => $sportsCategory->id,
+                'stock' => 0,
+                'minimum_stock' => 25,
+                'purchase_price' => 60000,
+                'selling_price' => 95000,
+                'description' => 'Celana training polyester'
+            ],
+            [
+                'item_name' => 'Jaket Olahraga',
+                'category_id' => $sportsCategory->id,
+                'stock' => 0,
+                'minimum_stock' => 20,
+                'purchase_price' => 120000,
+                'selling_price' => 185000,
+                'description' => 'Jaket olahraga windbreaker'
+            ],
+            [
+                'item_name' => 'Sarung Tangan Kiper',
+                'category_id' => $sportsCategory->id,
+                'stock' => 0,
+                'minimum_stock' => 10,
+                'purchase_price' => 85000,
+                'selling_price' => 130000,
+                'description' => 'Sarung tangan kiper latex grip'
+            ],
+            [
+                'item_name' => 'Matras Yoga',
+                'category_id' => $sportsCategory->id,
+                'stock' => 0,
+                'minimum_stock' => 15,
+                'purchase_price' => 75000,
+                'selling_price' => 120000,
+                'description' => 'Matras yoga anti slip 6mm'
+            ],
+            [
+                'item_name' => 'Dumbbell 5kg',
+                'category_id' => $sportsCategory->id,
+                'stock' => 0,
+                'minimum_stock' => 8,
+                'purchase_price' => 150000,
+                'selling_price' => 220000,
+                'description' => 'Dumbbell 5kg iron cast'
+            ],
+            [
+                'item_name' => 'Botol Minum Olahraga',
+                'category_id' => $sportsCategory->id,
+                'stock' => 0,
+                'minimum_stock' => 40,
+                'purchase_price' => 25000,
+                'selling_price' => 45000,
+                'description' => 'Botol minum sport 750ml BPA free'
             ]
         ];
 
@@ -107,16 +215,8 @@ class TransactionDataSeeder extends Seeder
 
         // 3. Ambil semua item yang baru dibuat
         $allItems = Item::all();
-        $sepatuBolaOrtus = $allItems->where('item_name', 'Sepatu Bola Ortus')->first();
-        $kaosKakiAvo = $allItems->where('item_name', 'Kaos Kaki Avo')->first();
-        $jerseyMills = $allItems->where('item_name', 'Jersey Mills')->first();
-        $taliSepatu = $allItems->where('item_name', 'Tali Sepatu Kipzkapz')->first();
-        $piala = $allItems->where('item_name', 'Piala')->first();
-        $sepatuFutsal = $allItems->where('item_name', 'Sepatu Futsal')->first();
-        $bolaBasket = $allItems->where('item_name', 'Bola Basket')->first();
-        $jerseyBasket = $allItems->where('item_name', 'Jersey Basket')->first();
 
-        // 4. Buat 100 transaksi simulasi (OutgoingItems)
+        // 4. Sistem transaksi baru: Restocking mingguan + Penjualan harian
         $customers = [
             'Tim Sepak Bola Garuda FC',
             'Sekolah SMA Negeri 1',
@@ -127,158 +227,177 @@ class TransactionDataSeeder extends Seeder
             'Sekolah SMP 5',
             'Tim Volley Eagles',
             'Akademi Olahraga Prima',
-            'Club Sepak Bola Junior'
+            'Club Sepak Bola Junior',
+            'Sekolah SMA Negeri 3',
+            'Club Badminton Prestasi',
+            'Tim Tenis Muda',
+            'Gym Fitness Center',
+            'Yoga Studio Sehat'
         ];
 
-        // Pattern untuk menciptakan asosiasi yang kuat
-        $strongAssociations = [
-            // Sepatu Bola Ortus & Kaos Kaki Avo (70% kemungkinan muncul bersama)
-            [$sepatuBolaOrtus->id, $kaosKakiAvo->id],
-            // Jersey Mills & Sepatu Bola Ortus (60% kemungkinan muncul bersama)
-            [$jerseyMills->id, $sepatuBolaOrtus->id],
-            // Sepatu Futsal & Jersey Mills (50% kemungkinan)
-            [$sepatuFutsal->id, $jerseyMills->id],
-            // Bola Basket & Jersey Basket (80% kemungkinan)
-            [$bolaBasket->id, $jerseyBasket->id]
-        ];
-
-        // Buat transaksi per hari dengan minimal 8 transaksi per hari
-        $startDate = Carbon::create(2025, 5, 1);
+        // Periode transaksi: Februari 2025 hingga sekarang
+        $startDate = Carbon::create(2025, 2, 1);
         $endDate = Carbon::today();
 
         $currentDate = $startDate->copy();
         $totalTransactions = 0;
         $totalIncomingItems = 0;
+        $totalOutgoingItems = 0;
+
+        // Track penjualan per minggu per item untuk restocking
+        $weeklySales = [];
 
         while ($currentDate->lte($endDate)) {
-            // Cek apakah perlu restocking (setiap 3-5 hari sekali atau jika ada item stock rendah)
-            $needsRestocking = ($currentDate->day % $faker->numberBetween(3, 5) == 0);
+            $weekOfYear = $currentDate->format('Y-W');
+            $isMonday = $currentDate->dayOfWeek === Carbon::MONDAY;
 
-            // Atau jika ada item yang stocknya sangat rendah (di bawah 20% dari minimum stock)
-            $hasLowStockItems = $allItems->some(function ($item) {
-                return $item->fresh()->stock <= ($item->minimum_stock * 0.2);
-            });
+            // Inisialisasi tracking penjualan mingguan
+            if (!isset($weeklySales[$weekOfYear])) {
+                $weeklySales[$weekOfYear] = array_fill_keys($allItems->pluck('id')->toArray(), 0);
+            }
 
-            if ($needsRestocking || $hasLowStockItems) {
-                // Lakukan restocking untuk item yang stocknya rendah
+            // RESTOCKING SETIAP HARI SENIN (awal minggu)
+            if ($isMonday) {
+                $this->command->info("Restocking untuk minggu {$weekOfYear}...");
+
                 foreach ($allItems as $item) {
-                    $currentStock = $item->fresh()->stock; // Ambil stock terkini
-                    $minimumStock = $item->minimum_stock;
+                    $currentStock = $item->fresh()->stock;
 
-                    // Jika stock di bawah atau mendekati minimum stock (dengan buffer 50%)
-                    if ($currentStock <= ($minimumStock * 1.5)) {
-                        // Restock untuk mencapai 3-5x minimum stock
-                        $targetStock = $minimumStock * $faker->numberBetween(3, 5);
-                        $restockQuantity = max(50, $targetStock - $currentStock);
+                    // Perkiraan penjualan per minggu: minimal 10 + random 5-15
+                    $estimatedWeeklySales = $faker->numberBetween(15, 25);
 
-                        IncomingItem::create([
-                            'transaction_id' => 'IN-' . strtoupper($faker->unique()->lexify('??????')),
-                            'incoming_date' => $currentDate->copy()->addHours($faker->numberBetween(6, 8)), // Pagi hari untuk restocking
-                            'item_id' => $item->id,
-                            'quantity' => $restockQuantity,
-                            'unit_cost' => $item->purchase_price,
-                            'notes' => "Restocking otomatis (stock: {$currentStock}, min: {$minimumStock}) tanggal " . $currentDate->format('d-m-Y')
-                        ]);
+                    // Restock quantity = estimasi penjualan + buffer 20-50%
+                    $restockQuantity = intval($estimatedWeeklySales * $faker->numberBetween(120, 150) / 100);
 
-                        // Update stock item
-                        $item->update([
-                            'stock' => $currentStock + $restockQuantity
-                        ]);
+                    // Minimal restock 20 unit
+                    $restockQuantity = max(20, $restockQuantity);
 
-                        $totalIncomingItems++;
-                    }
+                    IncomingItem::create([
+                        'transaction_id' => 'IN-' . $weekOfYear . '-' . strtoupper($faker->lexify('???')),
+                        'incoming_date' => $currentDate->copy()->addHours($faker->numberBetween(7, 9)),
+                        'item_id' => $item->id,
+                        'quantity' => $restockQuantity,
+                        'unit_cost' => $item->purchase_price,
+                        'notes' => "Restocking mingguan {$weekOfYear} - estimasi penjualan: {$estimatedWeeklySales}"
+                    ]);
+
+                    // Update stock
+                    $item->update(['stock' => $currentStock + $restockQuantity]);
+                    $totalIncomingItems++;
                 }
-            }            // Minimal 8 transaksi per hari, maksimal 15 transaksi per hari
-            $dailyTransactions = $faker->numberBetween(8, 15);
+            }
 
-            for ($i = 0; $i < $dailyTransactions; $i++) {
-                // Waktu transaksi dalam hari (jam operasional 8:00 - 20:00)
-                $transactionTime = $currentDate->copy()->addHours($faker->numberBetween(8, 20))->addMinutes($faker->numberBetween(0, 59));
+            // PENJUALAN HARIAN
+            // Pastikan setiap produk terjual minimal 2 kali per minggu (untuk mencapai minimal 10 qty/minggu)
+            $dailySalesTarget = $faker->numberBetween(8, 15); // Total transaksi customer per hari
 
-                // Buat transaction_id yang sama untuk semua items dalam 1 customer session
+            for ($i = 0; $i < $dailySalesTarget; $i++) {
+                $transactionTime = $currentDate->copy()
+                    ->addHours($faker->numberBetween(8, 20))
+                    ->addMinutes($faker->numberBetween(0, 59));
+
                 $sessionTransactionId = 'TRX-' . strtoupper($faker->unique()->lexify('??????'));
-
-                // Pilih customer random
                 $customer = $faker->randomElement($customers);
 
-                // Tentukan jumlah item per transaksi (2-4 item)
-                $itemCount = $faker->numberBetween(2, 4);
+                // Jumlah item per transaksi (1-4 item)
+                $itemCount = $faker->numberBetween(1, 4);
 
-                $selectedItems = [];
-
-                // 30% kemungkinan gunakan strong association
-                if ($faker->numberBetween(1, 100) <= 30) {
-                    $association = $faker->randomElement($strongAssociations);
-                    $selectedItems = $association;
-
-                    // Jika masih perlu item tambahan
-                    if ($itemCount > 2) {
-                        $remainingCount = $itemCount - 2;
-                        $availableItems = $allItems->whereNotIn('id', $selectedItems)->pluck('id')->toArray();
-                        $additionalItems = $faker->randomElements($availableItems, $remainingCount);
-                        $selectedItems = array_merge($selectedItems, $additionalItems);
-                    }
-                } else {
-                    // Pilih item secara random
-                    $selectedItems = $faker->randomElements($allItems->pluck('id')->toArray(), $itemCount);
-                }
-
-                // Track apakah session ini berhasil membuat minimal 1 item
+                // Pilih items random
+                $selectedItems = $faker->randomElements($allItems->pluck('id')->toArray(), $itemCount);
                 $sessionSuccessful = false;
 
-                // Buat outgoing items untuk setiap item dalam transaksi
                 foreach ($selectedItems as $itemId) {
                     $item = $allItems->find($itemId);
-                    $currentStock = $item->fresh()->stock; // Ambil stock terkini
+                    $currentStock = $item->fresh()->stock;
 
-                    // Tentukan quantity yang realistis berdasarkan stock yang tersedia
-                    $maxQuantity = min(5, max(1, intval($currentStock / 10))); // Maksimal 5 atau 10% dari stock
-                    $quantity = $faker->numberBetween(1, $maxQuantity);
+                    // Quantity berdasarkan hari dalam minggu untuk memastikan minimal 10/minggu
+                    $dayOfWeek = $currentDate->dayOfWeek;
+                    if ($dayOfWeek >= 1 && $dayOfWeek <= 5) { // Senin-Jumat lebih aktif
+                        $baseQuantity = $faker->numberBetween(2, 5);
+                    } else { // Weekend
+                        $baseQuantity = $faker->numberBetween(1, 3);
+                    }
 
-                    // Hanya buat transaksi jika stock mencukupi
-                    if ($currentStock >= $quantity) {
+                    $quantity = min($baseQuantity, intval($currentStock / 2)); // Maksimal setengah stock
+                    $quantity = max(1, $quantity); // Minimal 1
+
+                    if ($currentStock >= $quantity && $quantity > 0) {
                         OutgoingItem::create([
                             'outgoing_date' => $transactionTime,
                             'item_id' => $itemId,
                             'quantity' => $quantity,
                             'unit_price' => $item->selling_price,
-                            'transaction_id' => $sessionTransactionId, // Gunakan transaction_id yang sama
-                            'notes' => "Transaksi simulasi tanggal " . $transactionTime->format('d-m-Y H:i')
+                            'transaction_id' => $sessionTransactionId,
+                            'notes' => "Penjualan {$transactionTime->format('d-m-Y')} - {$customer}"
                         ]);
 
-                        // Update stock item dengan quantity yang benar
-                        $item->update([
-                            "stock" => max(0, $currentStock - $quantity)
-                        ]);
+                        // Update stock
+                        $item->update(['stock' => $currentStock - $quantity]);
+
+                        // Track penjualan mingguan
+                        $weeklySales[$weekOfYear][$itemId] += $quantity;
 
                         $sessionSuccessful = true;
+                        $totalOutgoingItems++;
                     }
                 }
 
-                // Hitung hanya jika session berhasil membuat minimal 1 item
                 if ($sessionSuccessful) {
                     $totalTransactions++;
                 }
-            }            // Pindah ke hari berikutnya
+            }
+
+            // TAMBAHAN PENJUALAN untuk produk yang belum mencapai target 10/minggu
+            if ($currentDate->dayOfWeek === Carbon::SUNDAY) { // Akhir minggu, cek target
+                foreach ($allItems as $item) {
+                    $soldThisWeek = $weeklySales[$weekOfYear][$item->id] ?? 0;
+
+                    if ($soldThisWeek < 10) {
+                        $needed = 10 - $soldThisWeek;
+                        $currentStock = $item->fresh()->stock;
+
+                        if ($currentStock >= $needed) {
+                            $boostTransactionId = 'BOOST-' . strtoupper($faker->lexify('????'));
+                            $boostTime = $currentDate->copy()
+                                ->addHours($faker->numberBetween(10, 18))
+                                ->addMinutes($faker->numberBetween(0, 59));
+
+                            OutgoingItem::create([
+                                'outgoing_date' => $boostTime,
+                                'item_id' => $item->id,
+                                'quantity' => $needed,
+                                'unit_price' => $item->selling_price,
+                                'transaction_id' => $boostTransactionId,
+                                'notes' => "Penjualan tambahan untuk mencapai target mingguan - {$needed} unit"
+                            ]);
+
+                            $item->update(['stock' => $currentStock - $needed]);
+                            $weeklySales[$weekOfYear][$item->id] += $needed;
+                            $totalOutgoingItems++;
+                            $totalTransactions++;
+                        }
+                    }
+                }
+            }
+
             $currentDate->addDay();
         }
 
-        // Hitung total hari dan rata-rata transaksi per hari
+        // Hitung statistik
         $totalDays = $startDate->diffInDays($endDate) + 1;
-        $totalLineItems = OutgoingItem::count();
+        $totalWeeks = intval($totalDays / 7);
 
-        $this->command->info('✅ Berhasil membuat:');
+        $this->command->info('✅ Berhasil membuat sistem transaksi baru:');
         $this->command->info('   - 1 Kategori: Peralatan Olahraga');
-        $this->command->info('   - 8 Item olahraga dengan minimum_stock');
-        $this->command->info("   - {$totalTransactions} transaksi customer sessions");
-        $this->command->info("   - {$totalLineItems} line items penjualan total");
-        $this->command->info("   - {$totalIncomingItems} transaksi pembelian/restocking (incoming)");
-        $this->command->info("   - {$totalDays} hari dengan minimal 8 transaksi per hari");
-        $this->command->info('   - Rata-rata ' . round($totalTransactions / $totalDays, 1) . ' customer sessions per hari');
-        $this->command->info('   - Rata-rata ' . round($totalLineItems / $totalDays, 1) . ' items terjual per hari');
-        $this->command->info('   - Restocking otomatis setiap 3-5 hari atau saat stock rendah');
-        $this->command->info('   - Target restocking: 3-5x minimum stock per item');
-        $this->command->info('   - Data optimal untuk Apriori analysis (transaction grouping)');
-        $this->command->info('   - Stock item terjaga dengan sistem restocking cerdas');
+        $this->command->info("   - 20 Item olahraga dengan minimum_stock");
+        $this->command->info("   - {$totalIncomingItems} transaksi restocking (setiap Senin)");
+        $this->command->info("   - {$totalOutgoingItems} line items penjualan total");
+        $this->command->info("   - {$totalTransactions} customer sessions");
+        $this->command->info("   - {$totalDays} hari (Februari - September 2025)");
+        $this->command->info("   - {$totalWeeks} minggu dengan restocking sistematis");
+        $this->command->info('   - Rata-rata ' . round($totalTransactions / $totalDays, 1) . ' transaksi per hari');
+        $this->command->info('   - Setiap produk minimal 10 unit terjual per minggu');
+        $this->command->info('   - Stock balance terjaga (restocking > penjualan)');
+        $this->command->info('   - Sistem restocking: estimasi penjualan + buffer 20-50%');
     }
 }
