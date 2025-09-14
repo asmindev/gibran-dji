@@ -1,3 +1,4 @@
 # Ignore data and model directories
-/data
-/model
+data/
+model/
+logs/
