@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Simple Prediction Results</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="bg-gray-100 min-h-screen py-8">
+        <div class="max-w-2xl mx-auto px-4">
+            <h1 class="text-2xl font-bold text-center mb-8 text-gray-800">
+                Simple & Informatif Design
+            </h1>
+
+            <!-- Simple Prediction Card Example -->
+            <div
+                class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden mb-6"
+            >
+                <!-- Header -->
+                <div
+                    class="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-3"
+                >
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-semibold">📤 Prediksi Penjualan</h3>
+                        <span
+                            class="text-xs bg-white bg-opacity-25 px-2 py-1 rounded"
+                        >
+                            94% akurat
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="p-4 space-y-4">
+                    <!-- Key Info -->
+                    <div class="grid grid-cols-3 gap-4 text-center">
+                        <div>
+                            <div class="text-xs text-gray-500 mb-1">Produk</div>
+                            <div class="font-medium text-gray-900 text-sm">
+                                Sepatu Bola Ortus
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-gray-500 mb-1">
+                                Prediksi
+                            </div>
+                            <div class="font-bold text-lg text-blue-600">
+                                40
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-gray-500 mb-1">
+                                Stok Saat Ini
+                            </div>
+                            <div class="font-medium text-gray-900">20</div>
+                        </div>
+                    </div>
+
+                    <!-- Status Alert -->
+                    <div
+                        class="flex items-center space-x-3 p-3 rounded-lg bg-red-50 border border-red-200"
+                    >
+                        <span class="text-2xl">🔴</span>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-medium text-sm text-red-900">
+                                ❌ Stok Tidak Mencukupi
+                            </h4>
+                            <p class="text-xs text-red-700 mt-1">
+                                Kekurangan stok: 20 unit | Status: Understock
+                            </p>
+                        </div>
+                        <span
+                            class="px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-800"
+                        >
+                            HIGH
+                        </span>
+                    </div>
+
+                    <!-- Simple Recommendation -->
+                    <div
+                        class="bg-blue-50 border-l-4 border-blue-400 p-3 rounded-r"
+                    >
+                        <div class="flex items-start space-x-2">
+                            <span class="text-blue-500 text-sm">💡</span>
+                            <p class="text-blue-800 text-sm">
+                                Segera lakukan restock minimal 20 unit untuk
+                                memenuhi prediksi penjualan.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Simple Footer Stats -->
+                    <div
+                        class="flex items-center justify-between pt-3 border-t border-gray-100 text-xs text-gray-500"
+                    >
+                        <span>Akurasi: 94.0%</span>
+                        <span>Eksekusi: 49ms</span>
+                        <span
+                            class="px-2 py-1 rounded bg-gray-100 text-gray-700"
+                            >Excellent</span
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <!-- Restock Example -->
+            <div
+                class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden"
+            >
+                <!-- Header -->
+                <div
+                    class="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-3"
+                >
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-semibold">➕ Prediksi Restock</h3>
+                        <span
+                            class="text-xs bg-white bg-opacity-25 px-2 py-1 rounded"
+                        >
+                            91% akurat
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="p-4 space-y-4">
+                    <!-- Key Info -->
+                    <div class="grid grid-cols-3 gap-4 text-center">
+                        <div>
+                            <div class="text-xs text-gray-500 mb-1">Produk</div>
+                            <div class="font-medium text-gray-900 text-sm">
+                                Sepatu Bola Ortus
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-gray-500 mb-1">
+                                Prediksi
+                            </div>
+                            <div class="font-bold text-lg text-blue-600">
+                                100
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-gray-500 mb-1">
+                                Stok Saat Ini
+                            </div>
+                            <div class="font-medium text-gray-900">5692</div>
+                        </div>
+                    </div>
+
+                    <!-- Status Alert -->
+                    <div
+                        class="flex items-center space-x-3 p-3 rounded-lg bg-orange-50 border border-orange-200"
+                    >
+                        <span class="text-2xl">🟠</span>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-medium text-sm text-orange-900">
+                                ⚠️ Stok Berlebih
+                            </h4>
+                            <p class="text-xs text-orange-700 mt-1">
+                                Kondisi ini berpotensi Overstock karena
+                                permintaan hanya 25 unit
+                            </p>
+                        </div>
+                        <span
+                            class="px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800"
+                        >
+                            MEDIUM
+                        </span>
+                    </div>
+
+                    <!-- Simple Recommendation -->
+                    <div
+                        class="bg-blue-50 border-l-4 border-blue-400 p-3 rounded-r"
+                    >
+                        <div class="flex items-start space-x-2">
+                            <span class="text-blue-500 text-sm">💡</span>
+                            <p class="text-blue-800 text-sm">
+                                Pertimbangkan mengurangi jumlah restock atau
+                                memperpanjang periode restock untuk menghindari
+                                overstock.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Simple Footer Stats -->
+                    <div
+                        class="flex items-center justify-between pt-3 border-t border-gray-100 text-xs text-gray-500"
+                    >
+                        <span>Akurasi: 91.0%</span>
+                        <span>Eksekusi: 52ms</span>
+                        <span
+                            class="px-2 py-1 rounded bg-gray-100 text-gray-700"
+                            >Excellent</span
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <!-- Design Notes -->
+            <div class="mt-8 p-4 bg-gray-50 rounded-lg">
+                <h3 class="font-semibold text-gray-800 mb-2">
+                    ✨ Improvements:
+                </h3>
+                <ul class="text-sm text-gray-600 space-y-1">
+                    <li>• Single card design - lebih compact</li>
+                    <li>• Clear hierarchy - header, content, footer</li>
+                    <li>• Essential info only - produk, prediksi, stok</li>
+                    <li>• Visual status indicators - emoji + colors</li>
+                    <li>• Simple footer stats - akurasi, waktu, level</li>
+                    <li>• Responsive grid layout</li>
+                </ul>
+            </div>
+        </div>
+    </body>
+</html>

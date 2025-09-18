@@ -76,23 +76,17 @@ class StockPredictionController extends Controller
             // Save prediction to database
             $stockPrediction = $this->savePredictionToDatabase($item, $result, $request->prediction_type);
 
-            // DEBUG: Log simplified response building
-            Log::info('SIMPLIFIED: Building clean response', [
-                'item_name' => $item->name,
-                'prediction' => $result['prediction'],
-                'accuracy' => $result['details']['prediction_accuracy']['prediction_accuracy'] ?? 0
-            ]);
-
             // Analyze stock status based on prediction type
             $stockAnalysis = $this->analyzeStockStatus(
                 $result['prediction'],
                 $item->stock ?? 0,
                 $request->prediction_type,
-                $item // Pass the item object instead of just name
+                $item->name
             );
 
-            // Clean and structure the response - simplified
-            $cleanResponse = [
+            // SIMPLIFIED RESPONSE FORMAT - BYPASS COMPLEX RESPONSE
+            Log::info('DIRECT: Building simplified response directly');
+            return response()->json([
                 'success' => true,
                 'message' => 'Prediksi berhasil dibuat!',
                 'data' => [
@@ -102,11 +96,8 @@ class StockPredictionController extends Controller
                     'current_stock' => (int) ($item->stock ?? 0),
                     'execution_time_ms' => round($result['execution_time_ms'] ?? 0, 2),
                     'stock_analysis' => $stockAnalysis,
-                ],
-            ];
-
-            Log::info('SIMPLIFIED: About to return clean response', $cleanResponse);
-            return response()->json($cleanResponse);
+                ]
+            ]);
         } catch (\Exception $e) {
             Log::error('Stock prediction error: ' . $e->getMessage());
             return response()->json([
@@ -772,15 +763,14 @@ class StockPredictionController extends Controller
     /**
      * Analyze stock status based on prediction and current stock
      */
-    private function analyzeStockStatus($prediction, $currentStock, $predictionType, $item)
+    private function analyzeStockStatus($prediction, $currentStock, $predictionType, $productName)
     {
         $prediction = round($prediction, 2);
         $currentStock = (int) $currentStock;
-        $minimumStock = max(10, round($prediction * 0.25)); // Minimum stock is 25% of prediction or 10, whichever is higher
-        $productName = $item->name; // Get product name from item object
+        $minimumStock = 10; // Default minimum stock threshold
 
         if ($predictionType === 'sales') {
-            // For sales prediction (Barang Keluar)
+            // For sales prediction (barang keluar)
             if ($prediction > $currentStock) {
                 // Understock: prediction exceeds current stock
                 $shortage = $prediction - $currentStock;
@@ -789,180 +779,87 @@ class StockPredictionController extends Controller
                     'title' => '❌ Stok Tidak Mencukupi',
                     'message' => "Stok saat ini {$currentStock} unit tidak mencukupi untuk prediksi barang keluar sebesar {$prediction} unit.",
                     'category' => 'understock',
-                    'status' => 'warning',
-                    'status_emoji' => '🔴',
-                    'status_text' => 'Understock',
+                    'status' => 'danger',
+                    'shortage' => $shortage,
                     'details' => [
                         'current_stock' => $currentStock,
+                        'minimum_stock' => $minimumStock,
                         'predicted_outgoing' => $prediction,
-                        'shortage' => $shortage,
-                        'minimum_stock' => $minimumStock
+                        'status_text' => 'Understock'
                     ],
                     'summary' => "Kekurangan stok: {$shortage} unit | Status: Understock",
-                    'formatted_status' => [
-                        '📦 Stok Saat Ini' => "{$currentStock} unit",
-                        '📉 Minimum Stok' => "{$minimumStock} unit",
-                        '📤 Prediksi Barang Keluar' => "{$prediction} unit",
-                        '🔴 Status' => 'Understock'
-                    ],
-                    'recommendation' => "Segera lakukan restock minimal {$shortage} unit untuk memenuhi prediksi penjualan.",
-                    'priority' => 'high'
+                    'icon' => '📤',
+                    'color' => 'red'
                 ];
             } else {
-                // Stock sufficient
+                // Stock sufficient for sales
                 $surplus = $currentStock - $prediction;
-                $afterSales = $currentStock - $prediction;
-                $statusText = $afterSales >= $minimumStock ? 'Aman' : 'Perlu Perhatian';
-                $statusEmoji = $afterSales >= $minimumStock ? '🟢' : '🟡';
-
                 return [
                     'type' => 'sales',
                     'title' => '✅ Stok Mencukupi',
                     'message' => "Stok saat ini {$currentStock} unit mencukupi untuk prediksi barang keluar sebesar {$prediction} unit.",
                     'category' => 'sufficient',
-                    'status' => 'good',
-                    'status_emoji' => $statusEmoji,
-                    'status_text' => $statusText,
+                    'status' => 'success',
+                    'surplus' => $surplus,
                     'details' => [
                         'current_stock' => $currentStock,
+                        'minimum_stock' => $minimumStock,
                         'predicted_outgoing' => $prediction,
-                        'surplus' => $surplus,
-                        'stock_after_sales' => $afterSales,
-                        'minimum_stock' => $minimumStock
+                        'status_text' => 'Aman'
                     ],
-                    'summary' => "Sisa stok setelah penjualan: {$afterSales} unit | Status: {$statusText}",
-                    'formatted_status' => [
-                        '📦 Stok Saat Ini' => "{$currentStock} unit",
-                        '📤 Prediksi Barang Keluar' => "{$prediction} unit",
-                        '📈 Sisa Stok' => "{$afterSales} unit",
-                        $statusEmoji . ' Status' => $statusText
-                    ],
-                    'recommendation' => $afterSales < $minimumStock ?
-                        "Meskipun stok mencukupi, pertimbangkan restock untuk menjaga buffer stok minimum." :
-                        "Stok dalam kondisi baik, tidak perlu restock dalam waktu dekat.",
-                    'priority' => $afterSales < $minimumStock ? 'medium' : 'low'
+                    'summary' => "Surplus stok: {$surplus} unit | Status: Aman",
+                    'icon' => '📤',
+                    'color' => 'green'
                 ];
             }
         } else {
-            // For restock prediction (Barang Masuk)
-            // Get sales prediction as demand estimate - this will give us actual predicted demand
-            $estimatedSalesDemand = $this->getEstimatedSalesDemand($item, $predictionType);
-            $stockAfterRestock = $currentStock + $prediction;
+            // For restock prediction (barang masuk)
+            // We need to estimate potential sales to determine overstock
+            // Assume average sales is 70% of current stock or use a reasonable estimate
+            $estimatedSales = max(round($currentStock * 0.1), 40); // Estimate monthly sales
+            $futureStock = $currentStock + $prediction;
 
-            // Log the demand source for debugging
-            Log::info('Restock analysis using demand estimate', [
-                'item_id' => $item->id,
-                'item_name' => $productName,
-                'prediction_type' => $predictionType,
-                'estimated_sales_demand' => $estimatedSalesDemand,
-                'restock_prediction' => $prediction,
-                'current_stock' => $currentStock,
-                'stock_after_restock' => $stockAfterRestock
-            ]);
-
-            // Determine if this will cause overstock
-            $isOverstock = $stockAfterRestock > ($estimatedSalesDemand * 3); // If stock after restock is more than 3x sales demand
-
-            if ($isOverstock && $estimatedSalesDemand > 0) {
+            if ($futureStock > ($estimatedSales * 3)) {
+                // Potential overstock: future stock is much higher than estimated demand
                 return [
                     'type' => 'restock',
                     'title' => '⚠️ Stok Berlebih',
-                    'message' => "Prediksi barang masuk sebesar {$prediction} unit akan menambah stok menjadi {$stockAfterRestock} unit.",
+                    'message' => "Prediksi barang masuk sebesar {$prediction} unit akan menambah stok menjadi {$futureStock} unit.",
                     'category' => 'overstock',
                     'status' => 'warning',
-                    'status_emoji' => '🟠',
-                    'status_text' => 'Overstock/aman',
+                    'future_stock' => $futureStock,
+                    'estimated_demand' => $estimatedSales,
                     'details' => [
                         'current_stock' => $currentStock,
                         'predicted_incoming' => $prediction,
-                        'stock_after_restock' => $stockAfterRestock,
-                        'estimated_sales_demand' => $estimatedSalesDemand,
-                        'excess_ratio' => round($stockAfterRestock / max($estimatedSalesDemand, 1), 2)
+                        'estimated_outgoing' => $estimatedSales,
+                        'status_text' => 'Overstock/aman'
                     ],
-                    'summary' => "Kondisi ini berpotensi Overstock karena permintaan hanya {$estimatedSalesDemand} unit.",
-                    'formatted_status' => [
-                        '📦 Stok Saat Ini' => "{$currentStock} unit",
-                        '➕ Prediksi Barang Masuk' => "{$prediction} unit",
-                        '📤 Prediksi Barang Keluar' => "{$estimatedSalesDemand} unit",
-                        '🟠 Status' => 'Overstock/aman'
-                    ],
-                    'recommendation' => "Pertimbangkan mengurangi jumlah restock atau memperpanjang periode restock untuk menghindari overstock.",
-                    'priority' => 'medium'
+                    'summary' => "Kondisi ini berpotensi Overstock karena permintaan hanya {$estimatedSales} unit.",
+                    'icon' => '➕',
+                    'color' => 'orange'
                 ];
             } else {
-                $statusText = $prediction > ($currentStock * 0.5) ? 'Restock Diperlukan' : 'Stabil';
-                $statusEmoji = $prediction > ($currentStock * 0.5) ? '🟡' : '🟢';
-
+                // Normal restock
                 return [
                     'type' => 'restock',
-                    'title' => '✅ Prediksi Restock Normal',
-                    'message' => "Prediksi barang masuk sebesar {$prediction} unit sesuai dengan kebutuhan normal.",
+                    'title' => '✅ Restock Normal',
+                    'message' => "Prediksi barang masuk sebesar {$prediction} unit akan menambah stok menjadi {$futureStock} unit.",
                     'category' => 'normal',
-                    'status' => 'good',
-                    'status_emoji' => $statusEmoji,
-                    'status_text' => $statusText,
+                    'status' => 'success',
+                    'future_stock' => $futureStock,
+                    'estimated_demand' => $estimatedSales,
                     'details' => [
                         'current_stock' => $currentStock,
                         'predicted_incoming' => $prediction,
-                        'stock_after_restock' => $stockAfterRestock,
-                        'estimated_sales_demand' => $estimatedSalesDemand
+                        'estimated_outgoing' => $estimatedSales,
+                        'status_text' => 'Normal'
                     ],
-                    'summary' => "Restock dalam batas normal untuk menjaga ketersediaan stok.",
-                    'formatted_status' => [
-                        '📦 Stok Saat Ini' => "{$currentStock} unit",
-                        '➕ Prediksi Barang Masuk' => "{$prediction} unit",
-                        '📊 Total Stok Setelah Restock' => "{$stockAfterRestock} unit",
-                        $statusEmoji . ' Status' => $statusText
-                    ],
-                    'recommendation' => "Lakukan restock sesuai prediksi untuk menjaga ketersediaan optimal.",
-                    'priority' => 'low'
+                    'summary' => "Restock normal dengan perkiraan permintaan {$estimatedSales} unit.",
+                    'icon' => '➕',
+                    'color' => 'green'
                 ];
             }
-        }
-    }
-
-    /**
-     * Get estimated sales demand for a product (helper method for restock analysis)
-     */
-    private function getEstimatedSalesDemand($item, $predictionType = null)
-    {
-        try {
-            // If we're doing restock analysis, try to get sales prediction first
-            if ($predictionType === 'restock') {
-                // Call Python prediction for sales to get accurate demand estimate
-                $salesPredictionParams = $this->calculatePredictionParameters($item, 'sales');
-
-                if ($salesPredictionParams['success']) {
-                    $salesPredictionResult = $this->callNewPythonPredict($item, 'sales', $salesPredictionParams['params']);
-
-                    if ($salesPredictionResult['success']) {
-                        $salesPrediction = round($salesPredictionResult['prediction'], 0);
-                        Log::info('Using sales prediction as demand estimate', [
-                            'item_id' => $item->id,
-                            'sales_prediction' => $salesPrediction
-                        ]);
-                        return $salesPrediction;
-                    }
-                }
-            }
-
-            // Fallback: Get average monthly sales from last 3 months
-            $recentSales = OutgoingItem::where('item_id', $item->id)
-                ->where('outgoing_date', '>=', Carbon::now()->subMonths(3))
-                ->avg('quantity');
-
-            $avgSales = $recentSales ? round($recentSales, 0) : 10; // Lower default fallback
-
-            Log::info('Using historical average as demand estimate', [
-                'item_id' => $item->id,
-                'avg_sales' => $avgSales,
-                'months_data' => 3
-            ]);
-
-            return $avgSales;
-        } catch (\Exception $e) {
-            Log::warning('Error calculating estimated sales demand: ' . $e->getMessage());
-            return 10; // Lower default fallback value
         }
     }
 

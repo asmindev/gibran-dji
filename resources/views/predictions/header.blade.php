@@ -1,30 +1,54 @@
-<!-- Header Section dengan Generate Model Button -->
+<!-- Simple Header Section -->
 <div class="mb-8">
-    <div class="flex justify-between items-center">
-        <div>
-            <h1 class="text-3xl font-bold text-gray-900">Prediksi Stok</h1>
-            <p class="mt-2 text-gray-600">Gunakan AI untuk memprediksi kebutuhan stok berdasarkan data penjualan
-                historis</p>
-        </div>
-        <div>
-            <form id="generate-model-form">
-                @csrf
-                <button id="generate-model-btn" type="submit"
-                    class="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium py-3 px-6 rounded-lg shadow-sm transition duration-200 flex items-center space-x-2">
-                    <i class="bi bi-gear-fill"></i>
-                    <span id="generate-btn-text">Train Model</span>
-                    <div id="generate-loading-spinner" class="hidden ml-2">
-                        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                            </circle>
-                            <path class="opacity-75" fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 714 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                            </path>
+    <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg shadow-lg p-6 text-white">
+        <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center space-y-4 lg:space-y-0">
+            <!-- Header Content -->
+            <div class="flex-1">
+                <div class="flex items-center mb-3">
+                    <div class="bg-white bg-opacity-20 rounded-lg p-2 mr-3">
+                        <svg class="w-6 h-6 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z" />
+                            <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z" />
                         </svg>
                     </div>
-                </button>
-            </form>
+                    <div>
+                        <h1 class="text-2xl lg:text-3xl font-bold">Prediksi Stok AI</h1>
+                        <p class="text-blue-100 text-sm">Powered by Machine Learning</p>
+                    </div>
+                </div>
+                <p class="text-blue-100 text-base max-w-xl">
+                    Analisis data penjualan dan buat prediksi stok yang akurat
+                </p>
+            </div>
+
+            <!-- Training Button -->
+            <div class="lg:flex-shrink-0">
+                <form id="generate-model-form" onsubmit="return false;">
+                    @csrf
+                    <button id="generate-model-btn" type="button"
+                        class="bg-white text-blue-600 hover:bg-blue-50 font-medium py-3 px-6 rounded-lg shadow transition-all duration-200 flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span id="generate-btn-text">Train Model</span>
+                        <div id="generate-loading-spinner" class="hidden">
+                            <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 818-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 714 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
+                            </svg>
+                        </div>
+                    </button>
+                </form>
+                <div class="mt-2 text-xs text-blue-200 text-center">
+                    <span id="training-status">Model siap digunakan</span>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -32,205 +56,215 @@
 @push('scripts')
 <script>
     // ======== GENERATE MODEL BUTTON HANDLER ========
-    function initializeGenerateModelButton() {
-        const generateModelForm = document.getElementById('generate-model-form');
-        const generateModelBtn = document.getElementById('generate-model-btn');
+function initializeGenerateModelButton() {
+    const generateModelForm = document.getElementById('generate-model-form');
+    const generateModelBtn = document.getElementById('generate-model-btn');
 
-        if (generateModelForm && generateModelBtn) {
-            console.log('Initializing Generate Model button handler');
+    if (generateModelForm && generateModelBtn) {
+        console.log('Initializing Generate Model button handler');
 
-            // Remove any existing onclick handlers
-            generateModelBtn.onclick = null;
+        // Remove any existing onclick handlers
+        generateModelBtn.onclick = null;
 
-            // Handle form submission
-            generateModelForm.addEventListener('submit', async function(event) {
-                console.log('Generate Model form submitted', {
-                    isTrainingInProgress: window.isTrainingInProgress,
-                    buttonDisabled: generateModelBtn.disabled,
-                    eventType: event.type,
-                    timestamp: new Date().toISOString()
-                });
-                // CRITICAL: Prevent any form submission or page navigation
-                event.preventDefault();
-                event.stopPropagation();
-                event.stopImmediatePropagation();
+        // Handle form submission
+        generateModelForm.addEventListener('submit', async function(event) {
+            // CRITICAL: Prevent any form submission or page navigation
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
 
-                console.log('Generate Model form submitted', {
-                    isTrainingInProgress: window.isTrainingInProgress,
-                    buttonDisabled: generateModelBtn.disabled,
-                    eventType: event.type,
-                    timestamp: new Date().toISOString()
-                });
-
-                // Call the generate model function
-                await handleGenerateModelClick(event, generateModelBtn);
+            console.log('Generate Model form submitted', {
+                isTrainingInProgress: window.isTrainingInProgress,
+                buttonDisabled: generateModelBtn.disabled,
+                eventType: event.type,
+                timestamp: new Date().toISOString()
             });
 
-            // Handle button click as backup
-            generateModelBtn.addEventListener('click', async function(event) {
-                // CRITICAL: Prevent any form submission or page navigation
-                event.preventDefault();
-                event.stopPropagation();
-                event.stopImmediatePropagation();
+            // Call the generate model function
+            await handleGenerateModelClick(event, generateModelBtn);
+        });
 
-                console.log('Generate Model button clicked', {
-                    isTrainingInProgress: window.isTrainingInProgress,
-                    buttonDisabled: generateModelBtn.disabled,
-                    eventType: event.type,
-                    timestamp: new Date().toISOString()
-                });
+        // Handle button click as backup
+        generateModelBtn.addEventListener('click', async function(event) {
+            // CRITICAL: Prevent any form submission or page navigation
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
 
-                // Call the generate model function
-                await handleGenerateModelClick(event, generateModelBtn);
+            console.log('Generate Model button clicked', {
+                isTrainingInProgress: window.isTrainingInProgress,
+                buttonDisabled: generateModelBtn.disabled,
+                eventType: event.type,
+                timestamp: new Date().toISOString()
             });
-        }
+
+            // Call the generate model function
+            await handleGenerateModelClick(event, generateModelBtn);
+        });
+    }
+}
+
+// Extract the main logic into a separate function
+async function handleGenerateModelClick(event, generateModelBtn) {
+    // Prevent multiple clicks
+    if (window.isTrainingInProgress) {
+        console.log('Training already in progress, ignoring click');
+        window.showAlert('Training sudah berjalan, mohon tunggu...', 'warning');
+        return false;
     }
 
-    // Extract the main logic into a separate function
-    async function handleGenerateModelClick(event, generateModelBtn) {
-        // Prevent multiple clicks
-        if (window.isTrainingInProgress) {
-            console.log('Training already in progress, ignoring click');
-            window.showAlert('Training sudah berjalan, mohon tunggu...', 'warning');
-            return false;
-        }
+    // Check if button is already disabled
+    if (generateModelBtn.disabled) {
+        console.log('Button already disabled, ignoring click');
+        return false;
+    }
 
-        // Check if button is already disabled
-        if (generateModelBtn.disabled) {
-            console.log('Button already disabled, ignoring click');
-            return false;
-        }        // Immediately disable the button to prevent any further clicks
-        generateModelBtn.disabled = true;
+    // Immediately disable the button to prevent any further clicks
+    generateModelBtn.disabled = true;
 
-        const generateBtnText = document.getElementById('generate-btn-text');
-        const generateLoadingSpinner = document.getElementById('generate-loading-spinner');
+    const generateBtnText = document.getElementById('generate-btn-text');
+    const generateLoadingSpinner = document.getElementById('generate-loading-spinner');
 
-        // Set flag and update UI
-        window.isTrainingInProgress = true;
-        generateBtnText.textContent = 'Memulai training...';
-        generateLoadingSpinner.classList.remove('hidden');
+    // Set flag and update UI
+    window.isTrainingInProgress = true;
+    generateBtnText.textContent = 'Memulai training...';
+    generateLoadingSpinner.classList.remove('hidden');
 
-        try {
-            console.log('Sending training request...');
-            const response = await axios.post('{{ route("predictions.train-model") }}', {}, {
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Content-Type': 'application/json'
-                },
-                timeout: 30000 // 30 seconds for initial request
-            });
+    try {
+        console.log('Sending training request...');
+        const response = await axios.post('{{ route("predictions.train-model") }}', {}, {
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Content-Type': 'application/json'
+            },
+            timeout: 30000 // 30 seconds for initial request
+        });
 
-            console.log('Training request response:', response.data);
+        console.log('Training request response:', response.data);
 
-            if (response.data.success) {
-                // Training started successfully, start polling for status
-                window.showAlert('Model training dimulai di background. Silakan tunggu...', 'info');
-                generateBtnText.textContent = 'Training di background...';
+        if (response.data.success) {
+            // Training started successfully, start polling for status
+            window.showAlert('Model training dimulai di background. Silakan tunggu...', 'info');
+            generateBtnText.textContent = 'Training di background...';
 
-                // Start polling status
-                window.startTrainingStatusPolling(generateModelBtn, generateBtnText, generateLoadingSpinner);
+            // Start polling status
+            window.startTrainingStatusPolling(generateModelBtn, generateBtnText, generateLoadingSpinner);
 
-            } else {
-                // Handle failure to start training
-                window.isTrainingInProgress = false;
-                generateModelBtn.disabled = false;
-                generateBtnText.textContent = 'Train Model';
-                generateLoadingSpinner.classList.add('hidden');
-
-                window.showAlert(response.data.message || 'Gagal memulai training', 'error');
-            }
-
-        } catch (error) {
-            console.error('Training request failed:', error);
-
-            // Reset state on error
+        } else {
+            // Handle failure to start training
             window.isTrainingInProgress = false;
             generateModelBtn.disabled = false;
             generateBtnText.textContent = 'Train Model';
             generateLoadingSpinner.classList.add('hidden');
 
-            let errorMessage = 'Terjadi kesalahan saat memulai training';
-            if (error.response) {
-                console.error('Error response:', error.response);
-                errorMessage = error.response.data.message || `Server error (${error.response.status})`;
-            } else if (error.request) {
-                console.error('Error request:', error.request);
-                errorMessage = 'Tidak dapat terhubung ke server';
-            } else {
-                console.error('Error:', error.message);
-                errorMessage = 'Terjadi kesalahan: ' + error.message;
-            }
-
-            window.showAlert(errorMessage, 'error');
+            window.showAlert(response.data.message || 'Gagal memulai training', 'error');
         }
+
+    } catch (error) {
+        console.error('Training request failed:', error);
+
+        // Reset state on error
+        window.isTrainingInProgress = false;
+        generateModelBtn.disabled = false;
+        generateBtnText.textContent = 'Train Model';
+        generateLoadingSpinner.classList.add('hidden');
+
+        let errorMessage = 'Terjadi kesalahan saat memulai training';
+        if (error.response) {
+            console.error('Error response:', error.response);
+            errorMessage = error.response.data.message || `Server error (${error.response.status})`;
+        } else if (error.request) {
+            console.error('Error request:', error.request);
+            errorMessage = 'Tidak dapat terhubung ke server' + JSON.stringify(error.request) || error.request;
+        } else {
+            console.error('Error:', error.message);
+            errorMessage = 'Terjadi kesalahan: ' + error.message;
+        }
+
+        window.showAlert(errorMessage, 'error');
     }
+}
 
-    // ======== TRAINING STATUS POLLING ========
-    window.startTrainingStatusPolling = function(generateBtn, generateBtnText, generateLoadingSpinner) {
-        const startTime = Date.now();
+// ======== TRAINING STATUS POLLING ========
+window.startTrainingStatusPolling = function(generateBtn, generateBtnText, generateLoadingSpinner) {
+    const startTime = Date.now();
 
-        const pollInterval = setInterval(async () => {
-            try {
-                const statusResponse = await axios.get('{{ route("predictions.training-status") }}');
-                const status = statusResponse.data.status;
-                const elapsedSeconds = Math.round((Date.now() - startTime) / 1000);
+    const pollInterval = setInterval(async () => {
+        try {
+            const statusResponse = await axios.get('{{ route("predictions.training-status") }}');
+            const status = statusResponse.data.data.training_status; // Fixed: Get from data.training_status
+            const elapsedSeconds = Math.round((Date.now() - startTime) / 1000);
 
-                console.log('Training status:', status, 'Elapsed:', elapsedSeconds + 's');
+            console.log('Training status:', status, 'Elapsed:', elapsedSeconds + 's');
+            console.log('Full response:', statusResponse.data); // Debug: show full response
 
-                switch (status) {
-                    case 'in_progress':
-                        const minutes = Math.floor(elapsedSeconds / 60);
-                        const seconds = elapsedSeconds % 60;
-                        generateBtnText.textContent = `Training... (${minutes}:${seconds.toString().padStart(2, '0')})`;
-                        break;
+            switch (status) {
+                case 'training': // Updated: was 'in_progress'
+                    const minutes = Math.floor(elapsedSeconds / 60);
+                    const seconds = elapsedSeconds % 60;
+                    generateBtnText.textContent = `Training... (${minutes}:${seconds.toString().padStart(2, '0')})`;
+                    break;
 
-                    case 'completed':
-                        clearInterval(pollInterval);
-                        window.isTrainingInProgress = false; // Reset flag
-                        generateBtn.disabled = false;
-                        generateBtnText.textContent = 'Train Model';
-                        generateLoadingSpinner.classList.add('hidden');
-
-                        const completedMinutes = Math.floor(elapsedSeconds / 60);
-                        const completedSeconds = elapsedSeconds % 60;
-                        const durationText = completedMinutes > 0 ? `${completedMinutes}m ${completedSeconds}s` : `${completedSeconds}s`;
-
-                        window.showAlert(`Model berhasil diperbarui dalam ${durationText}! Training selesai di background.`, 'success');
-                        break;
-
-                    case 'failed':
-                        clearInterval(pollInterval);
-                        window.isTrainingInProgress = false; // Reset flag
-                        generateBtn.disabled = false;
-                        generateBtnText.textContent = 'Train Model';
-                        generateLoadingSpinner.classList.add('hidden');
-
-                        const errorMessage = statusResponse.data.error || 'Training gagal';
-                        window.showAlert(`Training gagal: ${errorMessage}`, 'error');
-                        break;
-
-                    case 'idle':
-                        // Training hasn't started yet or was reset
-                        generateBtnText.textContent = `Menunggu job dimulai... (${elapsedSeconds}s)`;
-                        break;
-                }
-
-                // Timeout after 10 minutes
-                if (elapsedSeconds > 600) {
+                case 'completed':
                     clearInterval(pollInterval);
                     window.isTrainingInProgress = false; // Reset flag
                     generateBtn.disabled = false;
                     generateBtnText.textContent = 'Train Model';
                     generateLoadingSpinner.classList.add('hidden');
-                    window.showAlert('Training timeout. Periksa status queue worker.', 'error');
-                }
 
-            } catch (error) {
-                console.error('Status polling error:', error);
-                // Continue polling even if there's an error
+                    // Update status indicator
+                    let statusIndicator = document.getElementById('training-status');
+                    if (statusIndicator) {
+                        statusIndicator.textContent = 'Model baru siap digunakan';
+                    }
+
+                    const completedMinutes = Math.floor(elapsedSeconds / 60);
+                    const completedSeconds = elapsedSeconds % 60;
+                    const durationText = completedMinutes > 0 ? `${completedMinutes}m ${completedSeconds}s` : `${completedSeconds}s`;
+
+                    window.showAlert(`Model berhasil diperbarui dalam ${durationText}! Training selesai di background.`, 'success');
+                    break;
+
+                case 'failed':
+                    clearInterval(pollInterval);
+                    window.isTrainingInProgress = false; // Reset flag
+                    generateBtn.disabled = false;
+                    generateBtnText.textContent = 'Train Model';
+                    generateLoadingSpinner.classList.add('hidden');
+
+                    // Update status indicator
+                    statusIndicator = document.getElementById('training-status');
+                    if (statusIndicator) {
+                        statusIndicator.textContent = 'Training gagal - Model lama masih aktif';
+                    }
+
+                    const errorMessage = statusResponse.data.data.status_message || 'Training gagal';
+                    window.showAlert(`Training gagal: ${errorMessage}`, 'error');
+                    break;
+
+                case 'idle':
+                default:
+                    // Training hasn't started yet or was reset
+                    generateBtnText.textContent = `Menunggu job dimulai... (${elapsedSeconds}s)`;
+                    break;
             }
-        }, 2000); // Poll every 2 seconds
-    };
-    initializeGenerateModelButton();
+
+            // Timeout after 10 minutes
+            if (elapsedSeconds > 600) {
+                clearInterval(pollInterval);
+                window.isTrainingInProgress = false; // Reset flag
+                generateBtn.disabled = false;
+                generateBtnText.textContent = 'Train Model';
+                generateLoadingSpinner.classList.add('hidden');
+                window.showAlert('Training timeout. Periksa status queue worker.', 'error');
+            }
+        } catch (error) {
+            console.error('Status polling error:', error);
+            // Continue polling even if there's an error
+        }
+    }, 2000); // Poll every 2 seconds
+};
+
+initializeGenerateModelButton();
 </script>
 @endpush

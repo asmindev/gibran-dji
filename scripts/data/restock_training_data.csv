@@ -1,0 +1,641 @@
+item_id,product_name,category,date,quantity,month,year,day_of_week,is_weekend,season
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-02-03,34,2,2025,1,0,winter
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-02-03,29,2,2025,1,0,winter
+3,"Jersey Mills","Peralatan Olahraga",2025-02-03,21,2,2025,1,0,winter
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-02-03,24,2,2025,1,0,winter
+5,Piala,"Peralatan Olahraga",2025-02-03,28,2,2025,1,0,winter
+6,"Sepatu Futsal","Peralatan Olahraga",2025-02-03,26,2,2025,1,0,winter
+7,"Bola Basket","Peralatan Olahraga",2025-02-03,24,2,2025,1,0,winter
+8,"Jersey Basket","Peralatan Olahraga",2025-02-03,27,2,2025,1,0,winter
+9,"Bola Sepak","Peralatan Olahraga",2025-02-03,30,2,2025,1,0,winter
+10,"Raket Badminton","Peralatan Olahraga",2025-02-03,26,2,2025,1,0,winter
+11,Shuttlecock,"Peralatan Olahraga",2025-02-03,26,2,2025,1,0,winter
+12,"Raket Tenis","Peralatan Olahraga",2025-02-03,25,2,2025,1,0,winter
+13,"Bola Tenis","Peralatan Olahraga",2025-02-03,24,2,2025,1,0,winter
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-02-03,27,2,2025,1,0,winter
+15,"Celana Training","Peralatan Olahraga",2025-02-03,25,2,2025,1,0,winter
+16,"Jaket Olahraga","Peralatan Olahraga",2025-02-03,27,2,2025,1,0,winter
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-02-03,27,2,2025,1,0,winter
+18,"Matras Yoga","Peralatan Olahraga",2025-02-03,29,2,2025,1,0,winter
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-02-03,36,2,2025,1,0,winter
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-02-03,34,2,2025,1,0,winter
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-02-10,34,2,2025,1,0,winter
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-02-10,26,2,2025,1,0,winter
+3,"Jersey Mills","Peralatan Olahraga",2025-02-10,21,2,2025,1,0,winter
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-02-10,27,2,2025,1,0,winter
+5,Piala,"Peralatan Olahraga",2025-02-10,26,2,2025,1,0,winter
+6,"Sepatu Futsal","Peralatan Olahraga",2025-02-10,25,2,2025,1,0,winter
+7,"Bola Basket","Peralatan Olahraga",2025-02-10,26,2,2025,1,0,winter
+8,"Jersey Basket","Peralatan Olahraga",2025-02-10,24,2,2025,1,0,winter
+9,"Bola Sepak","Peralatan Olahraga",2025-02-10,30,2,2025,1,0,winter
+10,"Raket Badminton","Peralatan Olahraga",2025-02-10,22,2,2025,1,0,winter
+11,Shuttlecock,"Peralatan Olahraga",2025-02-10,31,2,2025,1,0,winter
+12,"Raket Tenis","Peralatan Olahraga",2025-02-10,32,2,2025,1,0,winter
+13,"Bola Tenis","Peralatan Olahraga",2025-02-10,30,2,2025,1,0,winter
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-02-10,30,2,2025,1,0,winter
+15,"Celana Training","Peralatan Olahraga",2025-02-10,27,2,2025,1,0,winter
+16,"Jaket Olahraga","Peralatan Olahraga",2025-02-10,33,2,2025,1,0,winter
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-02-10,27,2,2025,1,0,winter
+18,"Matras Yoga","Peralatan Olahraga",2025-02-10,27,2,2025,1,0,winter
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-02-10,28,2,2025,1,0,winter
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-02-10,23,2,2025,1,0,winter
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-02-17,37,2,2025,1,0,winter
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-02-17,24,2,2025,1,0,winter
+3,"Jersey Mills","Peralatan Olahraga",2025-02-17,20,2,2025,1,0,winter
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-02-17,26,2,2025,1,0,winter
+5,Piala,"Peralatan Olahraga",2025-02-17,25,2,2025,1,0,winter
+6,"Sepatu Futsal","Peralatan Olahraga",2025-02-17,27,2,2025,1,0,winter
+7,"Bola Basket","Peralatan Olahraga",2025-02-17,24,2,2025,1,0,winter
+8,"Jersey Basket","Peralatan Olahraga",2025-02-17,23,2,2025,1,0,winter
+9,"Bola Sepak","Peralatan Olahraga",2025-02-17,31,2,2025,1,0,winter
+10,"Raket Badminton","Peralatan Olahraga",2025-02-17,25,2,2025,1,0,winter
+11,Shuttlecock,"Peralatan Olahraga",2025-02-17,27,2,2025,1,0,winter
+12,"Raket Tenis","Peralatan Olahraga",2025-02-17,33,2,2025,1,0,winter
+13,"Bola Tenis","Peralatan Olahraga",2025-02-17,21,2,2025,1,0,winter
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-02-17,31,2,2025,1,0,winter
+15,"Celana Training","Peralatan Olahraga",2025-02-17,26,2,2025,1,0,winter
+16,"Jaket Olahraga","Peralatan Olahraga",2025-02-17,32,2,2025,1,0,winter
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-02-17,31,2,2025,1,0,winter
+18,"Matras Yoga","Peralatan Olahraga",2025-02-17,27,2,2025,1,0,winter
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-02-17,27,2,2025,1,0,winter
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-02-17,23,2,2025,1,0,winter
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-02-24,34,2,2025,1,0,winter
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-02-24,24,2,2025,1,0,winter
+3,"Jersey Mills","Peralatan Olahraga",2025-02-24,32,2,2025,1,0,winter
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-02-24,34,2,2025,1,0,winter
+5,Piala,"Peralatan Olahraga",2025-02-24,27,2,2025,1,0,winter
+6,"Sepatu Futsal","Peralatan Olahraga",2025-02-24,23,2,2025,1,0,winter
+7,"Bola Basket","Peralatan Olahraga",2025-02-24,25,2,2025,1,0,winter
+8,"Jersey Basket","Peralatan Olahraga",2025-02-24,30,2,2025,1,0,winter
+9,"Bola Sepak","Peralatan Olahraga",2025-02-24,20,2,2025,1,0,winter
+10,"Raket Badminton","Peralatan Olahraga",2025-02-24,25,2,2025,1,0,winter
+11,Shuttlecock,"Peralatan Olahraga",2025-02-24,25,2,2025,1,0,winter
+12,"Raket Tenis","Peralatan Olahraga",2025-02-24,29,2,2025,1,0,winter
+13,"Bola Tenis","Peralatan Olahraga",2025-02-24,33,2,2025,1,0,winter
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-02-24,34,2,2025,1,0,winter
+15,"Celana Training","Peralatan Olahraga",2025-02-24,21,2,2025,1,0,winter
+16,"Jaket Olahraga","Peralatan Olahraga",2025-02-24,23,2,2025,1,0,winter
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-02-24,31,2,2025,1,0,winter
+18,"Matras Yoga","Peralatan Olahraga",2025-02-24,20,2,2025,1,0,winter
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-02-24,21,2,2025,1,0,winter
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-02-24,30,2,2025,1,0,winter
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-03-03,21,3,2025,1,0,spring
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-03-03,22,3,2025,1,0,spring
+3,"Jersey Mills","Peralatan Olahraga",2025-03-03,37,3,2025,1,0,spring
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-03-03,28,3,2025,1,0,spring
+5,Piala,"Peralatan Olahraga",2025-03-03,26,3,2025,1,0,spring
+6,"Sepatu Futsal","Peralatan Olahraga",2025-03-03,22,3,2025,1,0,spring
+7,"Bola Basket","Peralatan Olahraga",2025-03-03,24,3,2025,1,0,spring
+8,"Jersey Basket","Peralatan Olahraga",2025-03-03,32,3,2025,1,0,spring
+9,"Bola Sepak","Peralatan Olahraga",2025-03-03,26,3,2025,1,0,spring
+10,"Raket Badminton","Peralatan Olahraga",2025-03-03,21,3,2025,1,0,spring
+11,Shuttlecock,"Peralatan Olahraga",2025-03-03,25,3,2025,1,0,spring
+12,"Raket Tenis","Peralatan Olahraga",2025-03-03,31,3,2025,1,0,spring
+13,"Bola Tenis","Peralatan Olahraga",2025-03-03,31,3,2025,1,0,spring
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-03-03,26,3,2025,1,0,spring
+15,"Celana Training","Peralatan Olahraga",2025-03-03,26,3,2025,1,0,spring
+16,"Jaket Olahraga","Peralatan Olahraga",2025-03-03,26,3,2025,1,0,spring
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-03-03,24,3,2025,1,0,spring
+18,"Matras Yoga","Peralatan Olahraga",2025-03-03,31,3,2025,1,0,spring
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-03-03,25,3,2025,1,0,spring
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-03-03,21,3,2025,1,0,spring
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-03-10,30,3,2025,1,0,spring
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-03-10,35,3,2025,1,0,spring
+3,"Jersey Mills","Peralatan Olahraga",2025-03-10,23,3,2025,1,0,spring
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-03-10,22,3,2025,1,0,spring
+5,Piala,"Peralatan Olahraga",2025-03-10,20,3,2025,1,0,spring
+6,"Sepatu Futsal","Peralatan Olahraga",2025-03-10,20,3,2025,1,0,spring
+7,"Bola Basket","Peralatan Olahraga",2025-03-10,32,3,2025,1,0,spring
+8,"Jersey Basket","Peralatan Olahraga",2025-03-10,22,3,2025,1,0,spring
+9,"Bola Sepak","Peralatan Olahraga",2025-03-10,28,3,2025,1,0,spring
+10,"Raket Badminton","Peralatan Olahraga",2025-03-10,20,3,2025,1,0,spring
+11,Shuttlecock,"Peralatan Olahraga",2025-03-10,21,3,2025,1,0,spring
+12,"Raket Tenis","Peralatan Olahraga",2025-03-10,31,3,2025,1,0,spring
+13,"Bola Tenis","Peralatan Olahraga",2025-03-10,30,3,2025,1,0,spring
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-03-10,27,3,2025,1,0,spring
+15,"Celana Training","Peralatan Olahraga",2025-03-10,33,3,2025,1,0,spring
+16,"Jaket Olahraga","Peralatan Olahraga",2025-03-10,29,3,2025,1,0,spring
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-03-10,22,3,2025,1,0,spring
+18,"Matras Yoga","Peralatan Olahraga",2025-03-10,30,3,2025,1,0,spring
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-03-10,22,3,2025,1,0,spring
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-03-10,29,3,2025,1,0,spring
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-03-17,27,3,2025,1,0,spring
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-03-17,30,3,2025,1,0,spring
+3,"Jersey Mills","Peralatan Olahraga",2025-03-17,34,3,2025,1,0,spring
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-03-17,31,3,2025,1,0,spring
+5,Piala,"Peralatan Olahraga",2025-03-17,24,3,2025,1,0,spring
+6,"Sepatu Futsal","Peralatan Olahraga",2025-03-17,31,3,2025,1,0,spring
+7,"Bola Basket","Peralatan Olahraga",2025-03-17,24,3,2025,1,0,spring
+8,"Jersey Basket","Peralatan Olahraga",2025-03-17,33,3,2025,1,0,spring
+9,"Bola Sepak","Peralatan Olahraga",2025-03-17,20,3,2025,1,0,spring
+10,"Raket Badminton","Peralatan Olahraga",2025-03-17,25,3,2025,1,0,spring
+11,Shuttlecock,"Peralatan Olahraga",2025-03-17,30,3,2025,1,0,spring
+12,"Raket Tenis","Peralatan Olahraga",2025-03-17,27,3,2025,1,0,spring
+13,"Bola Tenis","Peralatan Olahraga",2025-03-17,24,3,2025,1,0,spring
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-03-17,34,3,2025,1,0,spring
+15,"Celana Training","Peralatan Olahraga",2025-03-17,20,3,2025,1,0,spring
+16,"Jaket Olahraga","Peralatan Olahraga",2025-03-17,23,3,2025,1,0,spring
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-03-17,30,3,2025,1,0,spring
+18,"Matras Yoga","Peralatan Olahraga",2025-03-17,34,3,2025,1,0,spring
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-03-17,21,3,2025,1,0,spring
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-03-17,29,3,2025,1,0,spring
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-03-24,26,3,2025,1,0,spring
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-03-24,35,3,2025,1,0,spring
+3,"Jersey Mills","Peralatan Olahraga",2025-03-24,31,3,2025,1,0,spring
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-03-24,33,3,2025,1,0,spring
+5,Piala,"Peralatan Olahraga",2025-03-24,26,3,2025,1,0,spring
+6,"Sepatu Futsal","Peralatan Olahraga",2025-03-24,25,3,2025,1,0,spring
+7,"Bola Basket","Peralatan Olahraga",2025-03-24,29,3,2025,1,0,spring
+8,"Jersey Basket","Peralatan Olahraga",2025-03-24,30,3,2025,1,0,spring
+9,"Bola Sepak","Peralatan Olahraga",2025-03-24,27,3,2025,1,0,spring
+10,"Raket Badminton","Peralatan Olahraga",2025-03-24,28,3,2025,1,0,spring
+11,Shuttlecock,"Peralatan Olahraga",2025-03-24,29,3,2025,1,0,spring
+12,"Raket Tenis","Peralatan Olahraga",2025-03-24,31,3,2025,1,0,spring
+13,"Bola Tenis","Peralatan Olahraga",2025-03-24,33,3,2025,1,0,spring
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-03-24,28,3,2025,1,0,spring
+15,"Celana Training","Peralatan Olahraga",2025-03-24,32,3,2025,1,0,spring
+16,"Jaket Olahraga","Peralatan Olahraga",2025-03-24,26,3,2025,1,0,spring
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-03-24,32,3,2025,1,0,spring
+18,"Matras Yoga","Peralatan Olahraga",2025-03-24,23,3,2025,1,0,spring
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-03-24,36,3,2025,1,0,spring
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-03-24,31,3,2025,1,0,spring
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-03-31,31,3,2025,1,0,spring
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-03-31,26,3,2025,1,0,spring
+3,"Jersey Mills","Peralatan Olahraga",2025-03-31,28,3,2025,1,0,spring
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-03-31,28,3,2025,1,0,spring
+5,Piala,"Peralatan Olahraga",2025-03-31,31,3,2025,1,0,spring
+6,"Sepatu Futsal","Peralatan Olahraga",2025-03-31,29,3,2025,1,0,spring
+7,"Bola Basket","Peralatan Olahraga",2025-03-31,25,3,2025,1,0,spring
+8,"Jersey Basket","Peralatan Olahraga",2025-03-31,26,3,2025,1,0,spring
+9,"Bola Sepak","Peralatan Olahraga",2025-03-31,25,3,2025,1,0,spring
+10,"Raket Badminton","Peralatan Olahraga",2025-03-31,24,3,2025,1,0,spring
+11,Shuttlecock,"Peralatan Olahraga",2025-03-31,22,3,2025,1,0,spring
+12,"Raket Tenis","Peralatan Olahraga",2025-03-31,22,3,2025,1,0,spring
+13,"Bola Tenis","Peralatan Olahraga",2025-03-31,26,3,2025,1,0,spring
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-03-31,29,3,2025,1,0,spring
+15,"Celana Training","Peralatan Olahraga",2025-03-31,20,3,2025,1,0,spring
+16,"Jaket Olahraga","Peralatan Olahraga",2025-03-31,31,3,2025,1,0,spring
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-03-31,28,3,2025,1,0,spring
+18,"Matras Yoga","Peralatan Olahraga",2025-03-31,29,3,2025,1,0,spring
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-03-31,29,3,2025,1,0,spring
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-03-31,36,3,2025,1,0,spring
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-04-07,24,4,2025,1,0,spring
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-04-07,25,4,2025,1,0,spring
+3,"Jersey Mills","Peralatan Olahraga",2025-04-07,23,4,2025,1,0,spring
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-04-07,34,4,2025,1,0,spring
+5,Piala,"Peralatan Olahraga",2025-04-07,27,4,2025,1,0,spring
+6,"Sepatu Futsal","Peralatan Olahraga",2025-04-07,27,4,2025,1,0,spring
+7,"Bola Basket","Peralatan Olahraga",2025-04-07,31,4,2025,1,0,spring
+8,"Jersey Basket","Peralatan Olahraga",2025-04-07,28,4,2025,1,0,spring
+9,"Bola Sepak","Peralatan Olahraga",2025-04-07,31,4,2025,1,0,spring
+10,"Raket Badminton","Peralatan Olahraga",2025-04-07,27,4,2025,1,0,spring
+11,Shuttlecock,"Peralatan Olahraga",2025-04-07,35,4,2025,1,0,spring
+12,"Raket Tenis","Peralatan Olahraga",2025-04-07,23,4,2025,1,0,spring
+13,"Bola Tenis","Peralatan Olahraga",2025-04-07,27,4,2025,1,0,spring
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-04-07,20,4,2025,1,0,spring
+15,"Celana Training","Peralatan Olahraga",2025-04-07,35,4,2025,1,0,spring
+16,"Jaket Olahraga","Peralatan Olahraga",2025-04-07,31,4,2025,1,0,spring
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-04-07,31,4,2025,1,0,spring
+18,"Matras Yoga","Peralatan Olahraga",2025-04-07,31,4,2025,1,0,spring
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-04-07,21,4,2025,1,0,spring
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-04-07,31,4,2025,1,0,spring
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-04-14,30,4,2025,1,0,spring
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-04-14,25,4,2025,1,0,spring
+3,"Jersey Mills","Peralatan Olahraga",2025-04-14,20,4,2025,1,0,spring
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-04-14,23,4,2025,1,0,spring
+5,Piala,"Peralatan Olahraga",2025-04-14,26,4,2025,1,0,spring
+6,"Sepatu Futsal","Peralatan Olahraga",2025-04-14,24,4,2025,1,0,spring
+7,"Bola Basket","Peralatan Olahraga",2025-04-14,24,4,2025,1,0,spring
+8,"Jersey Basket","Peralatan Olahraga",2025-04-14,26,4,2025,1,0,spring
+9,"Bola Sepak","Peralatan Olahraga",2025-04-14,25,4,2025,1,0,spring
+10,"Raket Badminton","Peralatan Olahraga",2025-04-14,24,4,2025,1,0,spring
+11,Shuttlecock,"Peralatan Olahraga",2025-04-14,23,4,2025,1,0,spring
+12,"Raket Tenis","Peralatan Olahraga",2025-04-14,30,4,2025,1,0,spring
+13,"Bola Tenis","Peralatan Olahraga",2025-04-14,23,4,2025,1,0,spring
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-04-14,35,4,2025,1,0,spring
+15,"Celana Training","Peralatan Olahraga",2025-04-14,23,4,2025,1,0,spring
+16,"Jaket Olahraga","Peralatan Olahraga",2025-04-14,36,4,2025,1,0,spring
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-04-14,27,4,2025,1,0,spring
+18,"Matras Yoga","Peralatan Olahraga",2025-04-14,22,4,2025,1,0,spring
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-04-14,28,4,2025,1,0,spring
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-04-14,31,4,2025,1,0,spring
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-04-21,30,4,2025,1,0,spring
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-04-21,32,4,2025,1,0,spring
+3,"Jersey Mills","Peralatan Olahraga",2025-04-21,31,4,2025,1,0,spring
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-04-21,25,4,2025,1,0,spring
+5,Piala,"Peralatan Olahraga",2025-04-21,22,4,2025,1,0,spring
+6,"Sepatu Futsal","Peralatan Olahraga",2025-04-21,32,4,2025,1,0,spring
+7,"Bola Basket","Peralatan Olahraga",2025-04-21,30,4,2025,1,0,spring
+8,"Jersey Basket","Peralatan Olahraga",2025-04-21,31,4,2025,1,0,spring
+9,"Bola Sepak","Peralatan Olahraga",2025-04-21,35,4,2025,1,0,spring
+10,"Raket Badminton","Peralatan Olahraga",2025-04-21,29,4,2025,1,0,spring
+11,Shuttlecock,"Peralatan Olahraga",2025-04-21,29,4,2025,1,0,spring
+12,"Raket Tenis","Peralatan Olahraga",2025-04-21,21,4,2025,1,0,spring
+13,"Bola Tenis","Peralatan Olahraga",2025-04-21,21,4,2025,1,0,spring
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-04-21,28,4,2025,1,0,spring
+15,"Celana Training","Peralatan Olahraga",2025-04-21,20,4,2025,1,0,spring
+16,"Jaket Olahraga","Peralatan Olahraga",2025-04-21,21,4,2025,1,0,spring
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-04-21,22,4,2025,1,0,spring
+18,"Matras Yoga","Peralatan Olahraga",2025-04-21,37,4,2025,1,0,spring
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-04-21,20,4,2025,1,0,spring
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-04-21,31,4,2025,1,0,spring
+16,"Jaket Olahraga","Peralatan Olahraga",2025-04-28,20,4,2025,1,0,spring
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-04-28,29,4,2025,1,0,spring
+18,"Matras Yoga","Peralatan Olahraga",2025-04-28,29,4,2025,1,0,spring
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-04-28,22,4,2025,1,0,spring
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-04-28,28,4,2025,1,0,spring
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-04-28,24,4,2025,1,0,spring
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-04-28,28,4,2025,1,0,spring
+3,"Jersey Mills","Peralatan Olahraga",2025-04-28,34,4,2025,1,0,spring
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-04-28,21,4,2025,1,0,spring
+5,Piala,"Peralatan Olahraga",2025-04-28,31,4,2025,1,0,spring
+6,"Sepatu Futsal","Peralatan Olahraga",2025-04-28,20,4,2025,1,0,spring
+7,"Bola Basket","Peralatan Olahraga",2025-04-28,20,4,2025,1,0,spring
+8,"Jersey Basket","Peralatan Olahraga",2025-04-28,28,4,2025,1,0,spring
+9,"Bola Sepak","Peralatan Olahraga",2025-04-28,32,4,2025,1,0,spring
+10,"Raket Badminton","Peralatan Olahraga",2025-04-28,23,4,2025,1,0,spring
+11,Shuttlecock,"Peralatan Olahraga",2025-04-28,25,4,2025,1,0,spring
+12,"Raket Tenis","Peralatan Olahraga",2025-04-28,37,4,2025,1,0,spring
+13,"Bola Tenis","Peralatan Olahraga",2025-04-28,20,4,2025,1,0,spring
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-04-28,22,4,2025,1,0,spring
+15,"Celana Training","Peralatan Olahraga",2025-04-28,32,4,2025,1,0,spring
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-05-05,23,5,2025,1,0,spring
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-05-05,32,5,2025,1,0,spring
+3,"Jersey Mills","Peralatan Olahraga",2025-05-05,24,5,2025,1,0,spring
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-05-05,28,5,2025,1,0,spring
+5,Piala,"Peralatan Olahraga",2025-05-05,30,5,2025,1,0,spring
+6,"Sepatu Futsal","Peralatan Olahraga",2025-05-05,27,5,2025,1,0,spring
+7,"Bola Basket","Peralatan Olahraga",2025-05-05,29,5,2025,1,0,spring
+8,"Jersey Basket","Peralatan Olahraga",2025-05-05,20,5,2025,1,0,spring
+9,"Bola Sepak","Peralatan Olahraga",2025-05-05,20,5,2025,1,0,spring
+10,"Raket Badminton","Peralatan Olahraga",2025-05-05,29,5,2025,1,0,spring
+11,Shuttlecock,"Peralatan Olahraga",2025-05-05,22,5,2025,1,0,spring
+12,"Raket Tenis","Peralatan Olahraga",2025-05-05,22,5,2025,1,0,spring
+13,"Bola Tenis","Peralatan Olahraga",2025-05-05,31,5,2025,1,0,spring
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-05-05,20,5,2025,1,0,spring
+15,"Celana Training","Peralatan Olahraga",2025-05-05,23,5,2025,1,0,spring
+16,"Jaket Olahraga","Peralatan Olahraga",2025-05-05,33,5,2025,1,0,spring
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-05-05,29,5,2025,1,0,spring
+18,"Matras Yoga","Peralatan Olahraga",2025-05-05,25,5,2025,1,0,spring
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-05-05,31,5,2025,1,0,spring
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-05-05,32,5,2025,1,0,spring
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-05-12,21,5,2025,1,0,spring
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-05-12,25,5,2025,1,0,spring
+3,"Jersey Mills","Peralatan Olahraga",2025-05-12,28,5,2025,1,0,spring
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-05-12,23,5,2025,1,0,spring
+5,Piala,"Peralatan Olahraga",2025-05-12,24,5,2025,1,0,spring
+6,"Sepatu Futsal","Peralatan Olahraga",2025-05-12,33,5,2025,1,0,spring
+7,"Bola Basket","Peralatan Olahraga",2025-05-12,25,5,2025,1,0,spring
+8,"Jersey Basket","Peralatan Olahraga",2025-05-12,23,5,2025,1,0,spring
+9,"Bola Sepak","Peralatan Olahraga",2025-05-12,34,5,2025,1,0,spring
+10,"Raket Badminton","Peralatan Olahraga",2025-05-12,25,5,2025,1,0,spring
+11,Shuttlecock,"Peralatan Olahraga",2025-05-12,21,5,2025,1,0,spring
+12,"Raket Tenis","Peralatan Olahraga",2025-05-12,27,5,2025,1,0,spring
+13,"Bola Tenis","Peralatan Olahraga",2025-05-12,29,5,2025,1,0,spring
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-05-12,25,5,2025,1,0,spring
+15,"Celana Training","Peralatan Olahraga",2025-05-12,23,5,2025,1,0,spring
+16,"Jaket Olahraga","Peralatan Olahraga",2025-05-12,35,5,2025,1,0,spring
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-05-12,32,5,2025,1,0,spring
+18,"Matras Yoga","Peralatan Olahraga",2025-05-12,20,5,2025,1,0,spring
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-05-12,23,5,2025,1,0,spring
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-05-12,28,5,2025,1,0,spring
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-05-19,21,5,2025,1,0,spring
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-05-19,25,5,2025,1,0,spring
+3,"Jersey Mills","Peralatan Olahraga",2025-05-19,25,5,2025,1,0,spring
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-05-19,34,5,2025,1,0,spring
+5,Piala,"Peralatan Olahraga",2025-05-19,28,5,2025,1,0,spring
+6,"Sepatu Futsal","Peralatan Olahraga",2025-05-19,28,5,2025,1,0,spring
+7,"Bola Basket","Peralatan Olahraga",2025-05-19,30,5,2025,1,0,spring
+8,"Jersey Basket","Peralatan Olahraga",2025-05-19,23,5,2025,1,0,spring
+9,"Bola Sepak","Peralatan Olahraga",2025-05-19,31,5,2025,1,0,spring
+10,"Raket Badminton","Peralatan Olahraga",2025-05-19,25,5,2025,1,0,spring
+11,Shuttlecock,"Peralatan Olahraga",2025-05-19,20,5,2025,1,0,spring
+12,"Raket Tenis","Peralatan Olahraga",2025-05-19,23,5,2025,1,0,spring
+13,"Bola Tenis","Peralatan Olahraga",2025-05-19,23,5,2025,1,0,spring
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-05-19,23,5,2025,1,0,spring
+15,"Celana Training","Peralatan Olahraga",2025-05-19,27,5,2025,1,0,spring
+16,"Jaket Olahraga","Peralatan Olahraga",2025-05-19,24,5,2025,1,0,spring
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-05-19,22,5,2025,1,0,spring
+18,"Matras Yoga","Peralatan Olahraga",2025-05-19,22,5,2025,1,0,spring
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-05-19,25,5,2025,1,0,spring
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-05-19,28,5,2025,1,0,spring
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-05-26,36,5,2025,1,0,spring
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-05-26,29,5,2025,1,0,spring
+3,"Jersey Mills","Peralatan Olahraga",2025-05-26,30,5,2025,1,0,spring
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-05-26,28,5,2025,1,0,spring
+5,Piala,"Peralatan Olahraga",2025-05-26,32,5,2025,1,0,spring
+6,"Sepatu Futsal","Peralatan Olahraga",2025-05-26,21,5,2025,1,0,spring
+7,"Bola Basket","Peralatan Olahraga",2025-05-26,21,5,2025,1,0,spring
+8,"Jersey Basket","Peralatan Olahraga",2025-05-26,20,5,2025,1,0,spring
+9,"Bola Sepak","Peralatan Olahraga",2025-05-26,31,5,2025,1,0,spring
+10,"Raket Badminton","Peralatan Olahraga",2025-05-26,21,5,2025,1,0,spring
+11,Shuttlecock,"Peralatan Olahraga",2025-05-26,24,5,2025,1,0,spring
+12,"Raket Tenis","Peralatan Olahraga",2025-05-26,30,5,2025,1,0,spring
+13,"Bola Tenis","Peralatan Olahraga",2025-05-26,30,5,2025,1,0,spring
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-05-26,34,5,2025,1,0,spring
+15,"Celana Training","Peralatan Olahraga",2025-05-26,20,5,2025,1,0,spring
+16,"Jaket Olahraga","Peralatan Olahraga",2025-05-26,24,5,2025,1,0,spring
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-05-26,24,5,2025,1,0,spring
+18,"Matras Yoga","Peralatan Olahraga",2025-05-26,32,5,2025,1,0,spring
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-05-26,30,5,2025,1,0,spring
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-05-26,22,5,2025,1,0,spring
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-06-02,31,6,2025,1,0,summer
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-06-02,33,6,2025,1,0,summer
+3,"Jersey Mills","Peralatan Olahraga",2025-06-02,21,6,2025,1,0,summer
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-06-02,20,6,2025,1,0,summer
+5,Piala,"Peralatan Olahraga",2025-06-02,34,6,2025,1,0,summer
+6,"Sepatu Futsal","Peralatan Olahraga",2025-06-02,25,6,2025,1,0,summer
+7,"Bola Basket","Peralatan Olahraga",2025-06-02,23,6,2025,1,0,summer
+8,"Jersey Basket","Peralatan Olahraga",2025-06-02,29,6,2025,1,0,summer
+9,"Bola Sepak","Peralatan Olahraga",2025-06-02,23,6,2025,1,0,summer
+10,"Raket Badminton","Peralatan Olahraga",2025-06-02,36,6,2025,1,0,summer
+11,Shuttlecock,"Peralatan Olahraga",2025-06-02,31,6,2025,1,0,summer
+12,"Raket Tenis","Peralatan Olahraga",2025-06-02,25,6,2025,1,0,summer
+13,"Bola Tenis","Peralatan Olahraga",2025-06-02,28,6,2025,1,0,summer
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-06-02,28,6,2025,1,0,summer
+15,"Celana Training","Peralatan Olahraga",2025-06-02,34,6,2025,1,0,summer
+16,"Jaket Olahraga","Peralatan Olahraga",2025-06-02,28,6,2025,1,0,summer
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-06-02,27,6,2025,1,0,summer
+18,"Matras Yoga","Peralatan Olahraga",2025-06-02,28,6,2025,1,0,summer
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-06-02,29,6,2025,1,0,summer
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-06-02,21,6,2025,1,0,summer
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-06-09,27,6,2025,1,0,summer
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-06-09,29,6,2025,1,0,summer
+3,"Jersey Mills","Peralatan Olahraga",2025-06-09,26,6,2025,1,0,summer
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-06-09,35,6,2025,1,0,summer
+5,Piala,"Peralatan Olahraga",2025-06-09,28,6,2025,1,0,summer
+6,"Sepatu Futsal","Peralatan Olahraga",2025-06-09,26,6,2025,1,0,summer
+7,"Bola Basket","Peralatan Olahraga",2025-06-09,30,6,2025,1,0,summer
+8,"Jersey Basket","Peralatan Olahraga",2025-06-09,29,6,2025,1,0,summer
+9,"Bola Sepak","Peralatan Olahraga",2025-06-09,23,6,2025,1,0,summer
+10,"Raket Badminton","Peralatan Olahraga",2025-06-09,27,6,2025,1,0,summer
+11,Shuttlecock,"Peralatan Olahraga",2025-06-09,30,6,2025,1,0,summer
+12,"Raket Tenis","Peralatan Olahraga",2025-06-09,30,6,2025,1,0,summer
+13,"Bola Tenis","Peralatan Olahraga",2025-06-09,29,6,2025,1,0,summer
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-06-09,26,6,2025,1,0,summer
+15,"Celana Training","Peralatan Olahraga",2025-06-09,24,6,2025,1,0,summer
+16,"Jaket Olahraga","Peralatan Olahraga",2025-06-09,32,6,2025,1,0,summer
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-06-09,29,6,2025,1,0,summer
+18,"Matras Yoga","Peralatan Olahraga",2025-06-09,29,6,2025,1,0,summer
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-06-09,26,6,2025,1,0,summer
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-06-09,30,6,2025,1,0,summer
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-06-16,31,6,2025,1,0,summer
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-06-16,30,6,2025,1,0,summer
+3,"Jersey Mills","Peralatan Olahraga",2025-06-16,21,6,2025,1,0,summer
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-06-16,24,6,2025,1,0,summer
+5,Piala,"Peralatan Olahraga",2025-06-16,22,6,2025,1,0,summer
+6,"Sepatu Futsal","Peralatan Olahraga",2025-06-16,27,6,2025,1,0,summer
+7,"Bola Basket","Peralatan Olahraga",2025-06-16,25,6,2025,1,0,summer
+8,"Jersey Basket","Peralatan Olahraga",2025-06-16,28,6,2025,1,0,summer
+9,"Bola Sepak","Peralatan Olahraga",2025-06-16,33,6,2025,1,0,summer
+10,"Raket Badminton","Peralatan Olahraga",2025-06-16,31,6,2025,1,0,summer
+11,Shuttlecock,"Peralatan Olahraga",2025-06-16,34,6,2025,1,0,summer
+12,"Raket Tenis","Peralatan Olahraga",2025-06-16,26,6,2025,1,0,summer
+13,"Bola Tenis","Peralatan Olahraga",2025-06-16,27,6,2025,1,0,summer
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-06-16,25,6,2025,1,0,summer
+15,"Celana Training","Peralatan Olahraga",2025-06-16,23,6,2025,1,0,summer
+16,"Jaket Olahraga","Peralatan Olahraga",2025-06-16,32,6,2025,1,0,summer
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-06-16,30,6,2025,1,0,summer
+18,"Matras Yoga","Peralatan Olahraga",2025-06-16,24,6,2025,1,0,summer
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-06-16,28,6,2025,1,0,summer
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-06-16,29,6,2025,1,0,summer
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-06-23,26,6,2025,1,0,summer
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-06-23,20,6,2025,1,0,summer
+3,"Jersey Mills","Peralatan Olahraga",2025-06-23,32,6,2025,1,0,summer
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-06-23,25,6,2025,1,0,summer
+5,Piala,"Peralatan Olahraga",2025-06-23,32,6,2025,1,0,summer
+6,"Sepatu Futsal","Peralatan Olahraga",2025-06-23,26,6,2025,1,0,summer
+7,"Bola Basket","Peralatan Olahraga",2025-06-23,24,6,2025,1,0,summer
+8,"Jersey Basket","Peralatan Olahraga",2025-06-23,26,6,2025,1,0,summer
+9,"Bola Sepak","Peralatan Olahraga",2025-06-23,30,6,2025,1,0,summer
+10,"Raket Badminton","Peralatan Olahraga",2025-06-23,22,6,2025,1,0,summer
+11,Shuttlecock,"Peralatan Olahraga",2025-06-23,21,6,2025,1,0,summer
+12,"Raket Tenis","Peralatan Olahraga",2025-06-23,31,6,2025,1,0,summer
+13,"Bola Tenis","Peralatan Olahraga",2025-06-23,20,6,2025,1,0,summer
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-06-23,28,6,2025,1,0,summer
+15,"Celana Training","Peralatan Olahraga",2025-06-23,26,6,2025,1,0,summer
+16,"Jaket Olahraga","Peralatan Olahraga",2025-06-23,34,6,2025,1,0,summer
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-06-23,35,6,2025,1,0,summer
+18,"Matras Yoga","Peralatan Olahraga",2025-06-23,20,6,2025,1,0,summer
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-06-23,29,6,2025,1,0,summer
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-06-23,21,6,2025,1,0,summer
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-06-30,30,6,2025,1,0,summer
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-06-30,29,6,2025,1,0,summer
+3,"Jersey Mills","Peralatan Olahraga",2025-06-30,31,6,2025,1,0,summer
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-06-30,37,6,2025,1,0,summer
+5,Piala,"Peralatan Olahraga",2025-06-30,35,6,2025,1,0,summer
+6,"Sepatu Futsal","Peralatan Olahraga",2025-06-30,21,6,2025,1,0,summer
+7,"Bola Basket","Peralatan Olahraga",2025-06-30,27,6,2025,1,0,summer
+8,"Jersey Basket","Peralatan Olahraga",2025-06-30,29,6,2025,1,0,summer
+9,"Bola Sepak","Peralatan Olahraga",2025-06-30,26,6,2025,1,0,summer
+10,"Raket Badminton","Peralatan Olahraga",2025-06-30,30,6,2025,1,0,summer
+11,Shuttlecock,"Peralatan Olahraga",2025-06-30,35,6,2025,1,0,summer
+12,"Raket Tenis","Peralatan Olahraga",2025-06-30,25,6,2025,1,0,summer
+13,"Bola Tenis","Peralatan Olahraga",2025-06-30,20,6,2025,1,0,summer
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-06-30,31,6,2025,1,0,summer
+15,"Celana Training","Peralatan Olahraga",2025-06-30,22,6,2025,1,0,summer
+16,"Jaket Olahraga","Peralatan Olahraga",2025-06-30,29,6,2025,1,0,summer
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-06-30,33,6,2025,1,0,summer
+18,"Matras Yoga","Peralatan Olahraga",2025-06-30,31,6,2025,1,0,summer
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-06-30,32,6,2025,1,0,summer
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-06-30,25,6,2025,1,0,summer
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-07-07,21,7,2025,1,0,summer
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-07-07,32,7,2025,1,0,summer
+3,"Jersey Mills","Peralatan Olahraga",2025-07-07,24,7,2025,1,0,summer
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-07-07,30,7,2025,1,0,summer
+5,Piala,"Peralatan Olahraga",2025-07-07,31,7,2025,1,0,summer
+6,"Sepatu Futsal","Peralatan Olahraga",2025-07-07,28,7,2025,1,0,summer
+7,"Bola Basket","Peralatan Olahraga",2025-07-07,22,7,2025,1,0,summer
+8,"Jersey Basket","Peralatan Olahraga",2025-07-07,20,7,2025,1,0,summer
+9,"Bola Sepak","Peralatan Olahraga",2025-07-07,28,7,2025,1,0,summer
+10,"Raket Badminton","Peralatan Olahraga",2025-07-07,22,7,2025,1,0,summer
+11,Shuttlecock,"Peralatan Olahraga",2025-07-07,31,7,2025,1,0,summer
+12,"Raket Tenis","Peralatan Olahraga",2025-07-07,30,7,2025,1,0,summer
+13,"Bola Tenis","Peralatan Olahraga",2025-07-07,30,7,2025,1,0,summer
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-07-07,27,7,2025,1,0,summer
+15,"Celana Training","Peralatan Olahraga",2025-07-07,23,7,2025,1,0,summer
+16,"Jaket Olahraga","Peralatan Olahraga",2025-07-07,31,7,2025,1,0,summer
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-07-07,26,7,2025,1,0,summer
+18,"Matras Yoga","Peralatan Olahraga",2025-07-07,27,7,2025,1,0,summer
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-07-07,30,7,2025,1,0,summer
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-07-07,30,7,2025,1,0,summer
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-07-14,28,7,2025,1,0,summer
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-07-14,29,7,2025,1,0,summer
+3,"Jersey Mills","Peralatan Olahraga",2025-07-14,25,7,2025,1,0,summer
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-07-14,26,7,2025,1,0,summer
+5,Piala,"Peralatan Olahraga",2025-07-14,31,7,2025,1,0,summer
+6,"Sepatu Futsal","Peralatan Olahraga",2025-07-14,20,7,2025,1,0,summer
+7,"Bola Basket","Peralatan Olahraga",2025-07-14,23,7,2025,1,0,summer
+8,"Jersey Basket","Peralatan Olahraga",2025-07-14,30,7,2025,1,0,summer
+9,"Bola Sepak","Peralatan Olahraga",2025-07-14,22,7,2025,1,0,summer
+10,"Raket Badminton","Peralatan Olahraga",2025-07-14,23,7,2025,1,0,summer
+11,Shuttlecock,"Peralatan Olahraga",2025-07-14,24,7,2025,1,0,summer
+12,"Raket Tenis","Peralatan Olahraga",2025-07-14,25,7,2025,1,0,summer
+13,"Bola Tenis","Peralatan Olahraga",2025-07-14,30,7,2025,1,0,summer
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-07-14,27,7,2025,1,0,summer
+15,"Celana Training","Peralatan Olahraga",2025-07-14,20,7,2025,1,0,summer
+16,"Jaket Olahraga","Peralatan Olahraga",2025-07-14,22,7,2025,1,0,summer
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-07-14,33,7,2025,1,0,summer
+18,"Matras Yoga","Peralatan Olahraga",2025-07-14,25,7,2025,1,0,summer
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-07-14,22,7,2025,1,0,summer
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-07-14,31,7,2025,1,0,summer
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-07-21,29,7,2025,1,0,summer
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-07-21,22,7,2025,1,0,summer
+3,"Jersey Mills","Peralatan Olahraga",2025-07-21,29,7,2025,1,0,summer
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-07-21,32,7,2025,1,0,summer
+5,Piala,"Peralatan Olahraga",2025-07-21,23,7,2025,1,0,summer
+6,"Sepatu Futsal","Peralatan Olahraga",2025-07-21,35,7,2025,1,0,summer
+7,"Bola Basket","Peralatan Olahraga",2025-07-21,32,7,2025,1,0,summer
+8,"Jersey Basket","Peralatan Olahraga",2025-07-21,33,7,2025,1,0,summer
+9,"Bola Sepak","Peralatan Olahraga",2025-07-21,34,7,2025,1,0,summer
+10,"Raket Badminton","Peralatan Olahraga",2025-07-21,20,7,2025,1,0,summer
+11,Shuttlecock,"Peralatan Olahraga",2025-07-21,22,7,2025,1,0,summer
+12,"Raket Tenis","Peralatan Olahraga",2025-07-21,31,7,2025,1,0,summer
+13,"Bola Tenis","Peralatan Olahraga",2025-07-21,27,7,2025,1,0,summer
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-07-21,26,7,2025,1,0,summer
+15,"Celana Training","Peralatan Olahraga",2025-07-21,32,7,2025,1,0,summer
+16,"Jaket Olahraga","Peralatan Olahraga",2025-07-21,31,7,2025,1,0,summer
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-07-21,31,7,2025,1,0,summer
+18,"Matras Yoga","Peralatan Olahraga",2025-07-21,31,7,2025,1,0,summer
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-07-21,33,7,2025,1,0,summer
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-07-21,20,7,2025,1,0,summer
+12,"Raket Tenis","Peralatan Olahraga",2025-07-28,22,7,2025,1,0,summer
+13,"Bola Tenis","Peralatan Olahraga",2025-07-28,23,7,2025,1,0,summer
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-07-28,33,7,2025,1,0,summer
+15,"Celana Training","Peralatan Olahraga",2025-07-28,26,7,2025,1,0,summer
+16,"Jaket Olahraga","Peralatan Olahraga",2025-07-28,26,7,2025,1,0,summer
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-07-28,29,7,2025,1,0,summer
+18,"Matras Yoga","Peralatan Olahraga",2025-07-28,27,7,2025,1,0,summer
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-07-28,33,7,2025,1,0,summer
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-07-28,29,7,2025,1,0,summer
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-07-28,25,7,2025,1,0,summer
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-07-28,29,7,2025,1,0,summer
+3,"Jersey Mills","Peralatan Olahraga",2025-07-28,29,7,2025,1,0,summer
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-07-28,23,7,2025,1,0,summer
+5,Piala,"Peralatan Olahraga",2025-07-28,25,7,2025,1,0,summer
+6,"Sepatu Futsal","Peralatan Olahraga",2025-07-28,28,7,2025,1,0,summer
+7,"Bola Basket","Peralatan Olahraga",2025-07-28,37,7,2025,1,0,summer
+8,"Jersey Basket","Peralatan Olahraga",2025-07-28,28,7,2025,1,0,summer
+9,"Bola Sepak","Peralatan Olahraga",2025-07-28,29,7,2025,1,0,summer
+10,"Raket Badminton","Peralatan Olahraga",2025-07-28,30,7,2025,1,0,summer
+11,Shuttlecock,"Peralatan Olahraga",2025-07-28,30,7,2025,1,0,summer
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-08-04,25,8,2025,1,0,summer
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-08-04,28,8,2025,1,0,summer
+3,"Jersey Mills","Peralatan Olahraga",2025-08-04,27,8,2025,1,0,summer
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-08-04,33,8,2025,1,0,summer
+5,Piala,"Peralatan Olahraga",2025-08-04,24,8,2025,1,0,summer
+6,"Sepatu Futsal","Peralatan Olahraga",2025-08-04,24,8,2025,1,0,summer
+7,"Bola Basket","Peralatan Olahraga",2025-08-04,20,8,2025,1,0,summer
+8,"Jersey Basket","Peralatan Olahraga",2025-08-04,29,8,2025,1,0,summer
+9,"Bola Sepak","Peralatan Olahraga",2025-08-04,27,8,2025,1,0,summer
+10,"Raket Badminton","Peralatan Olahraga",2025-08-04,31,8,2025,1,0,summer
+11,Shuttlecock,"Peralatan Olahraga",2025-08-04,31,8,2025,1,0,summer
+12,"Raket Tenis","Peralatan Olahraga",2025-08-04,32,8,2025,1,0,summer
+13,"Bola Tenis","Peralatan Olahraga",2025-08-04,28,8,2025,1,0,summer
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-08-04,28,8,2025,1,0,summer
+15,"Celana Training","Peralatan Olahraga",2025-08-04,27,8,2025,1,0,summer
+16,"Jaket Olahraga","Peralatan Olahraga",2025-08-04,29,8,2025,1,0,summer
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-08-04,28,8,2025,1,0,summer
+18,"Matras Yoga","Peralatan Olahraga",2025-08-04,21,8,2025,1,0,summer
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-08-04,27,8,2025,1,0,summer
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-08-04,32,8,2025,1,0,summer
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-08-11,30,8,2025,1,0,summer
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-08-11,24,8,2025,1,0,summer
+3,"Jersey Mills","Peralatan Olahraga",2025-08-11,34,8,2025,1,0,summer
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-08-11,21,8,2025,1,0,summer
+5,Piala,"Peralatan Olahraga",2025-08-11,24,8,2025,1,0,summer
+6,"Sepatu Futsal","Peralatan Olahraga",2025-08-11,27,8,2025,1,0,summer
+7,"Bola Basket","Peralatan Olahraga",2025-08-11,21,8,2025,1,0,summer
+8,"Jersey Basket","Peralatan Olahraga",2025-08-11,22,8,2025,1,0,summer
+9,"Bola Sepak","Peralatan Olahraga",2025-08-11,23,8,2025,1,0,summer
+10,"Raket Badminton","Peralatan Olahraga",2025-08-11,28,8,2025,1,0,summer
+11,Shuttlecock,"Peralatan Olahraga",2025-08-11,32,8,2025,1,0,summer
+12,"Raket Tenis","Peralatan Olahraga",2025-08-11,22,8,2025,1,0,summer
+13,"Bola Tenis","Peralatan Olahraga",2025-08-11,29,8,2025,1,0,summer
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-08-11,22,8,2025,1,0,summer
+15,"Celana Training","Peralatan Olahraga",2025-08-11,20,8,2025,1,0,summer
+16,"Jaket Olahraga","Peralatan Olahraga",2025-08-11,21,8,2025,1,0,summer
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-08-11,22,8,2025,1,0,summer
+18,"Matras Yoga","Peralatan Olahraga",2025-08-11,20,8,2025,1,0,summer
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-08-11,24,8,2025,1,0,summer
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-08-11,33,8,2025,1,0,summer
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-08-18,29,8,2025,1,0,summer
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-08-18,30,8,2025,1,0,summer
+3,"Jersey Mills","Peralatan Olahraga",2025-08-18,28,8,2025,1,0,summer
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-08-18,29,8,2025,1,0,summer
+5,Piala,"Peralatan Olahraga",2025-08-18,23,8,2025,1,0,summer
+6,"Sepatu Futsal","Peralatan Olahraga",2025-08-18,23,8,2025,1,0,summer
+7,"Bola Basket","Peralatan Olahraga",2025-08-18,27,8,2025,1,0,summer
+8,"Jersey Basket","Peralatan Olahraga",2025-08-18,33,8,2025,1,0,summer
+9,"Bola Sepak","Peralatan Olahraga",2025-08-18,24,8,2025,1,0,summer
+10,"Raket Badminton","Peralatan Olahraga",2025-08-18,22,8,2025,1,0,summer
+11,Shuttlecock,"Peralatan Olahraga",2025-08-18,28,8,2025,1,0,summer
+12,"Raket Tenis","Peralatan Olahraga",2025-08-18,31,8,2025,1,0,summer
+13,"Bola Tenis","Peralatan Olahraga",2025-08-18,27,8,2025,1,0,summer
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-08-18,30,8,2025,1,0,summer
+15,"Celana Training","Peralatan Olahraga",2025-08-18,24,8,2025,1,0,summer
+16,"Jaket Olahraga","Peralatan Olahraga",2025-08-18,28,8,2025,1,0,summer
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-08-18,20,8,2025,1,0,summer
+18,"Matras Yoga","Peralatan Olahraga",2025-08-18,28,8,2025,1,0,summer
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-08-18,32,8,2025,1,0,summer
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-08-18,23,8,2025,1,0,summer
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-08-25,31,8,2025,1,0,summer
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-08-25,22,8,2025,1,0,summer
+3,"Jersey Mills","Peralatan Olahraga",2025-08-25,30,8,2025,1,0,summer
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-08-25,21,8,2025,1,0,summer
+5,Piala,"Peralatan Olahraga",2025-08-25,31,8,2025,1,0,summer
+6,"Sepatu Futsal","Peralatan Olahraga",2025-08-25,20,8,2025,1,0,summer
+7,"Bola Basket","Peralatan Olahraga",2025-08-25,27,8,2025,1,0,summer
+8,"Jersey Basket","Peralatan Olahraga",2025-08-25,25,8,2025,1,0,summer
+9,"Bola Sepak","Peralatan Olahraga",2025-08-25,20,8,2025,1,0,summer
+10,"Raket Badminton","Peralatan Olahraga",2025-08-25,29,8,2025,1,0,summer
+11,Shuttlecock,"Peralatan Olahraga",2025-08-25,33,8,2025,1,0,summer
+12,"Raket Tenis","Peralatan Olahraga",2025-08-25,27,8,2025,1,0,summer
+13,"Bola Tenis","Peralatan Olahraga",2025-08-25,29,8,2025,1,0,summer
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-08-25,30,8,2025,1,0,summer
+15,"Celana Training","Peralatan Olahraga",2025-08-25,26,8,2025,1,0,summer
+16,"Jaket Olahraga","Peralatan Olahraga",2025-08-25,30,8,2025,1,0,summer
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-08-25,28,8,2025,1,0,summer
+18,"Matras Yoga","Peralatan Olahraga",2025-08-25,26,8,2025,1,0,summer
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-08-25,31,8,2025,1,0,summer
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-08-25,27,8,2025,1,0,summer
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-09-01,22,9,2025,1,0,autumn
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-09-01,21,9,2025,1,0,autumn
+3,"Jersey Mills","Peralatan Olahraga",2025-09-01,21,9,2025,1,0,autumn
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-09-01,27,9,2025,1,0,autumn
+5,Piala,"Peralatan Olahraga",2025-09-01,20,9,2025,1,0,autumn
+6,"Sepatu Futsal","Peralatan Olahraga",2025-09-01,27,9,2025,1,0,autumn
+7,"Bola Basket","Peralatan Olahraga",2025-09-01,31,9,2025,1,0,autumn
+8,"Jersey Basket","Peralatan Olahraga",2025-09-01,21,9,2025,1,0,autumn
+9,"Bola Sepak","Peralatan Olahraga",2025-09-01,27,9,2025,1,0,autumn
+10,"Raket Badminton","Peralatan Olahraga",2025-09-01,23,9,2025,1,0,autumn
+11,Shuttlecock,"Peralatan Olahraga",2025-09-01,22,9,2025,1,0,autumn
+12,"Raket Tenis","Peralatan Olahraga",2025-09-01,30,9,2025,1,0,autumn
+13,"Bola Tenis","Peralatan Olahraga",2025-09-01,25,9,2025,1,0,autumn
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-09-01,27,9,2025,1,0,autumn
+15,"Celana Training","Peralatan Olahraga",2025-09-01,21,9,2025,1,0,autumn
+16,"Jaket Olahraga","Peralatan Olahraga",2025-09-01,28,9,2025,1,0,autumn
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-09-01,22,9,2025,1,0,autumn
+18,"Matras Yoga","Peralatan Olahraga",2025-09-01,28,9,2025,1,0,autumn
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-09-01,20,9,2025,1,0,autumn
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-09-01,30,9,2025,1,0,autumn
+1,"Sepatu Bola Ortus","Peralatan Olahraga",2025-09-08,28,9,2025,1,0,autumn
+2,"Kaos Kaki Avo","Peralatan Olahraga",2025-09-08,29,9,2025,1,0,autumn
+3,"Jersey Mills","Peralatan Olahraga",2025-09-08,20,9,2025,1,0,autumn
+4,"Tali Sepatu Kipzkapz","Peralatan Olahraga",2025-09-08,27,9,2025,1,0,autumn
+5,Piala,"Peralatan Olahraga",2025-09-08,32,9,2025,1,0,autumn
+6,"Sepatu Futsal","Peralatan Olahraga",2025-09-08,30,9,2025,1,0,autumn
+7,"Bola Basket","Peralatan Olahraga",2025-09-08,23,9,2025,1,0,autumn
+8,"Jersey Basket","Peralatan Olahraga",2025-09-08,22,9,2025,1,0,autumn
+9,"Bola Sepak","Peralatan Olahraga",2025-09-08,20,9,2025,1,0,autumn
+10,"Raket Badminton","Peralatan Olahraga",2025-09-08,20,9,2025,1,0,autumn
+11,Shuttlecock,"Peralatan Olahraga",2025-09-08,29,9,2025,1,0,autumn
+12,"Raket Tenis","Peralatan Olahraga",2025-09-08,21,9,2025,1,0,autumn
+13,"Bola Tenis","Peralatan Olahraga",2025-09-08,32,9,2025,1,0,autumn
+14,"Sepatu Lari Nike","Peralatan Olahraga",2025-09-08,20,9,2025,1,0,autumn
+15,"Celana Training","Peralatan Olahraga",2025-09-08,24,9,2025,1,0,autumn
+16,"Jaket Olahraga","Peralatan Olahraga",2025-09-08,33,9,2025,1,0,autumn
+17,"Sarung Tangan Kiper","Peralatan Olahraga",2025-09-08,21,9,2025,1,0,autumn
+18,"Matras Yoga","Peralatan Olahraga",2025-09-08,22,9,2025,1,0,autumn
+19,"Dumbbell 5kg","Peralatan Olahraga",2025-09-08,36,9,2025,1,0,autumn
+20,"Botol Minum Olahraga","Peralatan Olahraga",2025-09-08,20,9,2025,1,0,autumn

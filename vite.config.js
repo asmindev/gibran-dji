@@ -10,4 +10,9 @@ export default defineConfig({
         }),
         tailwindcss(),
     ],
+    server: {
+        watch: {
+            ignored: ["**/scripts/data/**", "**/scripts/models/**"],
+        },
+    },
 });

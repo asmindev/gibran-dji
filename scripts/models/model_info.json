@@ -1,0 +1,86 @@
+{
+  "sales": {
+    "train_r2": 0.9936977378017329,
+    "test_r2": 0.9588052541627989,
+    "train_rmse": 2.153776739105566,
+    "test_rmse": 4.746199047318207,
+    "train_mae": 1.531956619335525,
+    "test_mae": 2.8529427907162326,
+    "cv_r2_mean": 0.9532791877285147,
+    "cv_r2_std": 0.017484601500717074,
+    "feature_importance": {
+      "item_id": 0.0027408845330198738,
+      "month": 0.037848650799389094,
+      "year": 0.0,
+      "avg_quantity": 0.02702341111057127,
+      "transaction_count": 0.6400138887619572,
+      "weekend_ratio": 0.0013067405902205409,
+      "rolling_avg_3m": 0.008095316811765783,
+      "rolling_avg_6m": 0.006246937782590081,
+      "quantity_growth": 0.15116357117563467,
+      "category_encoded": 0.0,
+      "season_encoded": 0.1255605984348515
+    },
+    "training_samples": 128,
+    "test_samples": 32,
+    "feature_columns": [
+      "item_id",
+      "month",
+      "year",
+      "avg_quantity",
+      "transaction_count",
+      "weekend_ratio",
+      "rolling_avg_3m",
+      "rolling_avg_6m",
+      "quantity_growth",
+      "category_encoded",
+      "season_encoded"
+    ]
+  },
+  "restock": {
+    "train_r2": 0.9970093642191001,
+    "test_r2": 0.9959850574507421,
+    "train_rmse": 1.4680188863877668,
+    "test_rmse": 1.6425715792930704,
+    "train_mae": 0.6936976010101044,
+    "test_mae": 1.042656622023812,
+    "cv_r2_mean": 0.9815436372691577,
+    "cv_r2_std": 0.015453744282878906,
+    "feature_importance": {
+      "item_id": 0.0002762143694634942,
+      "month": 0.11022336034913428,
+      "year": 0.0,
+      "avg_quantity": 0.09483247914143383,
+      "transaction_count": 0.3393081401268343,
+      "weekend_ratio": 0.0,
+      "rolling_avg_3m": 0.08547830853337572,
+      "rolling_avg_6m": 0.001970801107394422,
+      "quantity_growth": 0.21402947113383727,
+      "category_encoded": 0.0,
+      "season_encoded": 0.15388122523852674
+    },
+    "training_samples": 128,
+    "test_samples": 32,
+    "feature_columns": [
+      "item_id",
+      "month",
+      "year",
+      "avg_quantity",
+      "transaction_count",
+      "weekend_ratio",
+      "rolling_avg_3m",
+      "rolling_avg_6m",
+      "quantity_growth",
+      "category_encoded",
+      "season_encoded"
+    ]
+  },
+  "training_date": "2025-09-18T01:57:26.777974",
+  "data_period": {
+    "start_date": "2024-09-18",
+    "end_date": "2025-09-18",
+    "total_products": 20,
+    "products_with_sales_data": 20,
+    "products_with_restock_data": 20
+  }
+}

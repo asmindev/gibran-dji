@@ -48,146 +48,57 @@
                         Dashboard
                     </a>
 
-                    <!-- Master Data Section -->
-                    <div class="space-y-1">
-                        <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-4 py-2">
-                            Master Data
-                        </div>
+                    <!-- Kategori -->
+                    <a href="{{ route('categories.index') }}"
+                        class="@if(request()->routeIs('categories.*')) bg-primary text-white @else text-gray-600 hover:bg-gray-100 hover:text-gray-900 @endif flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                            </path>
+                        </svg>
+                        Kategori
+                    </a>
 
-                        <a href="{{ route('categories.index') }}"
-                            class="@if(request()->routeIs('categories.*')) bg-primary text-white @else text-gray-600 hover:bg-gray-100 hover:text-gray-900 @endif flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ml-4">
-                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
-                                </path>
-                            </svg>
-                            Kategori
-                        </a>
+                    <!-- Barang -->
+                    <a href="{{ route('items.index') }}"
+                        class="@if(request()->routeIs('items.*')) bg-primary text-white @else text-gray-600 hover:bg-gray-100 hover:text-gray-900 @endif flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                        </svg>
+                        Barang
+                    </a>
 
-                        <a href="{{ route('items.index') }}"
-                            class="@if(request()->routeIs('items.*')) bg-primary text-white @else text-gray-600 hover:bg-gray-100 hover:text-gray-900 @endif flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ml-4">
-                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-                            </svg>
-                            Barang
-                        </a>
-                    </div>
+                    <!-- Barang Masuk -->
+                    <a href="{{ route('incoming_items.index') }}"
+                        class="@if(request()->routeIs('incoming_items.*')) bg-primary text-white @else text-gray-600 hover:bg-gray-100 hover:text-gray-900 @endif flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+                        </svg>
+                        Barang Masuk
+                    </a>
 
-                    <!-- Transactions Section -->
-                    <div class="space-y-1">
-                        <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-4 py-2">
-                            Transactions
-                        </div>
+                    <!-- Barang Keluar -->
+                    <a href="{{ route('outgoing_items.index') }}"
+                        class="@if(request()->routeIs('outgoing_items.*')) bg-primary text-white @else text-gray-600 hover:bg-gray-100 hover:text-gray-900 @endif flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 16l4-4m0 0l-4-4m4 4H3"></path>
+                        </svg>
+                        Barang Keluar
+                    </a>
 
-                        <a href="{{ route('incoming_items.index') }}"
-                            class="@if(request()->routeIs('incoming_items.*')) bg-primary text-white @else text-gray-600 hover:bg-gray-100 hover:text-gray-900 @endif flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ml-4">
-                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
-                            </svg>
-                            Barang Masuk
-                        </a>
-
-                        <a href="{{ route('outgoing_items.index') }}"
-                            class="@if(request()->routeIs('outgoing_items.*')) bg-primary text-white @else text-gray-600 hover:bg-gray-100 hover:text-gray-900 @endif flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ml-4">
-                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M17 16l4-4m0 0l-4-4m4 4H3"></path>
-                            </svg>
-                            Barang Keluar
-                        </a>
-                    </div>
-
-                    <!-- Reports Section -->
-                    {{-- <div class="space-y-1">
-                        <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-4 py-2">
-                            Reports
-                        </div>
-
-                        <a href="{{ route('reports.index') }}"
-                            class="@if(request()->routeIs('reports.index')) bg-primary text-white @else text-gray-600 hover:bg-gray-100 hover:text-gray-900 @endif flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ml-4">
-                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                                </path>
-                            </svg>
-                            Semua Laporan
-                        </a>
-
-                        <a href="{{ route('reports.stock') }}"
-                            class="@if(request()->routeIs('reports.stock')) bg-primary text-white @else text-gray-600 hover:bg-gray-100 hover:text-gray-900 @endif flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ml-4">
-                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-                            </svg>
-                            Laporan Stok
-                        </a>
-
-                        <a href="{{ route('reports.incoming') }}"
-                            class="@if(request()->routeIs('reports.incoming')) bg-primary text-white @else text-gray-600 hover:bg-gray-100 hover:text-gray-900 @endif flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ml-4">
-                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
-                            </svg>
-                            Laporan Masuk
-                        </a>
-
-                        <a href="{{ route('reports.outgoing') }}"
-                            class="@if(request()->routeIs('reports.outgoing')) bg-primary text-white @else text-gray-600 hover:bg-gray-100 hover:text-gray-900 @endif flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ml-4">
-                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M17 16l4-4m0 0l-4-4m4 4H3"></path>
-                            </svg>
-                            Laporan Keluar
-                        </a>
-
-                        <a href="{{ route('reports.summary') }}"
-                            class="@if(request()->routeIs('reports.summary')) bg-primary text-white @else text-gray-600 hover:bg-gray-100 hover:text-gray-900 @endif flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ml-4">
-                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                </path>
-                            </svg>
-                            Laporan Ringkasan
-                        </a>
-                    </div> --}}
-
-                    <!-- Analysis Section -->
-                    {{-- <div class="space-y-1">
-                        <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-4 py-2">
-                            Analisis
-                        </div>
-
-
-
-                        <a href="{{ route('analysis.apriori-process') }}"
-                            class="@if(request()->routeIs('analysis.apriori-process')) bg-primary text-white @else text-gray-600 hover:bg-gray-100 hover:text-gray-900 @endif flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ml-4">
-                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z">
-                                </path>
-                            </svg>
-                            Proses Apriori
-                        </a>
-                    </div> --}}
-
-                    <!-- Prediction Section -->
-                    <div class="space-y-1">
-                        <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-4 py-2">
-                            Prediksi
-                        </div>
-
-                        <a href="{{ route('predictions.index') }}"
-                            class="@if(request()->routeIs('predictions.*')) bg-primary text-white @else text-gray-600 hover:bg-gray-100 hover:text-gray-900 @endif flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ml-4">
-                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
-                                </path>
-                            </svg>
-                            Prediksi Stok
-                        </a>
-                    </div>
+                    <!-- Prediksi Stok -->
+                    <a href="{{ route('predictions.index') }}"
+                        class="@if(request()->routeIs('predictions.*')) bg-primary text-white @else text-gray-600 hover:bg-gray-100 hover:text-gray-900 @endif flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                            </path>
+                        </svg>
+                        Prediksi Stok
+                    </a>
                 </nav>
 
                 <!-- Footer in Sidebar -->
@@ -307,6 +218,18 @@
                                 Barang Keluar
                             </a>
                         </div>
+
+                        <!-- Prediksi Stok -->
+                        <a href="{{ route('predictions.index') }}"
+                            class="@if(request()->routeIs('predictions.*')) bg-purple-100 text-purple-700 @else text-gray-600 hover:bg-gray-100 hover:text-gray-900 @endif flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200"
+                            onclick="toggleMobileSidebar()">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                                </path>
+                            </svg>
+                            Prediksi Stok
+                        </a>
 
                         <!-- Reports Section -->
                         {{-- <div class="space-y-1">

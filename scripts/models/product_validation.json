@@ -1,0 +1,150 @@
+{
+    "products": {
+        "1": {
+            "id": 1,
+            "name": "Sepatu Bola Ortus",
+            "category": "Peralatan Olahraga",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "2": {
+            "id": 2,
+            "name": "Kaos Kaki Avo",
+            "category": "Peralatan Olahraga",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "3": {
+            "id": 3,
+            "name": "Jersey Mills",
+            "category": "Peralatan Olahraga",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "4": {
+            "id": 4,
+            "name": "Tali Sepatu Kipzkapz",
+            "category": "Peralatan Olahraga",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "5": {
+            "id": 5,
+            "name": "Piala",
+            "category": "Peralatan Olahraga",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "6": {
+            "id": 6,
+            "name": "Sepatu Futsal",
+            "category": "Peralatan Olahraga",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "7": {
+            "id": 7,
+            "name": "Bola Basket",
+            "category": "Peralatan Olahraga",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "8": {
+            "id": 8,
+            "name": "Jersey Basket",
+            "category": "Peralatan Olahraga",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "9": {
+            "id": 9,
+            "name": "Bola Sepak",
+            "category": "Peralatan Olahraga",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "10": {
+            "id": 10,
+            "name": "Raket Badminton",
+            "category": "Peralatan Olahraga",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "11": {
+            "id": 11,
+            "name": "Shuttlecock",
+            "category": "Peralatan Olahraga",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "12": {
+            "id": 12,
+            "name": "Raket Tenis",
+            "category": "Peralatan Olahraga",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "13": {
+            "id": 13,
+            "name": "Bola Tenis",
+            "category": "Peralatan Olahraga",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "14": {
+            "id": 14,
+            "name": "Sepatu Lari Nike",
+            "category": "Peralatan Olahraga",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "15": {
+            "id": 15,
+            "name": "Celana Training",
+            "category": "Peralatan Olahraga",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "16": {
+            "id": 16,
+            "name": "Jaket Olahraga",
+            "category": "Peralatan Olahraga",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "17": {
+            "id": 17,
+            "name": "Sarung Tangan Kiper",
+            "category": "Peralatan Olahraga",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "18": {
+            "id": 18,
+            "name": "Matras Yoga",
+            "category": "Peralatan Olahraga",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "19": {
+            "id": 19,
+            "name": "Dumbbell 5kg",
+            "category": "Peralatan Olahraga",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "20": {
+            "id": 20,
+            "name": "Botol Minum Olahraga",
+            "category": "Peralatan Olahraga",
+            "has_sales_data": true,
+            "has_restock_data": true
+        }
+    },
+    "total_products": 20,
+    "products_with_sales_data": 20,
+    "products_with_restock_data": 20,
+    "export_date": "2025-09-17T17:51:58.542218Z",
+    "data_period_start": "2024-09-18",
+    "data_period_end": "2025-09-18"
+}

@@ -16,23 +16,9 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        // Get available months for Apriori filter first
-        $availableAprioriMonths = AprioriAnalysis::distinct()
-            ->orderBy('transaction_date', 'desc')
-            ->get(['transaction_date'])
-            ->map(function ($analysis) {
-                $monthFormat = \Carbon\Carbon::parse($analysis->transaction_date)->format('Y-m');
-                return [
-                    'value' => $monthFormat,
-                    'label' => \Carbon\Carbon::parse($analysis->transaction_date)->format('F Y')
-                ];
-            })
-            ->unique('value')
-            ->values();
+
 
         // Get month filter parameter, default to first available month for Apriori or current month
-        $defaultAprioriMonth = $availableAprioriMonths->isNotEmpty() ? $availableAprioriMonths->first()['value'] : now()->format('Y-m');
-        $selectedMonth = $request->get('month', $defaultAprioriMonth);
 
         // Get prediction month filter parameter, default to current month
         $selectedPredictionMonth = $request->get('prediction_month', now()->format('Y-m'));        // Basic Statistics
@@ -60,7 +46,6 @@ class DashboardController extends Controller
 
 
         // Get available months for filter dropdown (use the already computed data)
-        $availableMonths = $availableAprioriMonths;
 
         // Stock Predictions Data for Chart (selected month)
         $stockPredictions = StockPrediction::whereRaw("DATE_FORMAT(month, '%Y-%m') = ?", [$selectedPredictionMonth])
@@ -70,7 +55,6 @@ class DashboardController extends Controller
         // Prepare data for chart
         $predictionLabels = $stockPredictions->pluck('product')->toArray();
         $predictionData = $stockPredictions->pluck('prediction')->toArray();
-        $actualData = $stockPredictions->pluck('actual')->toArray();
 
         // Get available months for prediction filter
         $availablePredictionMonths = StockPrediction::distinct()
@@ -94,12 +78,9 @@ class DashboardController extends Controller
             'stockByCategory',
             'monthlyIncoming',
             'monthlyOutgoing',
-            'selectedMonth',
-            'availableMonths',
             'stockPredictions',
             'predictionLabels',
             'predictionData',
-            'actualData',
             'availablePredictionMonths',
             'selectedPredictionMonth'
         ));

@@ -87,8 +87,8 @@
             <div class="p-6 border-b border-gray-200">
                 <div class="flex justify-between items-center">
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-900">Prediksi vs Aktual Stok</h3>
-                        <p class="text-sm text-gray-600 mt-1">Perbandingan prediksi dan penjualan aktual per produk</p>
+                        <h3 class="text-lg font-semibold text-gray-900">Prediksi Stok</h3>
+                        <p class="text-sm text-gray-600 mt-1">Prediksi kebutuhan stok per produk</p>
                     </div>
                     @if($availablePredictionMonths->count() > 0)
                     <div class="flex items-center space-x-2">
@@ -117,33 +117,6 @@
                         Menampilkan data untuk {{ \Carbon\Carbon::parse($selectedPredictionMonth . '-01')->format('F Y')
                         }}
                     </p>
-                </div>
-
-                <!-- Accuracy Summary -->
-                <div class="mt-6 pt-4 border-t border-gray-200">
-                    @php
-                    $totalPredicted = array_sum($predictionData);
-                    $totalActual = array_sum($actualData);
-                    $overallAccuracy = $totalPredicted > 0 ? (1 - abs($totalPredicted - $totalActual) /
-                    max($totalPredicted, $totalActual)) * 100 : 0;
-                    @endphp
-                    <div class="grid grid-cols-3 gap-4 text-center">
-                        <div>
-                            <span class="text-sm font-medium text-gray-700">Total Prediksi</span>
-                            <p class="text-lg font-semibold text-blue-600">{{ number_format($totalPredicted) }}</p>
-                        </div>
-                        <div>
-                            <span class="text-sm font-medium text-gray-700">Total Aktual</span>
-                            <p class="text-lg font-semibold text-red-600">{{ number_format($totalActual) }}</p>
-                        </div>
-                        <div>
-                            <span class="text-sm font-medium text-gray-700">Akurasi Keseluruhan</span>
-                            <p
-                                class="text-lg font-semibold {{ $overallAccuracy >= 75 ? 'text-green-600' : ($overallAccuracy >= 50 ? 'text-yellow-600' : 'text-red-600') }}">
-                                {{ number_format($overallAccuracy, 1) }}%
-                            </p>
-                        </div>
-                    </div>
                 </div>
                 @else
                 <div class="text-center py-8">
@@ -233,37 +206,18 @@
     const stockPredictionsCtx = document.getElementById('stockPredictionsChart');
     if (stockPredictionsCtx) {
         const stockPredictionsChart = new Chart(stockPredictionsCtx.getContext('2d'), {
-            type: 'line',
+            type: 'bar',
             data: {
                 labels: {!! json_encode($predictionLabels) !!},
                 datasets: [
                     {
                         label: 'Prediksi',
                         data: {!! json_encode($predictionData) !!},
-                        borderColor: '#ef4444',
-                        backgroundColor: '#ef444410',
-                        borderWidth: 3,
-                        fill: false,
-                        tension: 0.4,
-                        pointBackgroundColor: '#ef4444',
-                        pointBorderColor: '#ffffff',
-                        pointBorderWidth: 2,
-                        pointRadius: 6,
-                        pointHoverRadius: 8,
-                    },
-                    {
-                        label: 'Aktual',
-                        data: {!! json_encode($actualData) !!},
-                        borderColor: '#3b82f6',
-                        backgroundColor: '#3b82f610',
-                        borderWidth: 3,
-                        fill: false,
-                        tension: 0.4,
-                        pointBackgroundColor: '#3b82f6',
-                        pointBorderColor: '#ffffff',
-                        pointBorderWidth: 2,
-                        pointRadius: 6,
-                        pointHoverRadius: 8,
+                        backgroundColor: '#3b82f6',
+                        borderColor: '#2563eb',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        borderSkipped: false,
                     }
                 ]
             },
@@ -272,23 +226,14 @@
                 plugins: {
                     ...commonOptions.plugins,
                     legend: {
-                        display: true,
-                        position: 'top',
-                        labels: {
-                            usePointStyle: true,
-                            padding: 20,
-                            font: {
-                                size: 12
-                            }
-                        }
+                        display: false
                     },
                     tooltip: {
                         ...commonOptions.plugins.tooltip,
                         callbacks: {
                             label: function(context) {
-                                const label = context.dataset.label;
                                 const value = context.parsed.y;
-                                return `${label}: ${value} unit`;
+                                return `Prediksi: ${value} unit`;
                             }
                         }
                     }
@@ -302,15 +247,6 @@
                             maxRotation: 45,
                             minRotation: 0
                         }
-                    }
-                },
-                interaction: {
-                    intersect: false,
-                    mode: 'index'
-                },
-                elements: {
-                    point: {
-                        hoverBackgroundColor: '#ffffff'
                     }
                 }
             }
