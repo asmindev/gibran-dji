@@ -52,8 +52,31 @@ class DashboardController extends Controller
             ->orderBy('product')
             ->get();
 
+        // Separate predictions by type
+        $salesPredictions = $stockPredictions->where('prediction_type', 'sales');
+        $restockPredictions = $stockPredictions->where('prediction_type', 'restock');
+
+        // Get all unique products for consistent labels
+        $allProducts = $stockPredictions->pluck('product')->unique()->sort()->values();
+
         // Prepare data for chart
-        $predictionLabels = $stockPredictions->pluck('product')->toArray();
+        $predictionLabels = $allProducts->toArray();
+
+        // Create sales data array with proper indexing
+        $salesData = [];
+        foreach ($allProducts as $product) {
+            $salesPrediction = $salesPredictions->where('product', $product)->first();
+            $salesData[] = $salesPrediction ? $salesPrediction->prediction : 0;
+        }
+
+        // Create restock data array with proper indexing
+        $restockData = [];
+        foreach ($allProducts as $product) {
+            $restockPrediction = $restockPredictions->where('product', $product)->first();
+            $restockData[] = $restockPrediction ? $restockPrediction->prediction : 0;
+        }
+
+        // Keep backward compatibility
         $predictionData = $stockPredictions->pluck('prediction')->toArray();
 
         // Get available months for prediction filter
@@ -81,6 +104,8 @@ class DashboardController extends Controller
             'stockPredictions',
             'predictionLabels',
             'predictionData',
+            'salesData',
+            'restockData',
             'availablePredictionMonths',
             'selectedPredictionMonth'
         ));

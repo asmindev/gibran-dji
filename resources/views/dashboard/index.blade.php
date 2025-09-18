@@ -211,8 +211,17 @@
                 labels: {!! json_encode($predictionLabels) !!},
                 datasets: [
                     {
-                        label: 'Prediksi',
-                        data: {!! json_encode($predictionData) !!},
+                        label: 'Prediksi Penjualan',
+                        data: {!! json_encode($salesData) !!},
+                        backgroundColor: '#10b981',
+                        borderColor: '#059669',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        borderSkipped: false,
+                    },
+                    {
+                        label: 'Prediksi Restock',
+                        data: {!! json_encode($restockData) !!},
                         backgroundColor: '#3b82f6',
                         borderColor: '#2563eb',
                         borderWidth: 1,
@@ -226,14 +235,26 @@
                 plugins: {
                     ...commonOptions.plugins,
                     legend: {
-                        display: false
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            color: '#374151',
+                            font: {
+                                size: 12,
+                                weight: 'normal'
+                            },
+                            padding: 15,
+                            usePointStyle: true,
+                            pointStyle: 'rect'
+                        }
                     },
                     tooltip: {
                         ...commonOptions.plugins.tooltip,
                         callbacks: {
                             label: function(context) {
                                 const value = context.parsed.y;
-                                return `Prediksi: ${value} unit`;
+                                const type = context.dataset.label === 'Prediksi Penjualan' ? 'Penjualan' : 'Restock';
+                                return `${type}: ${value} unit`;
                             }
                         }
                     }
