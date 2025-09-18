@@ -814,26 +814,48 @@ class StockPredictionController extends Controller
      */
     private function savePredictionToDatabase($item, $result, $predictionType)
     {
+        // Validate prediction type
+        if (!in_array($predictionType, ['sales', 'restock'])) {
+            throw new \InvalidArgumentException('Invalid prediction type: ' . $predictionType);
+        }
+
+        // Ensure prediction value is numeric and properly formatted
+        $predictionValue = is_numeric($result['prediction']) ? round($result['prediction'], 2) : 0;
+
         $predictionData = [
             'item_id' => $item->id,
-            'product' => $item->name,
-            'prediction' => $result['prediction'],
-            'prediction_type' => $predictionType,
+            'product' => (string) $item->name, // Ensure string type
+            'prediction' => $predictionValue,
+            'prediction_type' => $predictionType, // This should now work with VARCHAR(20)
             'month' => now()->startOfMonth(),
             'created_at' => now(),
             'updated_at' => now()
         ];
 
-        $stockPrediction = StockPrediction::create($predictionData);
-
-        Log::info('Prediction saved to database', [
-            'prediction_id' => $stockPrediction->id,
-            'item_id' => $item->id,
-            'prediction_type' => $predictionType,
-            'prediction_value' => $result['prediction']
+        // Log the data being saved for debugging
+        Log::info('Saving prediction to database', [
+            'prediction_data' => $predictionData,
+            'prediction_type_length' => strlen($predictionType)
         ]);
 
-        return $stockPrediction;
+        try {
+            $stockPrediction = StockPrediction::create($predictionData);
+
+            Log::info('Prediction saved to database successfully', [
+                'prediction_id' => $stockPrediction->id,
+                'item_id' => $item->id,
+                'prediction_type' => $predictionType,
+                'prediction_value' => $predictionValue
+            ]);
+
+            return $stockPrediction;
+        } catch (\Exception $e) {
+            Log::error('Failed to save prediction to database', [
+                'error' => $e->getMessage(),
+                'prediction_data' => $predictionData
+            ]);
+            throw $e;
+        }
     }
 
     /**
