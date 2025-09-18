@@ -196,25 +196,47 @@ class StockPredictionController extends Controller
                 ];
             }
 
-            // Build command arguments with virtual environment activation
+            // Detect OS and build appropriate command
+            $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
             $venvPath = $basePath . '/scripts/.venv';
 
-            if (is_dir($venvPath)) {
-                // Use virtual environment
-                Log::info('Using Python virtual environment: ' . $venvPath);
-                $command = "cd {$basePath}/scripts && source .venv/bin/activate && python predict.py";
+            if ($isWindows) {
+                // Windows PowerShell command
+                if (is_dir($venvPath . '/Scripts')) {
+                    // Use virtual environment on Windows
+                    Log::info('Using Python virtual environment on Windows: ' . $venvPath);
+                    $activateScript = $venvPath . '/Scripts/Activate.ps1';
+                    $command = "powershell -Command \"& { . '$activateScript'; cd '$basePath/scripts'; python predict.py";
+                } else {
+                    // Fallback to system Python on Windows
+                    Log::warning('Virtual environment not found on Windows, using system Python');
+                    $command = "powershell -Command \"cd '$basePath/scripts'; python predict.py";
+                }
             } else {
-                // Fallback to system Python
-                Log::warning('Virtual environment not found, using system Python');
-                $command = "cd {$basePath}/scripts && python predict.py";
+                // Linux/Unix command
+                if (is_dir($venvPath)) {
+                    // Use virtual environment on Linux
+                    Log::info('Using Python virtual environment on Linux: ' . $venvPath);
+                    $command = "cd {$basePath}/scripts && source .venv/bin/activate && python predict.py";
+                } else {
+                    // Fallback to system Python on Linux
+                    Log::warning('Virtual environment not found on Linux, using system Python');
+                    $command = "cd {$basePath}/scripts && python predict.py";
+                }
             }
 
+            // Add command arguments
             $command .= " --product " . escapeshellarg((string) $item->id);
             $command .= " --type " . escapeshellarg($predictionType);
 
             // Add avg-monthly parameter (required by predict.py)
             $avgMonthly = $params['avg_monthly_sales'] ?? 0;
             $command .= " --avg-monthly " . escapeshellarg((string) $avgMonthly);
+
+            // Close PowerShell command if Windows
+            if ($isWindows) {
+                $command .= " }\"";
+            }
 
             Log::info('Running Python prediction command: ' . $command);
 
@@ -418,81 +440,44 @@ class StockPredictionController extends Controller
                 ];
             }
 
-            // Build training command with virtual environment activation
+            // Detect OS and build appropriate command
+            $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
             $venvPath = $basePath . '/scripts/.venv';
 
-            if (is_dir($venvPath)) {
-                // Use virtual environment
-                Log::info('Using Python virtual environment for training: ' . $venvPath);
-                $command = "cd {$basePath}/scripts && source .venv/bin/activate && python -u train_model.py";
+            if ($isWindows) {
+                // Windows PowerShell command
+                if (is_dir($venvPath . '/Scripts')) {
+                    // Use virtual environment on Windows
+                    Log::info('Using Python virtual environment for training on Windows: ' . $venvPath);
+                    $activateScript = $venvPath . '/Scripts/Activate.ps1';
+                    $command = "powershell -Command \"& { . '$activateScript'; cd '$basePath/scripts'; python -u train_model.py }\"";
+                } else {
+                    // Fallback to system Python on Windows
+                    Log::warning('Virtual environment not found for training on Windows, using system Python');
+                    $command = "powershell -Command \"cd '$basePath/scripts'; python -u train_model.py\"";
+                }
             } else {
-                // Fallback to system Python
-                Log::warning('Virtual environment not found for training, using system Python');
-                $command = "cd {$basePath}/scripts && python -u train_model.py";
+                // Linux/Unix command
+                if (is_dir($venvPath)) {
+                    // Use virtual environment on Linux
+                    Log::info('Using Python virtual environment for training on Linux: ' . $venvPath);
+                    $command = "cd {$basePath}/scripts && source .venv/bin/activate && python -u train_model.py";
+                } else {
+                    // Fallback to system Python on Linux
+                    Log::warning('Virtual environment not found for training on Linux, using system Python');
+                    $command = "cd {$basePath}/scripts && python -u train_model.py";
+                }
             }
 
             Log::info('Running Python training command: ' . $command);
 
-            // Execute command with timeout
-            $descriptorspec = [
-                0 => ["pipe", "r"],  // stdin
-                1 => ["pipe", "w"],  // stdout
-                2 => ["pipe", "w"],  // stderr
-            ];
+            if ($isWindows) {
+                // For Windows, use simpler execution with exec
+                $output = [];
+                $returnCode = 0;
+                exec($command . " 2>&1", $output, $returnCode);
 
-            $process = proc_open($command, $descriptorspec, $pipes);
-
-            if (is_resource($process)) {
-                // Close stdin
-                fclose($pipes[0]);
-
-                // Set a timeout for the process
-                $timeout = 120; // 2 minutes
-                $startTime = time();
-
-                $output = '';
-                $errorOutput = '';
-
-                // Read output with timeout
-                while (time() - $startTime < $timeout) {
-                    $read = [$pipes[1], $pipes[2]];
-                    $write = null;
-                    $except = null;
-
-                    if (stream_select($read, $write, $except, 1) > 0) {
-                        if (in_array($pipes[1], $read)) {
-                            $line = fgets($pipes[1]);
-                            if ($line !== false) {
-                                $output .= $line;
-                            }
-                        }
-                        if (in_array($pipes[2], $read)) {
-                            $line = fgets($pipes[2]);
-                            if ($line !== false) {
-                                $errorOutput .= $line;
-                            }
-                        }
-                    }
-
-                    // Check if process is still running
-                    $status = proc_get_status($process);
-                    if (!$status['running']) {
-                        break;
-                    }
-                }
-
-                // Read any remaining output
-                $output .= stream_get_contents($pipes[1]);
-                $errorOutput .= stream_get_contents($pipes[2]);
-
-                // Close pipes
-                fclose($pipes[1]);
-                fclose($pipes[2]);
-
-                // Get return value
-                $returnCode = proc_close($process);
-
-                $fullOutput = trim($output . $errorOutput);
+                $fullOutput = implode("\n", $output);
                 Log::info('Python training output: ' . $fullOutput);
                 Log::info('Training return code: ' . $returnCode);
 
@@ -503,13 +488,8 @@ class StockPredictionController extends Controller
                     ];
                 }
 
-                // Check for success indicators in output or log file
-                $success = false;
-
-                // Check output for success
-                if (strpos($fullOutput, 'TRAINING_COMPLETED') !== false) {
-                    $success = true;
-                }
+                // Check for success indicators in output
+                $success = strpos($fullOutput, 'TRAINING_COMPLETED') !== false;
 
                 if ($success) {
                     // Try to read model info if available
@@ -535,10 +515,113 @@ class StockPredictionController extends Controller
                     ];
                 }
             } else {
-                return [
-                    'success' => false,
-                    'message' => 'Gagal menjalankan process training'
+                // For Linux/Unix, use the existing proc_open method
+                $descriptorspec = [
+                    0 => ["pipe", "r"],  // stdin
+                    1 => ["pipe", "w"],  // stdout
+                    2 => ["pipe", "w"],  // stderr
                 ];
+
+                $process = proc_open($command, $descriptorspec, $pipes);
+
+                if (is_resource($process)) {
+                    // Close stdin
+                    fclose($pipes[0]);
+
+                    // Set a timeout for the process
+                    $timeout = 120; // 2 minutes
+                    $startTime = time();
+
+                    $output = '';
+                    $errorOutput = '';
+
+                    // Read output with timeout
+                    while (time() - $startTime < $timeout) {
+                        $read = [$pipes[1], $pipes[2]];
+                        $write = null;
+                        $except = null;
+
+                        if (stream_select($read, $write, $except, 1) > 0) {
+                            if (in_array($pipes[1], $read)) {
+                                $line = fgets($pipes[1]);
+                                if ($line !== false) {
+                                    $output .= $line;
+                                }
+                            }
+                            if (in_array($pipes[2], $read)) {
+                                $line = fgets($pipes[2]);
+                                if ($line !== false) {
+                                    $errorOutput .= $line;
+                                }
+                            }
+                        }
+
+                        // Check if process is still running
+                        $status = proc_get_status($process);
+                        if (!$status['running']) {
+                            break;
+                        }
+                    }
+
+                    // Read any remaining output
+                    $output .= stream_get_contents($pipes[1]);
+                    $errorOutput .= stream_get_contents($pipes[2]);
+
+                    // Close pipes
+                    fclose($pipes[1]);
+                    fclose($pipes[2]);
+
+                    // Get return value
+                    $returnCode = proc_close($process);
+
+                    $fullOutput = trim($output . $errorOutput);
+                    Log::info('Python training output: ' . $fullOutput);
+                    Log::info('Training return code: ' . $returnCode);
+
+                    if ($returnCode !== 0) {
+                        return [
+                            'success' => false,
+                            'message' => 'Error executing training (code ' . $returnCode . '): ' . $fullOutput
+                        ];
+                    }
+
+                    // Check for success indicators in output or log file
+                    $success = false;
+
+                    // Check output for success
+                    if (strpos($fullOutput, 'TRAINING_COMPLETED') !== false) {
+                        $success = true;
+                    }
+
+                    if ($success) {
+                        // Try to read model info if available
+                        $modelInfoPath = $basePath . '/scripts/models/model_info.json';
+                        $modelInfo = [];
+
+                        if (file_exists($modelInfoPath)) {
+                            $modelInfoContent = file_get_contents($modelInfoPath);
+                            $modelInfo = json_decode($modelInfoContent, true) ?? [];
+                        }
+
+                        return [
+                            'success' => true,
+                            'message' => 'Training berhasil diselesaikan',
+                            'export_stats' => $exportResult,
+                            'training_output' => $fullOutput,
+                            'model_info' => $modelInfo
+                        ];
+                    } else {
+                        return [
+                            'success' => false,
+                            'message' => 'Training tidak berhasil diselesaikan. Output: ' . $fullOutput
+                        ];
+                    }
+                } else {
+                    return [
+                        'success' => false,
+                        'message' => 'Gagal menjalankan process training'
+                    ];
+                }
             }
         } catch (\Exception $e) {
             Log::error('Python training call error: ' . $e->getMessage());
