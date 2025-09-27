@@ -80,6 +80,7 @@
         </div>
     </div>
 
+
     <!-- Charts Section -->
     <div class="grid grid-cols-1 gap-y-6">
         <!-- Stock Predictions Chart -->
@@ -87,8 +88,9 @@
             <div class="p-6 border-b border-gray-200">
                 <div class="flex justify-between items-center">
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-900">Prediksi Stok</h3>
-                        <p class="text-sm text-gray-600 mt-1">Prediksi kebutuhan stok per produk</p>
+                        <h3 class="text-lg font-semibold text-gray-900">Analisis Stok Bulanan</h3>
+                        <p class="text-sm text-gray-600 mt-1">Perbandingan prediksi vs aktual untuk bulan {{
+                            \Carbon\Carbon::parse($selectedPredictionMonth . '-01')->format('F Y') }}</p>
                     </div>
                     @if($availablePredictionMonths->count() > 0)
                     <div class="flex items-center space-x-2">
@@ -108,27 +110,31 @@
                 </div>
             </div>
             <div class="p-6">
-                @if(count($predictionLabels) > 0)
+                @if($availablePredictionMonths->count() > 0)
                 <div class="relative h-64">
-                    <canvas id="stockPredictionsChart"></canvas>
+                    <canvas id="monthlyAnalysisChart"></canvas>
                 </div>
-                <div class="mt-4 text-center">
-                    <p class="text-xs text-gray-500">
-                        Menampilkan data untuk {{ \Carbon\Carbon::parse($selectedPredictionMonth . '-01')->format('F Y')
-                        }}
-                    </p>
+                <div class="mt-4">
+                    <div class="grid grid-cols-3 gap-4 text-center">
+                        <div class="bg-blue-50 p-3 rounded-lg">
+                            <p class="text-xs text-blue-600 font-medium">Total Prediksi</p>
+                            <p class="text-lg font-bold text-blue-700">{{ $totalPrediction ?? 0 }} unit</p>
+                        </div>
+                        <div class="bg-red-50 p-3 rounded-lg">
+                            <p class="text-xs text-red-600 font-medium">Total Penjualan Aktual</p>
+                            <p class="text-lg font-bold text-red-700">{{ $totalOutgoing }} unit</p>
+                        </div>
+                        <div class="bg-green-50 p-3 rounded-lg">
+                            <p class="text-xs text-green-600 font-medium">Total Restock Aktual</p>
+                            <p class="text-lg font-bold text-green-700">{{ $totalIncoming }} unit</p>
+                        </div>
+                    </div>
                 </div>
                 @else
                 <div class="text-center py-8">
-                    @if($availablePredictionMonths->count() > 0)
-                    <p class="text-gray-500 mb-2">Tidak ada data prediksi untuk {{
-                        \Carbon\Carbon::parse($selectedPredictionMonth . '-01')->format('F Y') }}</p>
-                    <p class="text-xs text-gray-400 mb-4">Coba pilih bulan lain untuk melihat data prediksi</p>
-                    @else
                     <p class="text-gray-500 mb-2">Belum ada data prediksi stok</p>
                     <p class="text-xs text-gray-400 mb-4">Jalankan command berikut untuk membuat prediksi:</p>
                     <code class="text-xs bg-gray-100 px-2 py-1 rounded">php artisan predictions:backfill</code>
-                    @endif
                 </div>
                 @endif
             </div>
@@ -148,7 +154,14 @@
         maintainAspectRatio: false,
         plugins: {
             legend: {
-                display: false
+                display: true,
+                position: 'top',
+                labels: {
+                    padding: 20,
+                    font: {
+                        size: 12
+                    }
+                }
             },
             tooltip: {
                 backgroundColor: 'rgba(0, 0, 0, 0.8)',
@@ -157,7 +170,7 @@
                 borderColor: 'rgba(255, 255, 255, 0.1)',
                 borderWidth: 1,
                 cornerRadius: 8,
-                displayColors: false,
+                displayColors: true,
             }
         },
         scales: {
@@ -176,17 +189,37 @@
                 grid: {
                     color: 'rgba(229, 231, 235, 0.8)',
                     drawBorder: false
+                },
+                title: {
+                    display: true,
+                    text: 'Jumlah Unit',
+                    color: '#6b7280',
+                    font: {
+                        size: 12,
+                        weight: 'normal'
+                    }
                 }
             },
             x: {
                 ticks: {
                     color: '#6b7280',
                     font: {
-                        size: 12
-                    }
+                        size: 11
+                    },
+                    maxRotation: 45,
+                    minRotation: 0
                 },
                 grid: {
                     display: false
+                },
+                title: {
+                    display: true,
+                    text: 'Produk',
+                    color: '#6b7280',
+                    font: {
+                        size: 12,
+                        weight: 'normal'
+                    }
                 }
             }
         },
@@ -200,73 +233,57 @@
         }
     };
 
+    // Monthly Analysis Line Chart
+    @if($availablePredictionMonths->count() > 0)
+    const monthlyAnalysisCtx = document.getElementById('monthlyAnalysisChart');
+    if (monthlyAnalysisCtx) {
+        const chartData = {!! json_encode($lineChartData) !!};
 
-    // Stock Predictions Chart
-    @if(count($predictionLabels) > 0)
-    const stockPredictionsCtx = document.getElementById('stockPredictionsChart');
-    if (stockPredictionsCtx) {
-        const stockPredictionsChart = new Chart(stockPredictionsCtx.getContext('2d'), {
-            type: 'bar',
-            data: {
-                labels: {!! json_encode($predictionLabels) !!},
-                datasets: [
-                    {
-                        label: 'Prediksi Penjualan',
-                        data: {!! json_encode($salesData) !!},
-                        backgroundColor: '#10b981',
-                        borderColor: '#059669',
-                        borderWidth: 1,
-                        borderRadius: 4,
-                        borderSkipped: false,
-                    },
-                    {
-                        label: 'Prediksi Restock',
-                        data: {!! json_encode($restockData) !!},
-                        backgroundColor: '#3b82f6',
-                        borderColor: '#2563eb',
-                        borderWidth: 1,
-                        borderRadius: 4,
-                        borderSkipped: false,
-                    }
-                ]
-            },
+        // Configure datasets
+        chartData.datasets.forEach((dataset, index) => {
+            dataset.borderWidth = 2;
+            dataset.fill = false;
+            dataset.tension = 0.3;
+            dataset.pointRadius = 4;
+            dataset.pointHoverRadius = 6;
+            dataset.pointBorderWidth = 2;
+            dataset.pointHoverBorderWidth = 2;
+
+            if (dataset.label === 'Total Prediksi') {
+                dataset.pointBackgroundColor = '#3b82f6';
+                dataset.pointBorderColor = '#ffffff';
+                dataset.pointHoverBackgroundColor = '#2563eb';
+                dataset.pointHoverBorderColor = '#ffffff';
+            } else if (dataset.label === 'Sales Aktual') {
+                dataset.pointBackgroundColor = '#ef4444';
+                dataset.pointBorderColor = '#ffffff';
+                dataset.pointHoverBackgroundColor = '#dc2626';
+                dataset.pointHoverBorderColor = '#ffffff';
+            } else if (dataset.label === 'Restock Aktual') {
+                dataset.pointBackgroundColor = '#10b981';
+                dataset.pointBorderColor = '#ffffff';
+                dataset.pointHoverBackgroundColor = '#059669';
+                dataset.pointHoverBorderColor = '#ffffff';
+            }
+        });
+
+        const monthlyAnalysisChart = new Chart(monthlyAnalysisCtx.getContext('2d'), {
+            type: 'line',
+            data: chartData,
             options: {
                 ...commonOptions,
                 plugins: {
                     ...commonOptions.plugins,
-                    legend: {
-                        display: true,
-                        position: 'top',
-                        labels: {
-                            color: '#374151',
-                            font: {
-                                size: 12,
-                                weight: 'normal'
-                            },
-                            padding: 15,
-                            usePointStyle: true,
-                            pointStyle: 'rect'
-                        }
-                    },
                     tooltip: {
                         ...commonOptions.plugins.tooltip,
                         callbacks: {
+                            title: function(context) {
+                                return `Produk: ${context[0].label}`;
+                            },
                             label: function(context) {
                                 const value = context.parsed.y;
-                                const type = context.dataset.label === 'Prediksi Penjualan' ? 'Penjualan' : 'Restock';
-                                return `${type}: ${value} unit`;
+                                return `${context.dataset.label}: ${value} unit`;
                             }
-                        }
-                    }
-                },
-                scales: {
-                    ...commonOptions.scales,
-                    x: {
-                        ...commonOptions.scales.x,
-                        ticks: {
-                            ...commonOptions.scales.x.ticks,
-                            maxRotation: 45,
-                            minRotation: 0
                         }
                     }
                 }
@@ -275,14 +292,6 @@
     }
     @endif
 });
-
-// Function to filter chart by month
-function filterByMonth() {
-    const selectedMonth = document.getElementById('monthFilter').value;
-    const currentUrl = new URL(window.location);
-    currentUrl.searchParams.set('month', selectedMonth);
-    window.location.href = currentUrl.toString();
-}
 
 // Function to filter prediction chart by month
 function filterByPredictionMonth() {

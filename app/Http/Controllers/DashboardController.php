@@ -27,6 +27,78 @@ class DashboardController extends Controller
         $lowStockItems = Item::whereRaw('stock <= minimum_stock')->get();
         $latestItems = Item::with('category')->latest()->take(5)->get();
 
+        // calculate total incoming items and outgoing items in selected month
+        $totalIncoming = IncomingItem::whereRaw("DATE_FORMAT(incoming_date, '%Y-%m') = ?", [$selectedPredictionMonth])
+            ->sum('quantity');
+        $totalOutgoing = OutgoingItem::whereRaw("DATE_FORMAT(outgoing_date, '%Y-%m') = ?", [$selectedPredictionMonth])
+            ->sum('quantity');
+
+        // Stock Predictions Data for Chart (selected month)
+        $stockPredictions = StockPrediction::whereRaw("DATE_FORMAT(month, '%Y-%m') = ?", [$selectedPredictionMonth])
+            ->orderBy('product')
+            ->get();
+
+        // Get all unique products for consistent labels
+        $allProducts = $stockPredictions->pluck('product')->unique()->sort()->values();
+
+        // Prepare chart data by product
+        $chartLabels = $allProducts->toArray();
+
+        // Initialize arrays for each dataset
+        $predictionData = [];
+        $salesData = [];
+        $restockData = [];
+
+        foreach ($allProducts as $product) {
+            // Get predictions for this product
+            $salesPrediction = $stockPredictions->where('product', $product)->where('prediction_type', 'sales')->first();
+            $restockPrediction = $stockPredictions->where('product', $product)->where('prediction_type', 'restock')->first();
+
+            // Get actual data for this product in selected month
+            $actualSales = OutgoingItem::join('items', 'outgoing_items.item_id', '=', 'items.id')
+                ->where('items.item_name', $product)
+                ->whereRaw("DATE_FORMAT(outgoing_date, '%Y-%m') = ?", [$selectedPredictionMonth])
+                ->sum('outgoing_items.quantity');
+
+            $actualRestock = IncomingItem::join('items', 'incoming_items.item_id', '=', 'items.id')
+                ->where('items.item_name', $product)
+                ->whereRaw("DATE_FORMAT(incoming_date, '%Y-%m') = ?", [$selectedPredictionMonth])
+                ->sum('incoming_items.quantity');
+
+            // Add to arrays
+            $predictionData[] = ($salesPrediction ? $salesPrediction->prediction : 0) + ($restockPrediction ? $restockPrediction->prediction : 0);
+            $salesData[] = $actualSales;
+            $restockData[] = $actualRestock;
+        }
+
+        // Prepare data for multi-line chart
+        $lineChartData = [
+            'labels' => $chartLabels,
+            'datasets' => [
+                [
+                    'label' => 'Total Prediksi',
+                    'data' => $predictionData,
+                    'borderColor' => '#3b82f6',
+                    'backgroundColor' => 'rgba(59, 130, 246, 0.1)',
+                ],
+                [
+                    'label' => 'Sales Aktual',
+                    'data' => $salesData,
+                    'borderColor' => '#ef4444',
+                    'backgroundColor' => 'rgba(239, 68, 68, 0.1)',
+                ],
+                [
+                    'label' => 'Restock Aktual',
+                    'data' => $restockData,
+                    'borderColor' => '#10b981',
+                    'backgroundColor' => 'rgba(16, 185, 129, 0.1)',
+                ]
+            ]
+        ];
+
+        // Calculate totals for summary cards
+        $totalPrediction = array_sum($predictionData);
+
         // Stock by Category for Chart
         $stockByCategory = Category::select('categories.name')
             ->selectRaw('COALESCE(SUM(items.stock), 0) as total_stock')
@@ -107,7 +179,11 @@ class DashboardController extends Controller
             'salesData',
             'restockData',
             'availablePredictionMonths',
-            'selectedPredictionMonth'
+            'selectedPredictionMonth',
+            'totalIncoming',
+            'totalOutgoing',
+            'lineChartData',
+            'totalPrediction'
         ));
     }
 }
