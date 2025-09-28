@@ -80,10 +80,9 @@
         </div>
     </div>
 
-
     <!-- Charts Section -->
     <div class="grid grid-cols-1 gap-y-6">
-        <!-- Stock Predictions Chart -->
+        <!-- Stock Analysis Chart -->
         <div class="bg-white shadow rounded-lg">
             <div class="p-6 border-b border-gray-200">
                 <div class="flex justify-between items-center">
@@ -111,6 +110,7 @@
             </div>
             <div class="p-6">
                 @if($availablePredictionMonths->count() > 0)
+                @if(!empty($lineChartData['labels']))
                 <div class="relative h-64">
                     <canvas id="monthlyAnalysisChart"></canvas>
                 </div>
@@ -129,19 +129,24 @@
                             <p class="text-lg font-bold text-green-700">{{ $totalIncoming }} unit</p>
                         </div>
                     </div>
+                    @if($totalPrediction == 0)
+                    <p class="text-xs text-gray-400 mt-2">Tidak ada data prediksi untuk bulan ini.</p>
+                    @endif
                 </div>
                 @else
                 <div class="text-center py-8">
-                    <p class="text-gray-500 mb-2">Belum ada data prediksi stok</p>
-                    <p class="text-xs text-gray-400 mb-4">Jalankan command berikut untuk membuat prediksi:</p>
-                    <code class="text-xs bg-gray-100 px-2 py-1 rounded">php artisan predictions:backfill</code>
+                    <p class="text-gray-500 mb-2">Tidak ada data untuk bulan ini</p>
+                </div>
+                @endif
+                @else
+                <div class="text-center py-8">
+                    <p class="text-gray-500 mb-2">Tidak ada data transaksi (incoming atau outgoing) tersedia</p>
                 </div>
                 @endif
             </div>
         </div>
     </div>
 </div>
-
 
 <!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -234,62 +239,62 @@
     };
 
     // Monthly Analysis Line Chart
-    @if($availablePredictionMonths->count() > 0)
-    const monthlyAnalysisCtx = document.getElementById('monthlyAnalysisChart');
-    if (monthlyAnalysisCtx) {
-        const chartData = {!! json_encode($lineChartData) !!};
+    @if($availablePredictionMonths->count() > 0 && !empty($lineChartData['labels']))
+        const monthlyAnalysisCtx = document.getElementById('monthlyAnalysisChart');
+        if (monthlyAnalysisCtx) {
+            const chartData = {!! json_encode($lineChartData) !!};
 
-        // Configure datasets
-        chartData.datasets.forEach((dataset, index) => {
-            dataset.borderWidth = 2;
-            dataset.fill = false;
-            dataset.tension = 0.3;
-            dataset.pointRadius = 4;
-            dataset.pointHoverRadius = 6;
-            dataset.pointBorderWidth = 2;
-            dataset.pointHoverBorderWidth = 2;
+            // Configure datasets
+            chartData.datasets.forEach((dataset, index) => {
+                dataset.borderWidth = 2;
+                dataset.fill = false;
+                dataset.tension = 0.3;
+                dataset.pointRadius = 4;
+                dataset.pointHoverRadius = 6;
+                dataset.pointBorderWidth = 2;
+                dataset.pointHoverBorderWidth = 2;
 
-            if (dataset.label === 'Total Prediksi') {
-                dataset.pointBackgroundColor = '#3b82f6';
-                dataset.pointBorderColor = '#ffffff';
-                dataset.pointHoverBackgroundColor = '#2563eb';
-                dataset.pointHoverBorderColor = '#ffffff';
-            } else if (dataset.label === 'Sales Aktual') {
-                dataset.pointBackgroundColor = '#ef4444';
-                dataset.pointBorderColor = '#ffffff';
-                dataset.pointHoverBackgroundColor = '#dc2626';
-                dataset.pointHoverBorderColor = '#ffffff';
-            } else if (dataset.label === 'Restock Aktual') {
-                dataset.pointBackgroundColor = '#10b981';
-                dataset.pointBorderColor = '#ffffff';
-                dataset.pointHoverBackgroundColor = '#059669';
-                dataset.pointHoverBorderColor = '#ffffff';
-            }
-        });
+                if (dataset.label === 'Total Prediksi') {
+                    dataset.pointBackgroundColor = '#3b82f6';
+                    dataset.pointBorderColor = '#ffffff';
+                    dataset.pointHoverBackgroundColor = '#2563eb';
+                    dataset.pointHoverBorderColor = '#ffffff';
+                } else if (dataset.label === 'Sales Aktual') {
+                    dataset.pointBackgroundColor = '#ef4444';
+                    dataset.pointBorderColor = '#ffffff';
+                    dataset.pointHoverBackgroundColor = '#dc2626';
+                    dataset.pointHoverBorderColor = '#ffffff';
+                } else if (dataset.label === 'Restock Aktual') {
+                    dataset.pointBackgroundColor = '#10b981';
+                    dataset.pointBorderColor = '#ffffff';
+                    dataset.pointHoverBackgroundColor = '#059669';
+                    dataset.pointHoverBorderColor = '#ffffff';
+                }
+            });
 
-        const monthlyAnalysisChart = new Chart(monthlyAnalysisCtx.getContext('2d'), {
-            type: 'line',
-            data: chartData,
-            options: {
-                ...commonOptions,
-                plugins: {
-                    ...commonOptions.plugins,
-                    tooltip: {
-                        ...commonOptions.plugins.tooltip,
-                        callbacks: {
-                            title: function(context) {
-                                return `Produk: ${context[0].label}`;
-                            },
-                            label: function(context) {
-                                const value = context.parsed.y;
-                                return `${context.dataset.label}: ${value} unit`;
+            const monthlyAnalysisChart = new Chart(monthlyAnalysisCtx.getContext('2d'), {
+                type: 'line',
+                data: chartData,
+                options: {
+                    ...commonOptions,
+                    plugins: {
+                        ...commonOptions.plugins,
+                        tooltip: {
+                            ...commonOptions.plugins.tooltip,
+                            callbacks: {
+                                title: function(context) {
+                                    return `Produk: ${context[0].label}`;
+                                },
+                                label: function(context) {
+                                    const value = context.parsed.y;
+                                    return `${context.dataset.label}: ${value} unit`;
+                                }
                             }
                         }
                     }
                 }
-            }
-        });
-    }
+            });
+        }
     @endif
 });
 
