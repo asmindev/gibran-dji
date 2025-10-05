@@ -115,7 +115,7 @@
                     <canvas id="monthlyAnalysisChart"></canvas>
                 </div>
                 <div class="mt-4">
-                    <div class="grid grid-cols-3 gap-4 text-center">
+                    <div class="grid grid-cols-2 gap-4 text-center">
                         <div class="bg-blue-50 p-3 rounded-lg">
                             <p class="text-xs text-blue-600 font-medium">Total Prediksi</p>
                             <p class="text-lg font-bold text-blue-700">{{ $totalPrediction ?? 0 }} unit</p>
@@ -124,11 +124,50 @@
                             <p class="text-xs text-red-600 font-medium">Total Penjualan Aktual</p>
                             <p class="text-lg font-bold text-red-700">{{ $totalOutgoing }} unit</p>
                         </div>
-                        <div class="bg-green-50 p-3 rounded-lg">
-                            <p class="text-xs text-green-600 font-medium">Total Restock Aktual</p>
-                            <p class="text-lg font-bold text-green-700">{{ $totalIncoming }} unit</p>
+                    </div>
+                    @if($overallAccuracy !== null)
+                    <div
+                        class="mt-4 bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-green-700 font-medium">Akurasi Keseluruhan</p>
+                                <p class="text-xs text-green-600 mt-1">Tingkat akurasi prediksi vs aktual</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-3xl font-bold text-green-700">{{ number_format($overallAccuracy, 1) }}%
+                                </p>
+                                <p class="text-xs text-green-600 mt-1">
+                                    @if($overallAccuracy >= 85)
+                                    <span
+                                        class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        Sangat Baik
+                                    </span>
+                                    @elseif($overallAccuracy >= 70)
+                                    <span
+                                        class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                        Baik
+                                    </span>
+                                    @elseif($overallAccuracy >= 50)
+                                    <span
+                                        class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                        Cukup
+                                    </span>
+                                    @else
+                                    <span
+                                        class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        Perlu Ditingkatkan
+                                    </span>
+                                    @endif
+                                </p>
+                            </div>
                         </div>
                     </div>
+                    @else
+                    <div class="mt-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <p class="text-sm text-gray-600 text-center">Akurasi belum dapat dihitung. Data aktual belum
+                            tersedia.</p>
+                    </div>
+                    @endif
                     @if($totalPrediction == 0)
                     <p class="text-xs text-gray-400 mt-2">Tidak ada data prediksi untuk bulan ini.</p>
                     @endif
@@ -263,11 +302,6 @@
                     dataset.pointBackgroundColor = '#ef4444';
                     dataset.pointBorderColor = '#ffffff';
                     dataset.pointHoverBackgroundColor = '#dc2626';
-                    dataset.pointHoverBorderColor = '#ffffff';
-                } else if (dataset.label === 'Restock Aktual') {
-                    dataset.pointBackgroundColor = '#10b981';
-                    dataset.pointBorderColor = '#ffffff';
-                    dataset.pointHoverBackgroundColor = '#059669';
                     dataset.pointHoverBorderColor = '#ffffff';
                 }
             });

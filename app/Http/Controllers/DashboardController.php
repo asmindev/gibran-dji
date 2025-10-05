@@ -81,7 +81,7 @@ class DashboardController extends Controller
             $restockData[] = $actualRestock;
         }
 
-        // Prepare data for multi-line chart
+        // Prepare data for multi-line chart (without restock)
         $lineChartData = [
             'labels' => $chartLabels,
             'datasets' => [
@@ -96,18 +96,15 @@ class DashboardController extends Controller
                     'data' => $salesData,
                     'borderColor' => '#ef4444',
                     'backgroundColor' => 'rgba(239, 68, 68, 0.1)',
-                ],
-                [
-                    'label' => 'Restock Aktual',
-                    'data' => $restockData,
-                    'borderColor' => '#10b981',
-                    'backgroundColor' => 'rgba(16, 185, 129, 0.1)',
                 ]
             ]
         ];
 
         // Calculate totals for summary cards
         $totalPrediction = array_sum($predictionData);
+
+        // Calculate overall accuracy
+        $overallAccuracy = $this->calculateOverallAccuracy($selectedPredictionMonth);
 
         // Stock by Category for Chart
         $stockByCategory = Category::select('categories.name')
@@ -156,7 +153,42 @@ class DashboardController extends Controller
             'selectedPredictionMonth',
             'totalIncoming',
             'totalOutgoing',
-            'totalPrediction'
+            'totalPrediction',
+            'overallAccuracy'
         ));
+    }
+
+    /**
+     * Calculate overall accuracy for predictions in selected month
+     */
+    private function calculateOverallAccuracy($selectedMonth)
+    {
+        // Get all predictions with actual data for the selected month
+        $predictions = StockPrediction::whereRaw("DATE_FORMAT(month, '%Y-%m') = ?", [$selectedMonth])
+            ->whereNotNull('actual')
+            ->where('prediction_type', 'sales') // Only calculate for sales predictions
+            ->get();
+
+        if ($predictions->isEmpty()) {
+            return null; // No data available
+        }
+
+        $totalAccuracy = 0;
+        $count = 0;
+
+        foreach ($predictions as $prediction) {
+            if ($prediction->prediction > 0 || $prediction->actual > 0) {
+                $difference = abs($prediction->prediction - $prediction->actual);
+                $maxValue = max($prediction->prediction, $prediction->actual);
+
+                if ($maxValue > 0) {
+                    $accuracy = (1 - ($difference / $maxValue)) * 100;
+                    $totalAccuracy += max(0, $accuracy);
+                    $count++;
+                }
+            }
+        }
+
+        return $count > 0 ? round($totalAccuracy / $count, 2) : null;
     }
 }

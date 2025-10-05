@@ -976,7 +976,7 @@ class StockPredictionController extends Controller
                     'category' => 'overstock',
                     'status' => 'warning',
                     'status_emoji' => '🟠',
-                    'status_text' => 'Overstock/aman',
+                    'status_text' => 'Overstock',
                     'details' => [
                         'current_stock' => $currentStock,
                         'predicted_incoming' => $prediction,
@@ -989,7 +989,7 @@ class StockPredictionController extends Controller
                         '📦 Stok Saat Ini' => "{$currentStock} unit",
                         '➕ Prediksi Barang Masuk' => "{$prediction} unit",
                         '📤 Prediksi Barang Keluar' => "{$estimatedSalesDemand} unit",
-                        '🟠 Status' => 'Overstock/aman'
+                        '🟠 Status' => 'Overstock'
                     ],
                     'recommendation' => "Pertimbangkan mengurangi jumlah restock atau memperpanjang periode restock untuk menghindari overstock.",
                     'priority' => 'medium'
