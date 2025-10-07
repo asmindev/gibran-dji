@@ -206,18 +206,18 @@ class StockModelTrainer:
         X_train_scaled = self.scalers[scaler_name].fit_transform(X_train)
         X_test_scaled = self.scalers[scaler_name].transform(X_test)
 
-        # Train Random Forest with balanced hyperparameters
-        # Focus on using avg_quantity and historical patterns effectively
+        # Train Random Forest with optimized hyperparameters
+        # Increased complexity for better accuracy
         model = RandomForestRegressor(
-            n_estimators=150,  # Reduced for faster, less overfit
-            max_depth=20,  # Controlled depth to prevent overfitting
-            min_samples_split=3,  # Require more samples for splits
-            min_samples_leaf=2,  # Require leaves to have at least 2 samples
-            max_features=0.7,  # Use 70% of features per tree
-            min_impurity_decrease=0.01,  # Require meaningful improvements
+            n_estimators=200,  # More trees for better ensemble
+            max_depth=25,  # Deeper trees for capturing patterns
+            min_samples_split=2,  # Allow finer splits
+            min_samples_leaf=1,  # More detailed leaf nodes
+            max_features=0.8,  # Use 80% of features per tree
+            min_impurity_decrease=0.0,  # Allow all improvements
             bootstrap=True,  # Bootstrap sampling
             oob_score=True,  # Out-of-bag validation
-            max_samples=0.9,  # Use 90% samples per tree
+            max_samples=0.85,  # Use 85% samples per tree
             random_state=42,
             n_jobs=-1,
             warm_start=False,
@@ -262,8 +262,8 @@ class StockModelTrainer:
             "training_samples": len(X_train),
             "test_samples": len(X_test),
             "feature_columns": list(X.columns),
-            "n_estimators": 150,
-            "max_depth": 20,
+            "n_estimators": 200,
+            "max_depth": 25,
         }
 
         self.logger.info(f"Training completed for {prediction_type}:")

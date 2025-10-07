@@ -76,23 +76,25 @@ class DashboardController extends Controller
                 ->sum('incoming_items.quantity');
 
             // Add to arrays
-            $predictionData[] = ($salesPrediction ? $salesPrediction->prediction : 0) + ($restockPrediction ? $restockPrediction->prediction : 0);
+            // For prediction data, only use sales prediction (not sales + restock)
+            // because we're comparing with sales actual, not total activity
+            $predictionData[] = ($salesPrediction ? $salesPrediction->prediction : 0);
             $salesData[] = $actualSales;
             $restockData[] = $actualRestock;
         }
 
-        // Prepare data for multi-line chart (without restock)
+        // Prepare data for multi-line chart
         $lineChartData = [
             'labels' => $chartLabels,
             'datasets' => [
                 [
-                    'label' => 'Total Prediksi',
+                    'label' => 'Prediksi Penjualan',
                     'data' => $predictionData,
                     'borderColor' => '#3b82f6',
                     'backgroundColor' => 'rgba(59, 130, 246, 0.1)',
                 ],
                 [
-                    'label' => 'Sales Aktual',
+                    'label' => 'Penjualan Aktual',
                     'data' => $salesData,
                     'borderColor' => '#ef4444',
                     'backgroundColor' => 'rgba(239, 68, 68, 0.1)',
