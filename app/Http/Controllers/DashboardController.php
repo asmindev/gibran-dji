@@ -56,8 +56,11 @@ class DashboardController extends Controller
 
         // Initialize arrays for each dataset
         $predictionData = [];
+        $actualData = [];           // Total aktual (sales + restock) per product
         $salesData = [];
         $restockData = [];
+        $salesPredictionData = [];      // Array for sales predictions
+        $restockPredictionData = [];    // Array for restock predictions
 
         foreach ($allProducts as $product) {
             // Get predictions for this product
@@ -76,34 +79,46 @@ class DashboardController extends Controller
                 ->sum('incoming_items.quantity');
 
             // Add to arrays
-            // For prediction data, only use sales prediction (not sales + restock)
-            // because we're comparing with sales actual, not total activity
-            $predictionData[] = ($salesPrediction ? $salesPrediction->prediction : 0);
+            // Total prediction includes both sales and restock predictions
+            $salesPredictionValue = $salesPrediction ? $salesPrediction->prediction : 0;
+            $restockPredictionValue = $restockPrediction ? $restockPrediction->prediction : 0;
+            
+            $predictionData[] = $salesPredictionValue + $restockPredictionValue;
+            $actualData[] = $actualSales + $actualRestock;  // Total actual per product
+            $salesPredictionData[] = $salesPredictionValue;
+            $restockPredictionData[] = $restockPredictionValue;
             $salesData[] = $actualSales;
             $restockData[] = $actualRestock;
         }
 
         // Prepare data for multi-line chart
-        $lineChartData = [
-            'labels' => $chartLabels,
+                $lineChartData = [
+            'labels' => $allProducts,
             'datasets' => [
                 [
-                    'label' => 'Prediksi Penjualan',
+                    'label' => 'Total Prediksi (Sales + Restock)',
                     'data' => $predictionData,
                     'borderColor' => '#3b82f6',
                     'backgroundColor' => 'rgba(59, 130, 246, 0.1)',
+                    'tension' => 0.4
                 ],
                 [
-                    'label' => 'Penjualan Aktual',
-                    'data' => $salesData,
+                    'label' => 'Total Aktual (Sales + Restock)',
+                    'data' => $actualData,
                     'borderColor' => '#ef4444',
                     'backgroundColor' => 'rgba(239, 68, 68, 0.1)',
+                    'tension' => 0.4
                 ]
             ]
         ];
 
         // Calculate totals for summary cards
-        $totalPrediction = array_sum($predictionData);
+        $totalPrediction = array_sum($predictionData);           // Total prediksi (Sales + Restock)
+        $totalPredictedSales = array_sum($salesPredictionData);  // Total prediksi sales
+        $totalPredictedRestock = array_sum($restockPredictionData); // Total prediksi restock
+        $totalActualSales = array_sum($salesData);               // Total aktual penjualan
+        $totalActualRestock = array_sum($restockData);           // Total aktual restock
+        $totalActual = $totalActualSales + $totalActualRestock;  // Total aktual keseluruhan
 
         // Calculate overall accuracy
         $overallAccuracy = $this->calculateOverallAccuracy($selectedPredictionMonth);
@@ -156,6 +171,11 @@ class DashboardController extends Controller
             'totalIncoming',
             'totalOutgoing',
             'totalPrediction',
+            'totalPredictedSales',
+            'totalPredictedRestock',
+            'totalActualSales',
+            'totalActualRestock',
+            'totalActual',
             'overallAccuracy'
         ));
     }

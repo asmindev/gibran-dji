@@ -117,12 +117,17 @@
                 <div class="mt-4">
                     <div class="grid grid-cols-2 gap-4 text-center">
                         <div class="bg-blue-50 p-3 rounded-lg">
-                            <p class="text-xs text-blue-600 font-medium">Total Prediksi</p>
-                            <p class="text-lg font-bold text-blue-700">{{ $totalPrediction ?? 0 }} unit</p>
+                            <p class="text-xs text-blue-600 font-medium">Total Prediksi (Sales + Restock)</p>
+                            <p class="text-lg font-bold text-blue-700">{{ number_format($totalPrediction ?? 0) }} unit
+                            </p>
+                            <p class="text-xs text-gray-500 mt-1">Prediksi: {{ number_format($totalPredictedSales ?? 0) }} sales + {{ number_format($totalPredictedRestock ?? 0) }} restock</p>
                         </div>
                         <div class="bg-red-50 p-3 rounded-lg">
-                            <p class="text-xs text-red-600 font-medium">Total Penjualan Aktual</p>
-                            <p class="text-lg font-bold text-red-700">{{ $totalOutgoing }} unit</p>
+                            <p class="text-xs text-red-600 font-medium">Total Aktual</p>
+                            <p class="text-lg font-bold text-red-700">{{ number_format(($totalActualSales ?? 0) +
+                                ($totalActualRestock ?? 0)) }} unit</p>
+                            <p class="text-xs text-gray-500 mt-1">{{ number_format($totalActualSales ?? 0) }} penjualan
+                                + {{ number_format($totalActualRestock ?? 0) }} restock</p>
                         </div>
                     </div>
                     @if($overallAccuracy !== null)
