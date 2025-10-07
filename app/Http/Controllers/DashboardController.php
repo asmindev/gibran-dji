@@ -82,7 +82,7 @@ class DashboardController extends Controller
             // Total prediction includes both sales and restock predictions
             $salesPredictionValue = $salesPrediction ? $salesPrediction->prediction : 0;
             $restockPredictionValue = $restockPrediction ? $restockPrediction->prediction : 0;
-            
+
             $predictionData[] = $salesPredictionValue + $restockPredictionValue;
             $actualData[] = $actualSales + $actualRestock;  // Total actual per product
             $salesPredictionData[] = $salesPredictionValue;
@@ -92,7 +92,7 @@ class DashboardController extends Controller
         }
 
         // Prepare data for multi-line chart
-                $lineChartData = [
+        $lineChartData = [
             'labels' => $allProducts,
             'datasets' => [
                 [
