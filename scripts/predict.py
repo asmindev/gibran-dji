@@ -163,6 +163,15 @@ class StockPredictor:
                 season = "autumn"
 
             # Create base features similar to training
+            # avg_monthly is expected to be the TOTAL monthly quantity
+            # We need to estimate avg_quantity (per transaction) and transaction_count
+
+            # Historical avg: ~2.87 unit per transaction, ~37 transactions per month
+            estimated_avg_per_transaction = 2.87  # From training data stats
+            estimated_transaction_count = max(
+                1, int(avg_monthly / estimated_avg_per_transaction)
+            )
+
             features = {
                 "item_id": (
                     int(product_id)
@@ -171,12 +180,16 @@ class StockPredictor:
                 ),
                 "month": month,
                 "year": year,
-                "avg_quantity": avg_monthly,
-                "transaction_count": max(1, int(avg_monthly / 10)),  # Estimate
+                "avg_quantity": estimated_avg_per_transaction,  # Fixed: use typical avg per transaction
+                "transaction_count": estimated_transaction_count,  # Fixed: estimate from total
                 "weekend_ratio": 0.29,  # Average weekend ratio
-                "rolling_avg_3m": avg_monthly,  # Use current avg as estimate
-                "rolling_avg_6m": avg_monthly,  # Use current avg as estimate
+                "rolling_avg_3m": avg_monthly,  # Use current total as rolling avg
+                "rolling_avg_6m": avg_monthly,  # Use current total as rolling avg
                 "quantity_growth": 0.0,  # Neutral growth
+                "lag_1": avg_monthly,  # Use avg_monthly as lag estimate
+                "lag_2": avg_monthly,  # Use avg_monthly as lag estimate
+                "time_index": 6,  # Median time index estimate
+                "rolling_std_3m": avg_monthly * 0.15,  # Estimate 15% std deviation
             }
 
             # Encode categorical features

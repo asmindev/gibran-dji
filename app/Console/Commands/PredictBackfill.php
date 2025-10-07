@@ -211,19 +211,27 @@ class PredictBackfill extends Command
 
     /**
      * Calculate average monthly quantity for an item
+     * This calculates the average TOTAL quantity per month (not per transaction)
      */
     private function calculateAverageMonthly($item, $upToMonth, $predictionType)
     {
         $table = $predictionType === 'sales' ? 'outgoing_items' : 'incoming_items';
         $dateColumn = $predictionType === 'sales' ? 'outgoing_date' : 'incoming_date';
 
-        $avg = DB::table($table)
+        // Calculate average of monthly totals, not average per transaction
+        $monthlyTotals = DB::table($table)
             ->where('item_id', $item->id)
             ->where($dateColumn, '<', $upToMonth->format('Y-m-01'))
-            ->selectRaw("AVG(quantity) as avg_quantity")
-            ->value('avg_quantity');
+            ->selectRaw("DATE_FORMAT({$dateColumn}, '%Y-%m') as month, SUM(quantity) as monthly_total")
+            ->groupBy(DB::raw("DATE_FORMAT({$dateColumn}, '%Y-%m')"))
+            ->get();
 
-        return $avg ? round($avg, 2) : null;
+        if ($monthlyTotals->isEmpty()) {
+            return null;
+        }
+
+        $avgMonthly = $monthlyTotals->avg('monthly_total');
+        return $avgMonthly ? round($avgMonthly, 2) : null;
     }
 
     /**

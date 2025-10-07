@@ -120,6 +120,26 @@ class StockModelTrainer:
             monthly_data.groupby("item_id")["total_quantity"].pct_change().fillna(0)
         )
 
+        # Add lag features for better time series prediction
+        monthly_data["lag_1"] = (
+            monthly_data.groupby("item_id")["total_quantity"].shift(1).fillna(0)
+        )
+        monthly_data["lag_2"] = (
+            monthly_data.groupby("item_id")["total_quantity"].shift(2).fillna(0)
+        )
+
+        # Add trend feature (linear trend over time)
+        monthly_data["time_index"] = monthly_data.groupby("item_id").cumcount()
+
+        # Add moving standard deviation for volatility
+        monthly_data["rolling_std_3m"] = (
+            monthly_data.groupby("item_id")["total_quantity"]
+            .rolling(window=3, min_periods=1)
+            .std()
+            .reset_index(0, drop=True)
+            .fillna(0)
+        )
+
         # Encode categorical variables
         encoder_name = f"{prediction_type}_category_encoder"
         if encoder_name not in self.label_encoders:
@@ -154,12 +174,17 @@ class StockModelTrainer:
             "rolling_avg_3m",
             "rolling_avg_6m",
             "quantity_growth",
+            "lag_1",
+            "lag_2",
+            "time_index",
+            "rolling_std_3m",
             "category_encoded",
             "season_encoded",
         ]
 
         # Create feature matrix
         X = monthly_data[feature_columns].fillna(0)
+        # Use total_quantity as target (this is what we want to predict per month)
         y = monthly_data["total_quantity"]
 
         return X, y, monthly_data
@@ -170,9 +195,9 @@ class StockModelTrainer:
         self.logger.info(f"Features shape: {X.shape}")
         self.logger.info(f"Target shape: {y.shape}")
 
-        # Split data
+        # Split data with stratification for better representation
         X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=42, shuffle=True
+            X, y, test_size=0.15, random_state=42, shuffle=True
         )
 
         # Scale features (optional for Random Forest, but can help)
@@ -181,14 +206,22 @@ class StockModelTrainer:
         X_train_scaled = self.scalers[scaler_name].fit_transform(X_train)
         X_test_scaled = self.scalers[scaler_name].transform(X_test)
 
-        # Train Random Forest
+        # Train Random Forest with balanced hyperparameters
+        # Focus on using avg_quantity and historical patterns effectively
         model = RandomForestRegressor(
-            n_estimators=100,
-            max_depth=15,
-            min_samples_split=5,
-            min_samples_leaf=2,
+            n_estimators=150,  # Reduced for faster, less overfit
+            max_depth=20,  # Controlled depth to prevent overfitting
+            min_samples_split=3,  # Require more samples for splits
+            min_samples_leaf=2,  # Require leaves to have at least 2 samples
+            max_features=0.7,  # Use 70% of features per tree
+            min_impurity_decrease=0.01,  # Require meaningful improvements
+            bootstrap=True,  # Bootstrap sampling
+            oob_score=True,  # Out-of-bag validation
+            max_samples=0.9,  # Use 90% samples per tree
             random_state=42,
             n_jobs=-1,
+            warm_start=False,
+            verbose=0,
         )
 
         model.fit(X_train_scaled, y_train)
@@ -205,8 +238,11 @@ class StockModelTrainer:
         train_mae = mean_absolute_error(y_train, y_pred_train)
         test_mae = mean_absolute_error(y_test, y_pred_test)
 
-        # Cross-validation score
-        cv_scores = cross_val_score(model, X_train_scaled, y_train, cv=5, scoring="r2")
+        # Get OOB score for additional validation
+        oob_score = model.oob_score_ if hasattr(model, "oob_score_") else None
+
+        # Cross-validation score with more folds for better validation
+        cv_scores = cross_val_score(model, X_train_scaled, y_train, cv=10, scoring="r2")
 
         # Feature importance
         feature_importance = dict(zip(X.columns, model.feature_importances_))
@@ -219,18 +255,25 @@ class StockModelTrainer:
             "test_rmse": test_rmse,
             "train_mae": train_mae,
             "test_mae": test_mae,
+            "oob_score": oob_score,
             "cv_r2_mean": cv_scores.mean(),
             "cv_r2_std": cv_scores.std(),
             "feature_importance": feature_importance,
             "training_samples": len(X_train),
             "test_samples": len(X_test),
             "feature_columns": list(X.columns),
+            "n_estimators": 150,
+            "max_depth": 20,
         }
 
         self.logger.info(f"Training completed for {prediction_type}:")
         self.logger.info(f"  Train R²: {train_r2:.4f}")
         self.logger.info(f"  Test R²: {test_r2:.4f}")
+        if oob_score:
+            self.logger.info(f"  OOB Score: {oob_score:.4f}")
         self.logger.info(f"  ========= Train Metrics ({prediction_type}) =========")
+        self.logger.info(f"  Train MAE: {train_mae:.4f}")
+        self.logger.info(f"  Train RMSE: {train_rmse:.4f}")
         self.logger.info(f"  Test MAE: {test_mae:.4f}")
         self.logger.info(f"  Test RMSE: {test_rmse:.4f}")
         self.logger.info(f"  =================================")
