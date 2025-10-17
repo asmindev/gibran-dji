@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnalysisController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CategoryController;
@@ -46,6 +47,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/predict', [StockPredictionController::class, 'predict'])->name('predict');
         Route::post('/train-model', [StockPredictionController::class, 'trainModel'])->name('train-model');
         Route::get('/training-status', [StockPredictionController::class, 'getTrainingStatus'])->name('training-status');
+    });
+
+    Route::prefix('analysis')->name('analysis.')->group(function () {
+        Route::get('/compare', [AnalysisController::class, 'compareAlgorithms'])->name('compare');
+        Route::get('/apriori-process', [AnalysisController::class, 'aprioriProcess'])->name('apriori-process');
+        Route::get('/fpgrowth-process', [AnalysisController::class, 'fpGrowthProcess'])->name('fpgrowth-process');
     });
 
     // Reports

@@ -1,150 +1,276 @@
 {
     "products": {
-        "1": {
-            "id": 1,
+        "92": {
+            "id": 92,
             "name": "Sepatu Bola Ortus",
-            "category": "Peralatan Olahraga",
+            "category": "Sepatu",
             "has_sales_data": true,
             "has_restock_data": true
         },
-        "2": {
-            "id": 2,
+        "93": {
+            "id": 93,
             "name": "Kaos Kaki Avo",
-            "category": "Peralatan Olahraga",
+            "category": "Aksesoris",
             "has_sales_data": true,
             "has_restock_data": true
         },
-        "3": {
-            "id": 3,
+        "94": {
+            "id": 94,
             "name": "Jersey Mills",
-            "category": "Peralatan Olahraga",
+            "category": "Pakaian",
             "has_sales_data": true,
             "has_restock_data": true
         },
-        "4": {
-            "id": 4,
-            "name": "Tali Sepatu Kipzkapz",
-            "category": "Peralatan Olahraga",
+        "95": {
+            "id": 95,
+            "name": "Tali Sepatu KipzKapz",
+            "category": "Aksesoris",
             "has_sales_data": true,
             "has_restock_data": true
         },
-        "5": {
-            "id": 5,
+        "96": {
+            "id": 96,
+            "name": "Bola Futsal Specs Mador",
+            "category": "Peralatan",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "97": {
+            "id": 97,
+            "name": "Sepatu Futsal LS Reborn",
+            "category": "Sepatu",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "98": {
+            "id": 98,
+            "name": "Sepatu Lari Mills",
+            "category": "Sepatu",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "99": {
+            "id": 99,
+            "name": "Topi Lari Adidas Aeroready",
+            "category": "Aksesoris",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "100": {
+            "id": 100,
+            "name": "Raket Badminton Yonex Astrox 99",
+            "category": "Peralatan",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "101": {
+            "id": 101,
+            "name": "Shuttlecock Li-Ning A+300",
+            "category": "Peralatan",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "102": {
+            "id": 102,
+            "name": "Grip Raket Victor GR200",
+            "category": "Aksesoris",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "103": {
+            "id": 103,
+            "name": "Dekker Pelindung Kaki Nike Charge",
+            "category": "Aksesoris",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "104": {
+            "id": 104,
+            "name": "Baju Lari Nike Dri-Fit",
+            "category": "Pakaian",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "105": {
+            "id": 105,
+            "name": "Botol Minum Eiger Hydro",
+            "category": "Aksesoris",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "106": {
+            "id": 106,
+            "name": "Celana Bola Adidas Squadra",
+            "category": "Pakaian",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "107": {
+            "id": 107,
+            "name": "Handuk Mikrofiber Nabaiji",
+            "category": "Aksesoris",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "108": {
+            "id": 108,
+            "name": "Pompa Bola Tiento",
+            "category": "Peralatan",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "109": {
+            "id": 109,
+            "name": "Sepatu Badminton Victor A970",
+            "category": "Sepatu",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "110": {
+            "id": 110,
+            "name": "Tas Raket Lining",
+            "category": "Aksesoris",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "111": {
+            "id": 111,
+            "name": "Bola Basket Spalding TF-150",
+            "category": "Peralatan",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "112": {
+            "id": 112,
+            "name": "Sepatu Basket Adidas Harden Vol. 8",
+            "category": "Sepatu",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "113": {
+            "id": 113,
+            "name": "Legging Olahraga CoreNation",
+            "category": "Pakaian",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "114": {
+            "id": 114,
+            "name": "Sarung Tangan Kiper Specs Illuzion",
+            "category": "Aksesoris",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "115": {
+            "id": 115,
+            "name": "Jaket Parasut Eiger Windproof",
+            "category": "Pakaian",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "116": {
+            "id": 116,
+            "name": "Matras Yoga Kettler",
+            "category": "Peralatan",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "117": {
+            "id": 117,
+            "name": "Tali Skipping Reebok",
+            "category": "Peralatan",
+            "has_sales_data": true,
+            "has_restock_data": true
+        },
+        "118": {
+            "id": 118,
             "name": "Piala",
-            "category": "Peralatan Olahraga",
+            "category": "Aksesoris",
             "has_sales_data": true,
             "has_restock_data": true
         },
-        "6": {
-            "id": 6,
-            "name": "Sepatu Futsal",
-            "category": "Peralatan Olahraga",
+        "119": {
+            "id": 119,
+            "name": "Baju Renang Arena Carbon-Glide",
+            "category": "Pakaian",
             "has_sales_data": true,
             "has_restock_data": true
         },
-        "7": {
-            "id": 7,
-            "name": "Bola Basket",
-            "category": "Peralatan Olahraga",
+        "120": {
+            "id": 120,
+            "name": "Kacamata Renang Speedo Fastskin",
+            "category": "Peralatan",
             "has_sales_data": true,
             "has_restock_data": true
         },
-        "8": {
-            "id": 8,
-            "name": "Jersey Basket",
-            "category": "Peralatan Olahraga",
+        "121": {
+            "id": 121,
+            "name": "Dumbbell Set 2kg Agnite",
+            "category": "Peralatan",
             "has_sales_data": true,
             "has_restock_data": true
         },
-        "9": {
-            "id": 9,
-            "name": "Bola Sepak",
-            "category": "Peralatan Olahraga",
+        "122": {
+            "id": 122,
+            "name": "Tas Gym Under Armour",
+            "category": "Aksesoris",
             "has_sales_data": true,
-            "has_restock_data": true
+            "has_restock_data": false
         },
-        "10": {
-            "id": 10,
-            "name": "Raket Badminton",
-            "category": "Peralatan Olahraga",
+        "123": {
+            "id": 123,
+            "name": "Botol Shaker Herbalife",
+            "category": "Aksesoris",
             "has_sales_data": true,
-            "has_restock_data": true
+            "has_restock_data": false
         },
-        "11": {
-            "id": 11,
-            "name": "Shuttlecock",
-            "category": "Peralatan Olahraga",
+        "124": {
+            "id": 124,
+            "name": "Gelang Keringat Nike",
+            "category": "Aksesoris",
             "has_sales_data": true,
-            "has_restock_data": true
+            "has_restock_data": false
         },
-        "12": {
-            "id": 12,
-            "name": "Raket Tenis",
-            "category": "Peralatan Olahraga",
+        "125": {
+            "id": 125,
+            "name": "Piala Kejuaraan",
+            "category": "Aksesoris",
             "has_sales_data": true,
-            "has_restock_data": true
+            "has_restock_data": false
         },
-        "13": {
-            "id": 13,
-            "name": "Bola Tenis",
-            "category": "Peralatan Olahraga",
+        "126": {
+            "id": 126,
+            "name": "Tali Skipping Kettler",
+            "category": "Peralatan",
             "has_sales_data": true,
-            "has_restock_data": true
+            "has_restock_data": false
         },
-        "14": {
-            "id": 14,
-            "name": "Sepatu Lari Nike",
-            "category": "Peralatan Olahraga",
+        "127": {
+            "id": 127,
+            "name": "Pelindung Siku (Elbow Pad)",
+            "category": "Aksesoris",
             "has_sales_data": true,
-            "has_restock_data": true
+            "has_restock_data": false
         },
-        "15": {
-            "id": 15,
-            "name": "Celana Training",
-            "category": "Peralatan Olahraga",
+        "128": {
+            "id": 128,
+            "name": "Bola Basket Molten",
+            "category": "Peralatan",
             "has_sales_data": true,
-            "has_restock_data": true
+            "has_restock_data": false
         },
-        "16": {
-            "id": 16,
-            "name": "Jaket Olahraga",
-            "category": "Peralatan Olahraga",
+        "129": {
+            "id": 129,
+            "name": "Yoga Block Cor-Fit",
+            "category": "Peralatan",
             "has_sales_data": true,
-            "has_restock_data": true
-        },
-        "17": {
-            "id": 17,
-            "name": "Sarung Tangan Kiper",
-            "category": "Peralatan Olahraga",
-            "has_sales_data": true,
-            "has_restock_data": true
-        },
-        "18": {
-            "id": 18,
-            "name": "Matras Yoga",
-            "category": "Peralatan Olahraga",
-            "has_sales_data": true,
-            "has_restock_data": true
-        },
-        "19": {
-            "id": 19,
-            "name": "Dumbbell 5kg",
-            "category": "Peralatan Olahraga",
-            "has_sales_data": true,
-            "has_restock_data": true
-        },
-        "20": {
-            "id": 20,
-            "name": "Botol Minum Olahraga",
-            "category": "Peralatan Olahraga",
-            "has_sales_data": true,
-            "has_restock_data": true
+            "has_restock_data": false
         }
     },
-    "total_products": 20,
-    "products_with_sales_data": 20,
-    "products_with_restock_data": 20,
-    "export_date": "2025-09-18T13:16:16.983754Z",
-    "data_period_start": "2024-09-18",
-    "data_period_end": "2025-09-18"
+    "total_products": 38,
+    "products_with_sales_data": 38,
+    "products_with_restock_data": 30,
+    "export_date": "2025-10-08T09:00:10.482653Z",
+    "data_period_start": "2024-10-08",
+    "data_period_end": "2025-10-08"
 }
