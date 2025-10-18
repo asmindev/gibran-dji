@@ -111,7 +111,7 @@
     <!-- Sample Transaction Data -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-8">
         <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-semibold text-gray-800">📊 Data Transaksi Sample (DJ Sport)</h2>
+            <h2 class="text-xl font-semibold text-gray-800">📊 Data Transaksi</h2>
             @if($selectedDate !== 'all')
             <div class="text-sm">
                 <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full">
@@ -310,29 +310,50 @@
             </div>
 
             @elseif($step['step'] === 'C')
-            <!-- Generated 2-itemsets -->
-            <div class="grid md:grid-cols-2 gap-4">
-                @foreach($step['data'] as $itemset)
-                @if(isset($itemset['itemset']))
-                <div class="bg-green-50 border border-green-200 rounded-lg p-4">
-                    <div class="flex flex-wrap gap-1 items-center">
-                        @php
-                        $items = explode(', ', trim($itemset['itemset'], '{}'));
-                        @endphp
-                        @foreach($items as $index => $item)
-                        <span
-                            class="inline-flex px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full font-medium">
-                            {{ trim($item) }}
-                        </span>
-                        @if($index < count($items) - 1) <span class="text-green-400 font-bold">+</span>
-                            @endif
-                            @endforeach
-                            <span
-                                class="ml-2 text-xs bg-green-100 text-green-700 px-2 py-1 rounded font-medium">Generated</span>
-                    </div>
-                </div>
-                @endif
-                @endforeach
+            <!-- Sort Transactions -->
+            <div class="mb-4 bg-green-50 border-l-4 border-green-500 p-4 rounded">
+                <p class="text-sm text-green-700">
+                    <strong>📋 Sorted Transactions:</strong> Setiap transaksi diurutkan berdasarkan F-List (dari item
+                    paling frequent ke least frequent).
+                </p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full table-auto">
+                    <thead>
+                        <tr class="bg-gray-50">
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">#</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Sorted
+                                Transaction</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Item Count</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        @foreach($step['data'] as $index => $transaction)
+                        @if(isset($transaction['itemset']))
+                        <tr class="bg-white hover:bg-green-50">
+                            <td class="px-4 py-2 text-sm text-gray-600">{{ $index + 1 }}</td>
+                            <td class="px-4 py-2 text-sm font-medium text-gray-900">
+                                <div class="flex flex-wrap gap-1 items-center">
+                                    @php
+                                    $items = explode(' → ', $transaction['itemset']);
+                                    @endphp
+                                    @foreach($items as $itemIndex => $item)
+                                    <span
+                                        class="inline-flex px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full font-medium">
+                                        {{ trim($item) }}
+                                    </span>
+                                    @if($itemIndex < count($items) - 1) <span class="text-green-400 font-bold">→</span>
+                                        @endif
+                                        @endforeach
+                                </div>
+                            </td>
+                            <td class="px-4 py-2 text-sm text-gray-600">{{ $transaction['count'] ?? 0 }} items</td>
+                        </tr>
+                        @endif
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
 
             @elseif($step['step'] === 'D')

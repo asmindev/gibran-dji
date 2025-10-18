@@ -108,7 +108,7 @@
     <!-- Sample Transaction Data -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-8">
         <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-semibold text-gray-800">📊 Data Transaksi Sample (DJ Sport)</h2>
+            <h2 class="text-xl font-semibold text-gray-800">📊 Data Transaksi</h2>
             @if($selectedDate !== 'all')
             <div class="text-sm">
                 <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">

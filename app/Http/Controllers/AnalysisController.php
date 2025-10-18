@@ -353,7 +353,10 @@ class AnalysisController extends Controller
 
             if (!empty($filteredItems)) {
                 $sortedTransactions[] = $filteredItems;
+                
+                // Add itemset key for view compatibility - show the sorted transaction
                 $step3Data[] = [
+                    'itemset' => implode(' → ', $filteredItems),  // For view display
                     'original' => implode(', ', $transaction['items']),
                     'sorted' => implode(' → ', $filteredItems),
                     'count' => count($filteredItems)
@@ -376,9 +379,13 @@ class AnalysisController extends Controller
         }
 
         foreach ($fpTreePaths as $path => $count) {
+            $support = round(($count / $totalTransactions) * 100, 1);
             $step4Data[] = [
+                'itemset' => $path,  // Add itemset key for view compatibility
                 'path' => $path,
-                'count' => $count
+                'count' => $count,
+                'support' => $support,
+                'status' => 'kept'  // FP-Tree paths are always kept
             ];
         }
         $stepTimings['step4'] = round((microtime(true) - $step4Start) * 1000, 2);
@@ -407,13 +414,14 @@ class AnalysisController extends Controller
         $validFrequentPairs = [];
         foreach ($frequentPatterns as $pattern => $count) {
             $support = round(($count / $totalTransactions) * 100, 1);
-            $status = $support >= $minSupport ? 'frequent' : 'infrequent';
+            $status = $support >= $minSupport ? 'kept' : 'pruned';
 
-            if ($status === 'frequent') {
+            if ($status === 'kept') {
                 $validFrequentPairs[$pattern] = explode(', ', $pattern);
             }
 
             $step5Data[] = [
+                'itemset' => '{' . $pattern . '}',  // Use itemset for view compatibility
                 'pattern' => '{' . $pattern . '}',
                 'count' => $count,
                 'support' => $support,

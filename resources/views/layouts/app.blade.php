@@ -92,8 +92,8 @@
 
 
 
-
-                    <a href="{{ route('analysis.compare') }}"
+                    {{-- disable compare algoritm --}}
+                    {{-- <a href="{{ route('analysis.compare') }}"
                         class="@if(request()->routeIs('analysis.compare')) bg-primary text-white @else text-gray-600 hover:bg-gray-100 hover:text-gray-900 @endif flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -101,7 +101,7 @@
                             </path>
                         </svg>
                         Bandingkan Algoritma
-                    </a>
+                    </a> --}}
 
                     <a href="{{ route('analysis.apriori-process') }}"
                         class="@if(request()->routeIs('analysis.apriori-process')) bg-primary text-white @else text-gray-600 hover:bg-gray-100 hover:text-gray-900 @endif flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200">
@@ -123,8 +123,8 @@
                         Proses FP-Growth
                     </a>
 
-                    <!-- Prediksi Stok -->
-                    <a href="{{ route('predictions.index') }}"
+                    {{-- Disable Prediction --}}
+                    {{-- <a href="{{ route('predictions.index') }}"
                         class="@if(request()->routeIs('predictions.*')) bg-primary text-white @else text-gray-600 hover:bg-gray-100 hover:text-gray-900 @endif flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -132,7 +132,7 @@
                             </path>
                         </svg>
                         Prediksi Stok
-                    </a>
+                    </a> --}}
                 </nav>
 
                 <!-- Footer in Sidebar -->
