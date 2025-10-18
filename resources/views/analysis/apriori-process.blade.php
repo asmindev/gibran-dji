@@ -256,10 +256,11 @@
             <!-- Pruned items -->
             <div class="mb-4 bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
                 <p class="text-sm text-blue-700">
-                    <strong>📋 Pruning:</strong> Hanya items dengan support ≥ {{ $minSupport }}% yang dipertahankan untuk tahap selanjutnya.
+                    <strong>📋 Pruning:</strong> Hanya items dengan support ≥ {{ $minSupport }}% yang dipertahankan
+                    untuk tahap selanjutnya.
                 </p>
             </div>
-            
+
             <div class="overflow-x-auto">
                 <table class="min-w-full table-auto">
                     <thead>
@@ -272,23 +273,28 @@
                     <tbody class="divide-y divide-gray-200">
                         @foreach($step['data'] as $item)
                         @php
-                            $isKept = ($item['status'] ?? '') === 'kept';
+                        $isKept = ($item['status'] ?? '') === 'kept';
                         @endphp
                         <tr class="{{ $isKept ? 'bg-green-50' : 'bg-red-50' }}">
-                            <td class="px-4 py-2 text-sm font-medium text-gray-900">{{ $item['item'] ?? 'Unknown' }}</td>
+                            <td class="px-4 py-2 text-sm font-medium text-gray-900">{{ $item['item'] ?? 'Unknown' }}
+                            </td>
                             <td class="px-4 py-2 text-sm">{{ $item['support'] ?? 0 }}%</td>
                             <td class="px-4 py-2 text-sm">
                                 @if($isKept)
-                                <span class="inline-flex items-center px-2 py-1 text-xs font-semibold bg-green-100 text-green-800 rounded-full">
+                                <span
+                                    class="inline-flex items-center px-2 py-1 text-xs font-semibold bg-green-100 text-green-800 rounded-full">
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M5 13l4 4L19 7"></path>
                                     </svg>
                                     Dipertahankan
                                 </span>
                                 @else
-                                <span class="inline-flex items-center px-2 py-1 text-xs font-semibold bg-red-100 text-red-800 rounded-full">
+                                <span
+                                    class="inline-flex items-center px-2 py-1 text-xs font-semibold bg-red-100 text-red-800 rounded-full">
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12"></path>
                                     </svg>
                                     Dihapus (&lt; {{ $minSupport }}%)
                                 </span>
@@ -314,11 +320,11 @@
                         <span class="inline-flex px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full font-medium">
                             {{ trim($item) }}
                         </span>
-                        @if($index < count($items) - 1)
-                            <span class="text-blue-400 font-bold">+</span>
-                        @endif
-                        @endforeach
-                        <span class="ml-2 text-xs bg-green-100 text-green-700 px-2 py-1 rounded font-medium">Generated</span>
+                        @if($index < count($items) - 1) <span class="text-blue-400 font-bold">+</span>
+                            @endif
+                            @endforeach
+                            <span
+                                class="ml-2 text-xs bg-green-100 text-green-700 px-2 py-1 rounded font-medium">Generated</span>
                     </div>
                 </div>
                 @endif
@@ -349,21 +355,24 @@
                                     $items = explode(', ', trim($itemset['itemset'], '{}'));
                                     @endphp
                                     @foreach($items as $index => $item)
-                                    <span class="inline-flex px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full font-medium">
+                                    <span
+                                        class="inline-flex px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full font-medium">
                                         {{ trim($item) }}
                                     </span>
-                                    @if($index < count($items) - 1)
-                                        <span class="text-gray-400 font-bold">+</span>
-                                    @endif
-                                    @endforeach
+                                    @if($index < count($items) - 1) <span class="text-gray-400 font-bold">+</span>
+                                        @endif
+                                        @endforeach
                                 </div>
                             </td>
-                            <td class="px-4 py-2 text-sm">{{ $itemset['count'] ?? 0 }}/{{ $algorithmSteps['summary']['total_transactions'] ?? 0 }}</td>
+                            <td class="px-4 py-2 text-sm">{{ $itemset['count'] ?? 0 }}/{{
+                                $algorithmSteps['summary']['total_transactions'] ?? 0 }}</td>
                             <td class="px-4 py-2 text-sm">{{ $itemset['support'] ?? 0 }}%</td>
                             <td class="px-4 py-2 text-sm">
-                                <span class="inline-flex items-center px-2 py-1 text-xs font-semibold bg-green-100 text-green-800 rounded-full">
+                                <span
+                                    class="inline-flex items-center px-2 py-1 text-xs font-semibold bg-green-100 text-green-800 rounded-full">
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M5 13l4 4L19 7"></path>
                                     </svg>
                                     Frequent
                                 </span>
