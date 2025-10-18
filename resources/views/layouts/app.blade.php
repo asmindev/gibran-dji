@@ -254,7 +254,7 @@
                         </div>
 
                         <!-- Prediksi Stok -->
-                        <a href="{{ route('predictions.index') }}"
+                        {{-- <a href="{{ route('predictions.index') }}"
                             class="@if(request()->routeIs('predictions.*')) bg-purple-100 text-purple-700 @else text-gray-600 hover:bg-gray-100 hover:text-gray-900 @endif flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200"
                             onclick="toggleMobileSidebar()">
                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -262,7 +262,7 @@
                                     d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
                                 </path>
                             </svg>
-                            Prediksi Stok
+                            Prediksi Stok --}}
                         </a>
 
                         <!-- Reports Section -->

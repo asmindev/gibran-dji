@@ -41,13 +41,7 @@ Route::middleware('auth')->group(function () {
     Route::post('outgoing_items/import', [OutgoingItemController::class, 'import'])->name('outgoing_items.import');
     Route::resource('outgoing_items', OutgoingItemController::class);
 
-    // Stock Predictions
-    Route::prefix('predictions')->name('predictions.')->group(function () {
-        Route::get('/', [StockPredictionController::class, 'index'])->name('index');
-        Route::post('/predict', [StockPredictionController::class, 'predict'])->name('predict');
-        Route::post('/train-model', [StockPredictionController::class, 'trainModel'])->name('train-model');
-        Route::get('/training-status', [StockPredictionController::class, 'getTrainingStatus'])->name('training-status');
-    });
+
 
     Route::prefix('analysis')->name('analysis.')->group(function () {
         Route::get('/compare', [AnalysisController::class, 'compareAlgorithms'])->name('compare');
