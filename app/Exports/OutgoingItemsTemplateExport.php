@@ -10,14 +10,21 @@ class OutgoingItemsTemplateExport implements FromArray, WithHeadings
     public function array(): array
     {
         // Return sample data for template
+        // ID Transaksi tidak perlu diisi, akan auto-generated oleh sistem
         return [
             [
                 '1',
-                'TRX20250803001',
                 '03/08/2025',
                 'Barang A',
                 'Kategori A',
                 2
+            ],
+            [
+                '2',
+                '04/08/2025',
+                'Barang B',
+                'Kategori B',
+                1
             ]
         ];
     }
@@ -26,7 +33,6 @@ class OutgoingItemsTemplateExport implements FromArray, WithHeadings
     {
         return [
             'NO',
-            'ID TRANSAKSI',
             'TANGGAL TRANSAKSI',
             'NAMA BARANG',
             'KATEGORI',

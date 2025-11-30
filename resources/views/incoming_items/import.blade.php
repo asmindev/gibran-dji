@@ -26,7 +26,7 @@
             <li>• File harus berformat Excel (.xlsx) atau CSV (.csv)</li>
             <li>• Ukuran file maksimal 10MB</li>
             <li>• Pastikan format kolom sesuai dengan template</li>
-            <li>• ID Transaksi wajib diisi untuk setiap baris</li>
+            <li>• <strong>ID Transaksi akan dibuat otomatis oleh sistem</strong> (format: TR{YYYYMMDD}{XXX})</li>
             <li>• Nama barang harus sudah ada dalam sistem</li>
             <li>• Stok akan otomatis bertambah setelah import</li>
             <li>• Data akan langsung diimport setelah upload</li>
@@ -200,7 +200,6 @@
             <thead class="bg-gray-50">
                 <tr>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">No</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">ID Transaksi</th>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tanggal Transaksi</th>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Nama Barang</th>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Kategori</th>
@@ -211,7 +210,6 @@
             <tbody class="bg-white divide-y divide-gray-200">
                 <tr>
                     <td class="px-4 py-2 text-sm">1</td>
-                    <td class="px-4 py-2 text-sm">TRX20250810001</td>
                     <td class="px-4 py-2 text-sm">10/08/2025</td>
                     <td class="px-4 py-2 text-sm">Barang A</td>
                     <td class="px-4 py-2 text-sm">Kategori A</td>
@@ -220,7 +218,6 @@
                 </tr>
                 <tr>
                     <td class="px-4 py-2 text-sm">2</td>
-                    <td class="px-4 py-2 text-sm">TRX20250810002</td>
                     <td class="px-4 py-2 text-sm">10/08/2025</td>
                     <td class="px-4 py-2 text-sm">Barang B</td>
                     <td class="px-4 py-2 text-sm">Kategori B</td>
@@ -406,7 +403,7 @@ function displayPreview(data) {
         const headers = previewData[0] || [];
         headerMapping = getHeaderMapping(headers);
         // Expected headers in order - these should match exactly
-        const expectedHeaders = ["NO","ID TRANSAKSI", "TANGGAL TRANSAKSI", "NAMA BARANG", "KATEGORI", "JUMLAH", "HARGA SATUAN"];
+        const expectedHeaders = ["NO", "TANGGAL TRANSAKSI", "NAMA BARANG", "KATEGORI", "JUMLAH", "HARGA SATUAN"];
 
         headers.forEach((header, index) => {
             const headerStr = header ? String(header).trim() : '';
@@ -446,11 +443,9 @@ function displayPreview(data) {
             const trimmedValue = cellValue.trim();
 
             // Check if this cell index corresponds to required fields
-            const idTransaksiIndex = headerMapping["ID TRANSAKSI"];
             const namaBarangIndex = headerMapping["NAMA BARANG"];
             const jumlahIndex = headerMapping["JUMLAH"];
 
-            if (cellIndex === idTransaksiIndex && !trimmedValue) cellClass += ' bg-red-100'; // ID Transaksi required
             if (cellIndex === namaBarangIndex && !trimmedValue) cellClass += ' bg-red-100'; // Nama barang required
             if (cellIndex === tanggalIndex && !trimmedValue) cellClass += ' bg-red-100'; // Tanggal required
             if (cellIndex === jumlahIndex && (!trimmedValue || isNaN(trimmedValue) || parseFloat(trimmedValue) <= 0)) cellClass += ' bg-red-100'; // Jumlah required & numeric
@@ -506,7 +501,7 @@ function displayPreview(data) {
 }
 
 function getHeaderMapping(headers) {
-    const expectedHeaders = ["NO","ID TRANSAKSI", "TANGGAL TRANSAKSI", "NAMA BARANG", "KATEGORI", "JUMLAH", "HARGA SATUAN"];
+    const expectedHeaders = ["NO", "TANGGAL TRANSAKSI", "NAMA BARANG", "KATEGORI", "JUMLAH", "HARGA SATUAN"];
     const mapping = {};
 
     expectedHeaders.forEach(expected => {
@@ -531,17 +526,6 @@ function validateRow(row, rowIndex, headerMapping) {
     // Ensure row exists and has elements
     if (!row || !Array.isArray(row)) {
         return true;
-    }
-
-    // ID Transaksi required
-    const idTransaksiIndex = headerMapping["ID TRANSAKSI"];
-    if (idTransaksiIndex !== undefined) {
-        const idTransaksi = row[idTransaksiIndex] ? String(row[idTransaksiIndex]).trim() : '';
-        if (!idTransaksi) {
-            hasErrors = true;
-        }
-    } else {
-        hasErrors = true; // Required column missing
     }
 
     // Nama barang required
@@ -595,7 +579,7 @@ function validateAllData(data, headerMapping = {}) {
     }
 
     // Check required headers using mapping
-    const requiredHeaders = ["ID TRANSAKSI", "NAMA BARANG", "TANGGAL TRANSAKSI", "JUMLAH"];
+    const requiredHeaders = ["NAMA BARANG", "TANGGAL TRANSAKSI", "JUMLAH"];
     const missingHeaders = requiredHeaders.filter(header =>
         headerMapping[header] === undefined
     );
@@ -621,15 +605,6 @@ function validateAllData(data, headerMapping = {}) {
         const hasAnyContent = row.some(cell => cell && String(cell).trim() !== '');
         if (!hasAnyContent) {
             continue;
-        }
-
-        // ID Transaksi validation
-        const idTransaksiIndex = headerMapping["ID TRANSAKSI"];
-        if (idTransaksiIndex !== undefined) {
-            const idTransaksi = row[idTransaksiIndex] ? String(row[idTransaksiIndex]).trim() : '';
-            if (!idTransaksi) {
-                rowErrors.push('ID Transaksi kosong');
-            }
         }
 
         // Nama barang validation
