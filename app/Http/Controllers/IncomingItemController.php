@@ -99,11 +99,17 @@ class IncomingItemController extends Controller
      */
     public function store(StoreIncomingItemRequest $request)
     {
-
         // add item stock increment logic here
         $item = Item::find($request->item_id);
         if ($item) {
-            IncomingItem::create($request->validated());
+            $data = $request->validated();
+
+            // Auto-generate transaction_id jika tidak ada
+            if (empty($data['transaction_id'])) {
+                $data['transaction_id'] = IncomingItem::generateTransactionId($data['incoming_date'] ?? null);
+            }
+
+            IncomingItem::create($data);
             $item->increment('stock', $request->quantity);
             return redirect()->route('incoming_items.index')
                 ->with('success', 'Incoming item recorded successfully.');

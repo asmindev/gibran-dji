@@ -75,12 +75,11 @@ class OutgoingItemsImport implements
                     continue;
                 }
 
-                // Validate required fields
-                if (empty($row['id_transaksi']) || empty($row['nama_barang']) || empty($row['jumlah'])) {
+                // Validate required fields (id_transaksi tidak lagi required, akan auto-generate)
+                if (empty($row['nama_barang']) || empty($row['jumlah'])) {
                     $this->validationErrors[] = [
                         'row' => $actualRowNumber,
                         'message' => 'Data tidak lengkap pada baris ' . $actualRowNumber . ': ' .
-                            (empty($row['id_transaksi']) ? 'id_transaksi kosong ' : '') .
                             (empty($row['nama_barang']) ? 'nama_barang kosong ' : '') .
                             (empty($row['jumlah']) ? 'jumlah kosong' : '')
                     ];
@@ -88,7 +87,6 @@ class OutgoingItemsImport implements
                     Log::warning('Validation error: incomplete data', [
                         'actual_row_number' => $actualRowNumber,
                         'missing_fields' => [
-                            'id_transaksi' => empty($row['id_transaksi']),
                             'nama_barang' => empty($row['nama_barang']),
                             'jumlah' => empty($row['jumlah'])
                         ],
@@ -129,14 +127,17 @@ class OutgoingItemsImport implements
                 // Parse date
                 $outgoingDate = $this->parseDate($row['tanggal_transaksi'] ?? null);
 
+                // Generate transaction ID otomatis
+                $transactionId = OutgoingItem::generateTransactionId($outgoingDate);
+
                 // Create outgoing item
                 OutgoingItem::create([
-                    'transaction_id' => $row['id_transaksi'],
+                    'transaction_id' => $transactionId,
                     'item_id' => $item->id,
                     'quantity' => $requestedQuantity,
                     'unit_cost' => $row['harga_satuan'] ?? 0,
                     'outgoing_date' => $outgoingDate->format('Y-m-d'), // Save as YYYY-MM-DD for database
-                    'notes' => 'Import dari file Excel - ID Transaksi: ' . ($row['id_transaksi'] ?? 'N/A'),
+                    'notes' => 'Import dari file Excel - ' . $outgoingDate->format('d/m/Y'),
                 ]);
 
                 $this->savedRows++;

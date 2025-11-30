@@ -58,12 +58,23 @@
     <!-- Parameters Control -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-8">
         <h2 class="text-xl font-semibold text-gray-800 mb-4">🔧 Kontrol Parameter</h2>
-        <form method="GET" action="{{ route('analysis.apriori-process') }}" class="flex flex-col lg:flex-row gap-4">
-            <div class="flex-1">
+        <form method="GET" action="{{ route('analysis.apriori-process') }}" class="flex flex-col lg:flex-row gap-4"
+            id="apriori-form">
+            <div class="flex-none w-full lg:w-48">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Tipe Filter *</label>
+                <select name="filter_type" id="filter_type"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                    onchange="toggleFilterType()">
+                    <option value="date" {{ request('filter_type', 'date' )==='date' ? 'selected' : '' }}>Per Tanggal
+                    </option>
+                    <option value="month" {{ request('filter_type')==='month' ? 'selected' : '' }}>Per Bulan</option>
+                </select>
+            </div>
+            <div class="flex-1" id="date-filter"
+                style="{{ request('filter_type') === 'month' ? 'display:none;' : '' }}">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Transaksi *</label>
                 <input type="date" name="transaction_date" value="{{ $selectedDate !== 'all' ? $selectedDate : '' }}"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                    required>
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
                 <div class="text-xs text-gray-500 mt-1">
                     @if(!empty($availableDates))
                     Rentang data: {{ \Carbon\Carbon::parse(min($availableDates))->format('d M Y') }} - {{
@@ -71,6 +82,15 @@
                     @else
                     Tidak ada data transaksi tersedia
                     @endif
+                </div>
+            </div>
+            <div class="flex-1" id="month-filter"
+                style="{{ request('filter_type') !== 'month' ? 'display:none;' : '' }}">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Bulan & Tahun *</label>
+                <input type="month" name="transaction_month" value="{{ request('transaction_month') }}"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                <div class="text-xs text-gray-500 mt-1">
+                    Pilih bulan dan tahun untuk analisis transaksi
                 </div>
             </div>
             <div class="flex-none w-full lg:w-48">
@@ -1012,6 +1032,27 @@ document.addEventListener('keydown', function(e) {
         closeProductDetailModal();
     }
 });
+
+// Toggle filter type (date vs month)
+function toggleFilterType() {
+    const filterType = document.getElementById('filter_type').value;
+    const dateFilter = document.getElementById('date-filter');
+    const monthFilter = document.getElementById('month-filter');
+
+    if (filterType === 'month') {
+        dateFilter.style.display = 'none';
+        monthFilter.style.display = 'block';
+        // Clear date input and make month required
+        document.querySelector('input[name="transaction_date"]').removeAttribute('required');
+        document.querySelector('input[name="transaction_month"]').setAttribute('required', 'required');
+    } else {
+        dateFilter.style.display = 'block';
+        monthFilter.style.display = 'none';
+        // Clear month input and make date required
+        document.querySelector('input[name="transaction_month"]').removeAttribute('required');
+        document.querySelector('input[name="transaction_date"]').setAttribute('required', 'required');
+    }
+}
 
 // Date input enhancement
 document.addEventListener('DOMContentLoaded', function() {

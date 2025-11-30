@@ -42,11 +42,13 @@ class IncomingItemsImport implements
                     continue;
                 }
 
-                // Validate required fields
-                if (empty($row['id_transaksi']) || empty($row['nama_barang']) || empty($row['jumlah'])) {
+                // Validate required fields (id_transaksi tidak lagi required, akan auto-generate)
+                if (empty($row['nama_barang']) || empty($row['jumlah'])) {
                     $this->validationErrors[] = [
                         'row' => $index + 2, // +2 because of header and 0-based index
-                        'message' => 'Data tidak lengkap pada baris ' . ($index + 2)
+                        'message' => 'Data tidak lengkap pada baris ' . ($index + 2) . ': ' .
+                            (empty($row['nama_barang']) ? 'nama_barang kosong ' : '') .
+                            (empty($row['jumlah']) ? 'jumlah kosong' : '')
                     ];
                     continue;
                 }
@@ -65,14 +67,17 @@ class IncomingItemsImport implements
                 // Parse date
                 $incomingDate = $this->parseDate($row['tanggal_transaksi'] ?? null);
 
+                // Generate transaction ID otomatis
+                $transactionId = IncomingItem::generateTransactionId($incomingDate);
+
                 // Create incoming item
                 IncomingItem::create([
-                    'transaction_id' => $row['id_transaksi'],
+                    'transaction_id' => $transactionId,
                     'item_id' => $item->id,
                     'quantity' => $row['jumlah'],
                     'unit_cost' => $row['harga_satuan'] ?? 0,
                     'incoming_date' => $incomingDate->format('Y-m-d'), // Save as YYYY-MM-DD for database
-                    'notes' => 'Import dari file Excel - ID Transaksi: ' . ($row['id_transaksi'] ?? 'N/A'),
+                    'notes' => 'Import dari file Excel - ' . $incomingDate->format('d/m/Y'),
                 ]);
 
                 // Update stock

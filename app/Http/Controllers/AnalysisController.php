@@ -162,30 +162,43 @@ class AnalysisController extends Controller
         // Get algorithm parameters - keep as percentage
         $minSupport = $request->get('min_support', 50); // Keep as percentage (50)
         $minConfidence = $request->get('min_confidence', 70); // Keep as percentage (70)
+        $filterType = $request->get('filter_type', 'date');
         $selectedDate = $request->get('transaction_date', ''); // Default empty, no calculation
+        $selectedMonth = $request->get('transaction_month', ''); // For month filter
 
         // Get real transaction data from database for available dates
         $allTransactions = $this->getTransactionDataFromDatabase();
         $availableDates = array_unique(array_column($allTransactions, 'date'));
         sort($availableDates);
 
-        // Only perform calculation if a date is selected
+        // Only perform calculation if a date or month is selected
         $sampleTransactions = [];
         $algorithmSteps = null;
         $hasCalculation = false;
         $analysisSaved = false; // Tambahan variabel untuk tracking penyimpanan
         $savedRulesCount = 0; // Jumlah rules yang berhasil disimpan
 
-        if (!empty($selectedDate)) {
+        if (!empty($selectedDate) || !empty($selectedMonth)) {
             $hasCalculation = true;
 
             // Start timing execution
             $startTime = microtime(true);
 
-            // Filter transactions by selected date
-            if ($selectedDate === 'all') {
+            // Filter transactions based on filter type
+            if ($filterType === 'month' && !empty($selectedMonth)) {
+                // Filter by month
+                $sampleTransactions = array_filter($allTransactions, function ($transaction) use ($selectedMonth) {
+                    $transactionDate = Carbon::parse($transaction['date']);
+                    $filterDate = Carbon::parse($selectedMonth . '-01');
+                    return $transactionDate->format('Y-m') === $filterDate->format('Y-m');
+                });
+                // Reset array keys after filtering
+                $sampleTransactions = array_values($sampleTransactions);
+                $selectedDate = $selectedMonth; // For display and saving
+            } elseif ($selectedDate === 'all') {
                 $sampleTransactions = $allTransactions;
             } else {
+                // Filter by specific date
                 $sampleTransactions = array_filter($allTransactions, function ($transaction) use ($selectedDate) {
                     // Use Carbon for proper date comparison
                     $transactionDate = Carbon::parse($transaction['date'])->format('Y-m-d');
@@ -197,7 +210,9 @@ class AnalysisController extends Controller
             }
 
             Log::info('FP-Growth transactions filtering result', [
+                'filter_type' => $filterType,
                 'selected_date' => $selectedDate,
+                'selected_month' => $selectedMonth,
                 'total_transactions' => count($allTransactions),
                 'filtered_transactions' => count($sampleTransactions)
             ]);
@@ -478,7 +493,7 @@ class AnalysisController extends Controller
         $algorithmEnd = microtime(true);
         $totalAlgorithmTime = round(($algorithmEnd - $algorithmStart) * 1000, 2);
 
-        // Build steps array for FP-Growth
+        // Build steps array for FP-Growth (Step D - Build FP-Tree dihapus untuk simplifikasi UI)
         $steps = [
             [
                 'step' => 'A',
@@ -500,14 +515,8 @@ class AnalysisController extends Controller
             ],
             [
                 'step' => 'D',
-                'title' => 'Build FP-Tree',
-                'description' => 'Construct compressed tree structure from sorted transactions',
-                'data' => $step4Data
-            ],
-            [
-                'step' => 'E',
                 'title' => 'Mine Patterns',
-                'description' => 'Extract frequent patterns from FP-Tree',
+                'description' => 'Extract frequent patterns from sorted transactions',
                 'data' => $step5Data
             ],
         ];
@@ -536,30 +545,43 @@ class AnalysisController extends Controller
         // Get algorithm parameters - keep as percentage
         $minSupport = $request->get('min_support', 50); // Keep as percentage (50)
         $minConfidence = $request->get('min_confidence', 70); // Keep as percentage (70)
+        $filterType = $request->get('filter_type', 'date');
         $selectedDate = $request->get('transaction_date', ''); // Default empty, no calculation
+        $selectedMonth = $request->get('transaction_month', ''); // For month filter
 
         // Get real transaction data from database for available dates
         $allTransactions = $this->getTransactionDataFromDatabase();
         $availableDates = array_unique(array_column($allTransactions, 'date'));
         sort($availableDates);
 
-        // Only perform calculation if a date is selected
+        // Only perform calculation if a date or month is selected
         $sampleTransactions = [];
         $algorithmSteps = null;
         $hasCalculation = false;
         $analysisSaved = false; // Tambahan variabel untuk tracking penyimpanan
         $savedRulesCount = 0; // Jumlah rules yang berhasil disimpan
 
-        if (!empty($selectedDate)) {
+        if (!empty($selectedDate) || !empty($selectedMonth)) {
             $hasCalculation = true;
 
             // Start timing execution
             $startTime = microtime(true);
 
-            // Filter transactions by selected date
-            if ($selectedDate === 'all') {
+            // Filter transactions based on filter type
+            if ($filterType === 'month' && !empty($selectedMonth)) {
+                // Filter by month
+                $sampleTransactions = array_filter($allTransactions, function ($transaction) use ($selectedMonth) {
+                    $transactionDate = Carbon::parse($transaction['date']);
+                    $filterDate = Carbon::parse($selectedMonth . '-01');
+                    return $transactionDate->format('Y-m') === $filterDate->format('Y-m');
+                });
+                // Reset array keys after filtering
+                $sampleTransactions = array_values($sampleTransactions);
+                $selectedDate = $selectedMonth; // For display and saving
+            } elseif ($selectedDate === 'all') {
                 $sampleTransactions = $allTransactions;
             } else {
+                // Filter by specific date
                 $sampleTransactions = array_filter($allTransactions, function ($transaction) use ($selectedDate) {
                     // Use Carbon for proper date comparison
                     $transactionDate = Carbon::parse($transaction['date'])->format('Y-m-d');
@@ -570,8 +592,10 @@ class AnalysisController extends Controller
                 $sampleTransactions = array_values($sampleTransactions);
             }
 
-            Log::info('Transactions filtering result', [
+            Log::info('Apriori transactions filtering result', [
+                'filter_type' => $filterType,
                 'selected_date' => $selectedDate,
+                'selected_month' => $selectedMonth,
                 'total_transactions' => count($allTransactions),
                 'filtered_transactions' => count($sampleTransactions)
             ]);

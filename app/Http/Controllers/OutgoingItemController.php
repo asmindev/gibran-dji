@@ -72,8 +72,14 @@ class OutgoingItemController extends Controller
                 ->with('error', 'Insufficient stock. Available: ' . $item->stock);
         }
 
-        OutgoingItem::create($request->validated());
+        $data = $request->validated();
 
+        // Auto-generate transaction_id jika tidak ada
+        if (empty($data['transaction_id'])) {
+            $data['transaction_id'] = OutgoingItem::generateTransactionId($data['outgoing_date'] ?? null);
+        }
+
+        OutgoingItem::create($data);
 
         return redirect()->route('outgoing_items.index')
             ->with('success', 'Outgoing item recorded successfully.');
