@@ -353,7 +353,7 @@ class AnalysisController extends Controller
 
             if (!empty($filteredItems)) {
                 $sortedTransactions[] = $filteredItems;
-                
+
                 // Add itemset key for view compatibility - show the sorted transaction
                 $step3Data[] = [
                     'itemset' => implode(' → ', $filteredItems),  // For view display
