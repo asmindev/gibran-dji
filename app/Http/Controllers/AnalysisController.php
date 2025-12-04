@@ -31,6 +31,16 @@ class AnalysisController extends Controller
         $availableDates = array_unique(array_column($allTransactions, 'date'));
         sort($availableDates);
 
+        // Get available months from transactions (format: YYYY-MM)
+        $availableMonths = [];
+        foreach ($availableDates as $date) {
+            $monthKey = Carbon::parse($date)->format('Y-m');
+            if (!in_array($monthKey, $availableMonths)) {
+                $availableMonths[] = $monthKey;
+            }
+        }
+        sort($availableMonths);
+
         // Only perform calculation if a date is selected
         $sampleTransactions = [];
         $aprioriSteps = null;
@@ -142,6 +152,7 @@ class AnalysisController extends Controller
             'fpGrowthSteps',
             'selectedDate',
             'availableDates',
+            'availableMonths',
             'products',
             'hasCalculation',
             'aprioriSaved',
@@ -171,6 +182,16 @@ class AnalysisController extends Controller
         $availableDates = array_unique(array_column($allTransactions, 'date'));
         sort($availableDates);
 
+        // Get available months from transactions (format: YYYY-MM)
+        $availableMonths = [];
+        foreach ($availableDates as $date) {
+            $monthKey = Carbon::parse($date)->format('Y-m');
+            if (!in_array($monthKey, $availableMonths)) {
+                $availableMonths[] = $monthKey;
+            }
+        }
+        sort($availableMonths);
+
         // Only perform calculation if a date or month is selected
         $sampleTransactions = [];
         $algorithmSteps = null;
@@ -186,11 +207,11 @@ class AnalysisController extends Controller
 
             // Filter transactions based on filter type
             if ($filterType === 'month' && !empty($selectedMonth)) {
-                // Filter by month
+                // Filter by month - expect format YYYY-MM from month input
                 $sampleTransactions = array_filter($allTransactions, function ($transaction) use ($selectedMonth) {
                     $transactionDate = Carbon::parse($transaction['date']);
-                    $filterDate = Carbon::parse($selectedMonth . '-01');
-                    return $transactionDate->format('Y-m') === $filterDate->format('Y-m');
+                    // Direct comparison with Y-m format (no need to parse selectedMonth)
+                    return $transactionDate->format('Y-m') === $selectedMonth;
                 });
                 // Reset array keys after filtering
                 $sampleTransactions = array_values($sampleTransactions);
@@ -284,6 +305,7 @@ class AnalysisController extends Controller
             'algorithmSteps',
             'selectedDate',
             'availableDates',
+            'availableMonths',
             'products',
             'hasCalculation',
             'analysisSaved',
@@ -554,6 +576,16 @@ class AnalysisController extends Controller
         $availableDates = array_unique(array_column($allTransactions, 'date'));
         sort($availableDates);
 
+        // Get available months from transactions (format: YYYY-MM)
+        $availableMonths = [];
+        foreach ($availableDates as $date) {
+            $monthKey = Carbon::parse($date)->format('Y-m');
+            if (!in_array($monthKey, $availableMonths)) {
+                $availableMonths[] = $monthKey;
+            }
+        }
+        sort($availableMonths);
+
         // Only perform calculation if a date or month is selected
         $sampleTransactions = [];
         $algorithmSteps = null;
@@ -569,11 +601,11 @@ class AnalysisController extends Controller
 
             // Filter transactions based on filter type
             if ($filterType === 'month' && !empty($selectedMonth)) {
-                // Filter by month
+                // Filter by month - expect format YYYY-MM from month input
                 $sampleTransactions = array_filter($allTransactions, function ($transaction) use ($selectedMonth) {
                     $transactionDate = Carbon::parse($transaction['date']);
-                    $filterDate = Carbon::parse($selectedMonth . '-01');
-                    return $transactionDate->format('Y-m') === $filterDate->format('Y-m');
+                    // Direct comparison with Y-m format (no need to parse selectedMonth)
+                    return $transactionDate->format('Y-m') === $selectedMonth;
                 });
                 // Reset array keys after filtering
                 $sampleTransactions = array_values($sampleTransactions);
@@ -667,6 +699,7 @@ class AnalysisController extends Controller
             'algorithmSteps',
             'selectedDate',
             'availableDates',
+            'availableMonths',
             'products',
             'hasCalculation',
             'analysisSaved',
@@ -953,30 +986,28 @@ class AnalysisController extends Controller
 
     /**
      * Get real transaction data from database
+     * Group by DATE to find shopping patterns per day (not by transaction_id)
      */
     private function getTransactionDataFromDatabase(): array
     {
-        // Group outgoing items by combination of transaction_id AND date to form actual transactions
+        // Get all outgoing items grouped by DATE to analyze daily shopping patterns
         $outgoingItems = OutgoingItem::with('item')
             ->orderBy('outgoing_date')
-            ->orderBy('transaction_id')
             ->get();
 
         Log::info('Total outgoing items retrieved from database', ['count' => $outgoingItems->count()]);
 
         $transactions = [];
 
-        // Group by combination of transaction_id and date to handle repeated transaction IDs across dates
+        // Group by DATE ONLY to find shopping patterns per day
+        // This means all items purchased on the same date are treated as one transaction
         $groupedTransactions = $outgoingItems->groupBy(function ($item) {
-            return $item->transaction_id . '_' . Carbon::parse($item->outgoing_date)->format('Y-m-d');
+            return Carbon::parse($item->outgoing_date)->format('Y-m-d');
         });
 
-        Log::info('Grouped transactions count', ['count' => $groupedTransactions->count()]);
+        Log::info('Grouped transactions by date count', ['count' => $groupedTransactions->count()]);
 
-        foreach ($groupedTransactions as $groupKey => $items) {
-            // Get the first item to extract common transaction data
-            $firstItem = $items->first();
-
+        foreach ($groupedTransactions as $date => $items) {
             $itemNames = $items->map(function ($item) {
                 return $item->item->item_name;
             })->unique()->values()->toArray();
@@ -984,9 +1015,9 @@ class AnalysisController extends Controller
             // Only include transactions with at least one item
             if (count($itemNames) > 0) {
                 $transactions[] = [
-                    'id' => $firstItem->transaction_id . '_' . Carbon::parse($firstItem->outgoing_date)->format('Y-m-d'),
-                    'date' => Carbon::parse($firstItem->outgoing_date)->format('Y-m-d'),
-                    'customer' => $firstItem->customer ?? 'Unknown',
+                    'id' => 'DATE_' . $date, // Use date as transaction ID
+                    'date' => $date,
+                    'customer' => 'Daily Transaction', // Not relevant anymore since we group by date
                     'items' => $itemNames,
                     'item_count' => count($itemNames)
                 ];

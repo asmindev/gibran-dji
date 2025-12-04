@@ -53,6 +53,15 @@ class IncomingItemsImport implements
                     continue;
                 }
 
+                // Validate jumlah is numeric (not a formula like =RANDBETWEEN)
+                if (!is_numeric($row['jumlah']) || strpos($row['jumlah'], '=') === 0) {
+                    $this->validationErrors[] = [
+                        'row' => $index + 2,
+                        'message' => "Jumlah pada baris " . ($index + 2) . " harus berupa angka, bukan formula Excel. Nilai: '{$row['jumlah']}'"
+                    ];
+                    continue;
+                }
+
                 // Find item by name
                 $item = Item::where('item_name', $row['nama_barang'])->first();
 
@@ -390,10 +399,9 @@ class IncomingItemsImport implements
      */
     public function map($row): array
     {
-        // Header mapping yang fleksibel untuk format baru
+        // Header mapping yang fleksibel untuk format baru (id_transaksi tidak diperlukan, auto-generated)
         $headerMapping = [
             'no' => 'no',
-            'id transaksi' => 'id_transaksi',
             'tanggal transaksi' => 'tanggal_transaksi',
             'nama barang' => 'nama_barang',
             'kategori' => 'kategori',

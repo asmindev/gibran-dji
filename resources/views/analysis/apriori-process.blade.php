@@ -40,8 +40,22 @@
                         @if($selectedDate === 'all')
                         Semua tanggal ({{ count($sampleTransactions) }} transaksi)
                         @else
-                        {{ \Carbon\Carbon::parse($selectedDate)->format('d M Y') }} ({{ count($sampleTransactions) }}
-                        transaksi)
+                        @php
+                        // Handle both YYYY-MM (month) and YYYY-MM-DD (date) formats
+                        // Validate format before parsing
+                        try {
+                        if (strlen($selectedDate) === 7 && preg_match('/^\d{4}-\d{2}$/', $selectedDate)) {
+                        $displayDate = \Carbon\Carbon::parse($selectedDate . '-01')->format('M Y');
+                        } elseif (strlen($selectedDate) === 10 && preg_match('/^\d{4}-\d{2}-\d{2}$/', $selectedDate)) {
+                        $displayDate = \Carbon\Carbon::parse($selectedDate)->format('d M Y');
+                        } else {
+                        $displayDate = $selectedDate; // Fallback to raw value
+                        }
+                        } catch (\Exception $e) {
+                        $displayDate = $selectedDate;
+                        }
+                        @endphp
+                        {{ $displayDate }} ({{ count($sampleTransactions) }} transaksi)
                         @endif
                         @else
                         <span class="text-gray-500 italic">Belum dipilih</span>
@@ -87,10 +101,23 @@
             <div class="flex-1" id="month-filter"
                 style="{{ request('filter_type') !== 'month' ? 'display:none;' : '' }}">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Bulan & Tahun *</label>
-                <input type="month" name="transaction_month" value="{{ request('transaction_month') }}"
+                <select name="transaction_month"
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                    <option value="">-- Pilih Bulan --</option>
+                    @if(!empty($availableMonths))
+                    @foreach($availableMonths as $month)
+                    <option value="{{ $month }}" {{ request('transaction_month')==$month ? 'selected' : '' }}>
+                        {{ \Carbon\Carbon::parse($month . '-01')->format('F Y') }}
+                    </option>
+                    @endforeach
+                    @endif
+                </select>
                 <div class="text-xs text-gray-500 mt-1">
-                    Pilih bulan dan tahun untuk analisis transaksi
+                    @if(!empty($availableMonths))
+                    Tersedia {{ count($availableMonths) }} bulan transaksi
+                    @else
+                    Tidak ada data transaksi tersedia
+                    @endif
                 </div>
             </div>
             <div class="flex-none w-full lg:w-48">
@@ -132,7 +159,20 @@
             @if($selectedDate !== 'all')
             <div class="text-sm">
                 <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
-                    Difilter: {{ \Carbon\Carbon::parse($selectedDate)->format('d M Y') }}
+                    @php
+                    try {
+                    if (strlen($selectedDate) === 7 && preg_match('/^\d{4}-\d{2}$/', $selectedDate)) {
+                    $displayDate = 'Bulan: ' . \Carbon\Carbon::parse($selectedDate . '-01')->format('M Y');
+                    } elseif (strlen($selectedDate) === 10 && preg_match('/^\d{4}-\d{2}-\d{2}$/', $selectedDate)) {
+                    $displayDate = 'Tanggal: ' . \Carbon\Carbon::parse($selectedDate)->format('d M Y');
+                    } else {
+                    $displayDate = 'Filter: ' . $selectedDate;
+                    }
+                    } catch (\Exception $e) {
+                    $displayDate = 'Filter: ' . $selectedDate;
+                    }
+                    @endphp
+                    Difilter: {{ $displayDate }}
                 </span>
             </div>
             @else
@@ -182,7 +222,20 @@
             <div>
                 <strong>Total:</strong> {{ count($sampleTransactions) }} transaksi untuk analisis
                 @if($selectedDate !== 'all')
-                pada tanggal {{ \Carbon\Carbon::parse($selectedDate)->format('d M Y') }}
+                @php
+                try {
+                if (strlen($selectedDate) === 7 && preg_match('/^\d{4}-\d{2}$/', $selectedDate)) {
+                $displayDate = 'bulan ' . \Carbon\Carbon::parse($selectedDate . '-01')->format('M Y');
+                } elseif (strlen($selectedDate) === 10 && preg_match('/^\d{4}-\d{2}-\d{2}$/', $selectedDate)) {
+                $displayDate = 'tanggal ' . \Carbon\Carbon::parse($selectedDate)->format('d M Y');
+                } else {
+                $displayDate = $selectedDate;
+                }
+                } catch (\Exception $e) {
+                $displayDate = $selectedDate;
+                }
+                @endphp
+                pada {{ $displayDate }}
                 @endif
             </div>
             @if($selectedDate !== 'all' && count($sampleTransactions) < 2) <div

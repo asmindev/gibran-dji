@@ -102,7 +102,20 @@
             <h2 class="text-xl font-semibold text-gray-800">⚡ Ringkasan Performa</h2>
             <div class="text-sm">
                 <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full">
-                    📅 {{ \Carbon\Carbon::parse($selectedDate)->format('d M Y') }} |
+                    @php
+                    try {
+                    if (strlen($selectedDate) === 7 && preg_match('/^\d{4}-\d{2}$/', $selectedDate)) {
+                    $displayDate = \Carbon\Carbon::parse($selectedDate . '-01')->format('M Y');
+                    } elseif (strlen($selectedDate) === 10 && preg_match('/^\d{4}-\d{2}-\d{2}$/', $selectedDate)) {
+                    $displayDate = \Carbon\Carbon::parse($selectedDate)->format('d M Y');
+                    } else {
+                    $displayDate = $selectedDate;
+                    }
+                    } catch (\Exception $e) {
+                    $displayDate = $selectedDate;
+                    }
+                    @endphp
+                    📅 {{ $displayDate }} |
                     📊 {{ count($sampleTransactions) }} transaksi
                 </span>
             </div>

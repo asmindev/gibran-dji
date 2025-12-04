@@ -95,6 +95,20 @@ class OutgoingItemsImport implements
                     continue;
                 }
 
+                // Validate jumlah is numeric (not a formula like =RANDBETWEEN)
+                if (!is_numeric($row['jumlah']) || strpos($row['jumlah'], '=') === 0) {
+                    $this->validationErrors[] = [
+                        'row' => $actualRowNumber,
+                        'message' => "Jumlah pada baris {$actualRowNumber} harus berupa angka, bukan formula Excel. Nilai: '{$row['jumlah']}'"
+                    ];
+                    $this->skippedRows++;
+                    Log::warning('Validation error: jumlah contains formula', [
+                        'actual_row_number' => $actualRowNumber,
+                        'jumlah_value' => $row['jumlah']
+                    ]);
+                    continue;
+                }
+
                 // Find item by name
                 $item = Item::where('item_name', $row['nama_barang'])->first();
 
@@ -143,7 +157,7 @@ class OutgoingItemsImport implements
                 $this->savedRows++;
                 Log::debug('Successfully saved outgoing item', [
                     'actual_row_number' => $actualRowNumber,
-                    'transaction_id' => $row['id_transaksi'],
+                    'transaction_id' => $transactionId,
                     'item_name' => $row['nama_barang'],
                     'quantity' => $requestedQuantity
                 ]);
@@ -504,10 +518,9 @@ class OutgoingItemsImport implements
      */
     public function map($row): array
     {
-        // Header mapping yang fleksibel untuk format baru
+        // Header mapping yang fleksibel untuk format baru (id_transaksi tidak diperlukan, auto-generated)
         $headerMapping = [
             'no' => 'no',
-            'id transaksi' => 'id_transaksi',
             'tanggal transaksi' => 'tanggal_transaksi',
             'nama barang' => 'nama_barang',
             'kategori' => 'kategori',

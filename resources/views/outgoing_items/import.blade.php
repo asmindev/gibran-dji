@@ -27,6 +27,8 @@
             <li>• Ukuran file maksimal 10MB</li>
             <li>• Pastikan format kolom sesuai dengan template</li>
             <li>• <strong>ID Transaksi akan dibuat otomatis oleh sistem</strong> (format: TR{YYYYMMDD}{XXX})</li>
+            <li>• <strong class="text-red-700">Kolom JUMLAH harus berupa angka, TIDAK BOLEH berupa formula
+                    Excel</strong> (seperti =RANDBETWEEN atau =SUM)</li>
             <li>• Nama barang harus sudah ada dalam sistem</li>
             <li>• Stok barang harus mencukupi untuk jumlah yang akan dikeluarkan</li>
             <li>• Data akan langsung diimport setelah upload</li>
@@ -459,7 +461,15 @@ function displayPreview(data) {
 
             if (cellIndex === namaBarangIndex && !trimmedValue) cellClass += ' bg-red-100'; // Nama barang required
             if (cellIndex === tanggalIndex && !trimmedValue) cellClass += ' bg-red-100'; // Tanggal required
-            if (cellIndex === jumlahIndex && (!trimmedValue || isNaN(trimmedValue) || parseFloat(trimmedValue) <= 0)) cellClass += ' bg-red-100'; // Jumlah required & numeric
+            if (cellIndex === jumlahIndex) {
+                if (!trimmedValue) {
+                    cellClass += ' bg-red-100'; // Jumlah required
+                } else if (trimmedValue.startsWith('=')) {
+                    cellClass += ' bg-red-100'; // Formula not allowed
+                } else if (isNaN(trimmedValue) || parseFloat(trimmedValue) <= 0) {
+                    cellClass += ' bg-red-100'; // Must be positive number
+                }
+            }
 
             tableHTML += `<td class="${cellClass}">${cellValue}</td>`;
         });
@@ -571,7 +581,7 @@ function validateRow(row, rowIndex, headerMapping) {
     const jumlahIndex = headerMapping["JUMLAH"];
     if (jumlahIndex !== undefined) {
         const jumlah = row[jumlahIndex] ? String(row[jumlahIndex]).trim() : '';
-        if (!jumlah || isNaN(jumlah) || parseFloat(jumlah) <= 0) {
+        if (!jumlah || jumlah.startsWith('=') || isNaN(jumlah) || parseFloat(jumlah) <= 0) {
             hasErrors = true;
         }
     } else {
@@ -648,6 +658,8 @@ function validateAllData(data, headerMapping = {}) {
             const jumlah = row[jumlahIndex] ? String(row[jumlahIndex]).trim() : '';
             if (!jumlah) {
                 rowErrors.push('Jumlah kosong');
+            } else if (jumlah.startsWith('=')) {
+                rowErrors.push(`Jumlah tidak boleh berupa formula Excel (${jumlah})`);
             } else if (isNaN(jumlah) || parseFloat(jumlah) <= 0) {
                 rowErrors.push('Jumlah harus berupa angka positif');
             }
