@@ -986,11 +986,11 @@ class AnalysisController extends Controller
 
     /**
      * Get real transaction data from database
-     * Group by DATE to find shopping patterns per day (not by transaction_id)
+     * Group by transaction_id (default) to capture per-bill baskets; fallback to date when id is missing.
      */
     private function getTransactionDataFromDatabase(): array
     {
-        // Get all outgoing items grouped by DATE to analyze daily shopping patterns
+        // Get all outgoing items grouped by transaction to analyze basket-level patterns
         $outgoingItems = OutgoingItem::with('item')
             ->orderBy('outgoing_date')
             ->get();
@@ -999,25 +999,31 @@ class AnalysisController extends Controller
 
         $transactions = [];
 
-        // Group by DATE ONLY to find shopping patterns per day
-        // This means all items purchased on the same date are treated as one transaction
+        // Group by transaction_id; if missing, fall back to date bucket to avoid data loss
         $groupedTransactions = $outgoingItems->groupBy(function ($item) {
-            return Carbon::parse($item->outgoing_date)->format('Y-m-d');
+            if (!empty($item->transaction_id)) {
+                return $item->transaction_id;
+            }
+            // Fallback: group by date for records without transaction_id
+            return 'DATE_' . Carbon::parse($item->outgoing_date)->format('Y-m-d');
         });
 
         Log::info('Grouped transactions by date count', ['count' => $groupedTransactions->count()]);
 
-        foreach ($groupedTransactions as $date => $items) {
+        foreach ($groupedTransactions as $groupKey => $items) {
             $itemNames = $items->map(function ($item) {
                 return $item->item->item_name;
             })->unique()->values()->toArray();
 
+            // Derive a consistent date for the transaction from the first item
+            $transactionDate = Carbon::parse(optional($items->first())->outgoing_date)->format('Y-m-d');
+
             // Only include transactions with at least one item
             if (count($itemNames) > 0) {
                 $transactions[] = [
-                    'id' => 'DATE_' . $date, // Use date as transaction ID
-                    'date' => $date,
-                    'customer' => 'Daily Transaction', // Not relevant anymore since we group by date
+                    'id' => !str_starts_with($groupKey, 'DATE_') ? 'TX_' . $groupKey : $groupKey,
+                    'date' => $transactionDate,
+                    'customer' => $items->first()->customer ?? 'Unknown',
                     'items' => $itemNames,
                     'item_count' => count($itemNames)
                 ];

@@ -26,7 +26,10 @@
             <li>• File harus berformat Excel (.xlsx) atau CSV (.csv)</li>
             <li>• Ukuran file maksimal 10MB</li>
             <li>• Pastikan format kolom sesuai dengan template</li>
-            <li>• <strong>ID Transaksi akan dibuat otomatis oleh sistem</strong> (format: TR{YYYYMMDD}{XXX})</li>
+            <li>• Kolom: NO, <strong>ID TRANSAKSI (opsional)</strong>, TANGGAL TRANSAKSI, NAMA BARANG, KATEGORI, JUMLAH
+            </li>
+            <li>• Jika kolom ID TRANSAKSI diisi, nilai tersebut dipakai; jika dikosongkan akan <strong>digenerate
+                    otomatis</strong> (format: TR{YYYYMMDD}{XXX})</li>
             <li>• <strong class="text-red-700">Kolom JUMLAH harus berupa angka, TIDAK BOLEH berupa formula
                     Excel</strong> (seperti =RANDBETWEEN atau =SUM)</li>
             <li>• Nama barang harus sudah ada dalam sistem</li>
@@ -216,6 +219,8 @@
             <thead class="bg-gray-50">
                 <tr>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">No</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">ID Transaksi (opsional)
+                    </th>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tanggal Transaksi</th>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Nama Barang</th>
                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Kategori</th>
@@ -225,6 +230,7 @@
             <tbody class="bg-white divide-y divide-gray-200">
                 <tr>
                     <td class="px-4 py-2 text-sm">1</td>
+                    <td class="px-4 py-2 text-sm">OUT-2025-0001</td>
                     <td class="px-4 py-2 text-sm">03/08/2025</td>
                     <td class="px-4 py-2 text-sm">Barang A</td>
                     <td class="px-4 py-2 text-sm">Kategori A</td>
@@ -232,6 +238,7 @@
                 </tr>
                 <tr>
                     <td class="px-4 py-2 text-sm">2</td>
+                    <td class="px-4 py-2 text-sm">(kosong = auto)</td>
                     <td class="px-4 py-2 text-sm">03/08/2025</td>
                     <td class="px-4 py-2 text-sm">Barang B</td>
                     <td class="px-4 py-2 text-sm">Kategori B</td>
@@ -416,7 +423,8 @@ function displayPreview(data) {
         const headers = previewData[0] || [];
         headerMapping = getHeaderMapping(headers);
         // Expected headers in order - these should match exactly
-        const expectedHeaders = ["NO", "TANGGAL TRANSAKSI", "NAMA BARANG", "KATEGORI", "JUMLAH"];
+        // ID TRANSAKSI optional but marked as valid to avoid red highlight
+        const expectedHeaders = ["NO", "ID TRANSAKSI", "TANGGAL TRANSAKSI", "NAMA BARANG", "KATEGORI", "JUMLAH"];
 
         headers.forEach((header, index) => {
             const headerStr = header ? String(header).trim() : '';
@@ -522,7 +530,7 @@ function displayPreview(data) {
 }
 
 function getHeaderMapping(headers) {
-    const expectedHeaders = ["NO", "TANGGAL TRANSAKSI", "NAMA BARANG", "KATEGORI", "JUMLAH"];
+    const expectedHeaders = ["NO", "ID TRANSAKSI", "TANGGAL TRANSAKSI", "NAMA BARANG", "KATEGORI", "JUMLAH"];
     const mapping = {};
 
     expectedHeaders.forEach(expected => {

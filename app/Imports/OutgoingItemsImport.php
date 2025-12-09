@@ -75,7 +75,7 @@ class OutgoingItemsImport implements
                     continue;
                 }
 
-                // Validate required fields (id_transaksi tidak lagi required, akan auto-generate)
+                // Validate required fields (id_transaksi optional; will use provided or auto-generate)
                 if (empty($row['nama_barang']) || empty($row['jumlah'])) {
                     $this->validationErrors[] = [
                         'row' => $actualRowNumber,
@@ -141,8 +141,11 @@ class OutgoingItemsImport implements
                 // Parse date
                 $outgoingDate = $this->parseDate($row['tanggal_transaksi'] ?? null);
 
-                // Generate transaction ID otomatis
-                $transactionId = OutgoingItem::generateTransactionId($outgoingDate);
+                // Use provided transaction_id if supplied; otherwise generate
+                $providedTransactionId = $row['id_transaksi'] ?? $row['transaction_id'] ?? null;
+                $providedTransactionId = is_string($providedTransactionId) ? trim($providedTransactionId) : $providedTransactionId;
+
+                $transactionId = $providedTransactionId ?: OutgoingItem::generateTransactionId($outgoingDate);
 
                 // Create outgoing item
                 OutgoingItem::create([
@@ -518,9 +521,11 @@ class OutgoingItemsImport implements
      */
     public function map($row): array
     {
-        // Header mapping yang fleksibel untuk format baru (id_transaksi tidak diperlukan, auto-generated)
+        // Header mapping yang fleksibel untuk format baru (id_transaksi optional)
         $headerMapping = [
             'no' => 'no',
+            'id transaksi' => 'id_transaksi',
+            'transaction id' => 'id_transaksi',
             'tanggal transaksi' => 'tanggal_transaksi',
             'nama barang' => 'nama_barang',
             'kategori' => 'kategori',
